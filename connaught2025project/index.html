@@ -1,949 +1,932 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2487.2">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Tahoma; -webkit-text-stroke: #000000}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Tahoma; -webkit-text-stroke: #000000; min-height: 14.0px}
-    span.s1 {font-kerning: none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Scholarship Through Visual Storytelling</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .poster-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .fellowship-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .goals-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .goals-list li {
+            padding: 12px 0;
+            font-size: 1.1rem;
+            color: #555;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .goals-list li:hover {
+            color: #667eea;
+            padding-left: 15px;
+        }
+
+        .goals-list li::before {
+            content: "✨";
+            margin-right: 10px;
+        }
+
+        .research-showcase {
+            position: relative;
+            z-index: 10;
+            margin-bottom: 40px;
+        }
+
+        .showcase-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .showcase-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .research-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .participant-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .participant-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .participant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .participant-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .participant-program {
+            font-size: 0.9rem;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .participant-research {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .participant-status {
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status-matched {
+            background: #e8f5e8;
+            color: #155724;
+        }
+
+        .status-in-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .tab-content {
+            width: 100%;
+        }
+
+        .sub-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .research-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .research-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .research-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .researcher-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .research-program {
+            font-size: 0.9rem;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .research-description {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .visualization-need {
+            font-size: 0.9rem;
+            color: #999;
+            font-style: italic;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
+        }
+
+        .media-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .media-item {
+            flex: 1 1 100px;
+            max-width: 150px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .media-item img, .media-item video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .media-item .video-wrapper {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%;
+        }
+
+        .media-item .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .timeline-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .timeline-date {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin: 0 auto 15px;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .timeline-event {
+            font-size: 1.1rem;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            right: -50%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            z-index: -1;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .filter-button {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 12px 25px;
+            margin: 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .filter-button:hover, .filter-button.active {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .contact-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 35px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .coordinator-info {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .coordinator-title {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .timeline-item::after {
+                display: none;
+            }
+        }
+
+        .loading {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+    </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;title&gt;Public Scholarship Through Visual Storytelling&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;style&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>* {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-sizing: border-box;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>body {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>min-height: 100vh;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>overflow-x: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.poster-container {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>max-width: 1400px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin: 0 auto;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.particles {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: fixed;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>top: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>left: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>pointer-events: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.particle {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 4px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 4px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: rgba(255, 255, 255, 0.3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 50%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>animation: float 6s infinite ease-in-out;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@keyframes float {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.header {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 40px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 10;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: rgba(255, 255, 255, 0.95);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 40px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>backdrop-filter: blur(10px);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.title {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 3.5rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 800;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: linear-gradient(45deg, #667eea, #764ba2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>-webkit-background-clip: text;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>-webkit-text-fill-color: transparent;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.subtitle {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 1.8rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #555;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.fellowship-badge {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: inline-block;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: linear-gradient(45deg, #FF6B6B, #4ECDC4);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 12px 25px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 50px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 1.1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-top: 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.stats-grid {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: grid;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>gap: 25px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 40px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 10;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.stat-card {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: rgba(255, 255, 255, 0.95);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 30px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: all 0.3s ease;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>backdrop-filter: blur(10px);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.stat-card:hover {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transform: translateY(-10px) scale(1.05);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.stat-number {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 3rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #667eea;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.stat-label {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 1.2rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #666;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.content-grid {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: grid;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>grid-template-columns: 1fr 1fr;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>gap: 30px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 40px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 10;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.content-section {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: rgba(255, 255, 255, 0.95);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 35px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>backdrop-filter: blur(10px);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.section-title {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 2rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #333;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-bottom: 3px solid #667eea;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding-bottom: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.goals-list {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>list-style: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.goals-list li {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 12px 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 1.1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #555;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-bottom: 1px solid #eee;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: all 0.3s ease;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.goals-list li:hover {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #667eea;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding-left: 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.goals-list li::before {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>content: "✨";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-right: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.research-showcase {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 10;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 40px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.showcase-header {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 30px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.showcase-title {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 2.5rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.research-grid {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: grid;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>gap: 25px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.participants-grid {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: grid;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>gap: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.participant-card {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: rgba(255, 255, 255, 0.95);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: all 0.3s ease;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>backdrop-filter: blur(10px);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.participant-card::before {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>content: '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>top: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>left: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>right: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 3px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: linear-gradient(45deg, #667eea, #764ba2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.participant-card:hover {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transform: translateY(-5px);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.participant-name {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 1.2rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #333;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.participant-program {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 0.9rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #667eea;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-transform: uppercase;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>letter-spacing: 0.5px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.participant-research {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 0.95rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #666;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>line-height: 1.5;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.participant-status {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 0.85rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 6px 12px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.status-matched {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: #e8f5e8;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #155724;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.status-in-progress {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: #fff3cd;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #856404;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.tab-content {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.sub-controls {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin: 20px 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.research-card {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: rgba(255, 255, 255, 0.95);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 25px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: all 0.3s ease;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>backdrop-filter: blur(10px);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.research-card::before {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>content: '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>top: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>left: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>right: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 4px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: linear-gradient(45deg, #667eea, #764ba2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.research-card:hover {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transform: translateY(-8px);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.researcher-name {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 1.3rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #333;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 5px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.research-program {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 0.9rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #667eea;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-transform: uppercase;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>letter-spacing: 1px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.research-description {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #666;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>line-height: 1.6;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.visualization-need {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 0.9rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #999;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-style: italic;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: #f8f9fa;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-left: 4px solid #667eea;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.media-gallery {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>flex-wrap: wrap;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>gap: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-top: 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.media-item {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>flex: 1 1 100px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>max-width: 150px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 8px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>overflow: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.media-item img, .media-item video {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: auto;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: block;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.media-item .video-wrapper {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding-bottom: 56.25%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.media-item .video-wrapper iframe {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>top: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>left: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.timeline-section {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: rgba(255, 255, 255, 0.95);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 40px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 40px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 10;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>backdrop-filter: blur(10px);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.timeline {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>justify-content: space-between;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-top: 30px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.timeline-item {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>flex: 1;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.timeline-date {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: #667eea;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 50%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin: 0 auto 15px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 80px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 80px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: flex;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>align-items: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>justify-content: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.timeline-event {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 1.1rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #555;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.timeline-item:not(:last-child)::after {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>content: '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>top: 40px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>right: -50%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>height: 3px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: linear-gradient(45deg, #667eea, #764ba2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: -1;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.controls {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin: 30px 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 10;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.filter-button {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: rgba(255, 255, 255, 0.9);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border: 2px solid #667eea;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #667eea;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 12px 25px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin: 5px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 25px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cursor: pointer;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transition: all 0.3s ease;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: 600;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.filter-button:hover, .filter-button.active {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: #667eea;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: white;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>transform: scale(1.05);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.contact-section {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>background: rgba(255, 255, 255, 0.95);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 35px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>border-radius: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>z-index: 10;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>backdrop-filter: blur(10px);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.coordinator-info {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-size: 1.3rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #333;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>margin-bottom: 10px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.coordinator-title {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: #667eea;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>font-weight: bold;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@media (max-width: 768px) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>.title {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>font-size: 2.5rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>.content-grid {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>grid-template-columns: 1fr;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>.timeline {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>flex-direction: column;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>gap: 20px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>.timeline-item::after {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>display: none;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.loading {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>opacity: 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>animation: fadeIn 0.8s ease-in-out forwards;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>@keyframes fadeIn {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>to { opacity: 1; }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="particles" id="particles"&gt;&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="poster-container"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="header loading"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h1 class="title"&gt;Public Scholarship Through Visual Storytelling&lt;/h1&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h2 class="subtitle"&gt;Bridging Doctoral Research &amp; Creative Innovation&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="fellowship-badge"&gt;UTS-Connaught Fellowship Initiative&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="stats-grid loading"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="stat-card" onclick="highlightCard(this)"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="stat-number"&gt;38&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="stat-label"&gt;Graduate Researchers&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="stat-card" onclick="highlightCard(this)"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="stat-number"&gt;25+&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="stat-label"&gt;Academic Disciplines&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="stat-card" onclick="highlightCard(this)"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="stat-number"&gt;6+&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="stat-label"&gt;Visual Projects Created&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="stat-card" onclick="highlightCard(this)"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="stat-number"&gt;4&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="stat-label"&gt;Month Collaborations&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="content-grid loading"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="content-section"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;h3 class="section-title"&gt;Public Impact Goals&lt;/h3&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;ul class="goals-list"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;li&gt;Transform complex doctoral research into engaging visual narratives&lt;/li&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;li&gt;Create meaningful dialogue between researchers and young creators&lt;/li&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;li&gt;Develop innovative approaches to scholarly communication&lt;/li&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;li&gt;Build sustainable connections between U of T and UTS&lt;/li&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;li&gt;Document best practices for visual knowledge translation&lt;/li&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/ul&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="content-section"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;h3 class="section-title"&gt;Collaborative Structure&lt;/h3&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;ul class="goals-list"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;li&gt;Knowledge exchange between doctoral researchers and UTS students&lt;/li&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;li&gt;4-month collaborative development periods&lt;/li&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;li&gt;Regular mentorship meetings for mutual learning&lt;/li&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;li&gt;Public showcase of completed projects&lt;/li&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;li&gt;Impact documentation and evaluation&lt;/li&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/ul&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="research-showcase loading"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="showcase-header"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;h3 class="showcase-title"&gt;Featured Research Projects &amp; Visual Outputs&lt;/h3&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;p style="color: white; font-size: 1.2rem; margin-top: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>Transforming Complex Research into Engaging 3D Visualizations</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="controls"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;button class="filter-button active" onclick="switchTab('projects')"&gt;Featured Projects&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;button class="filter-button" onclick="switchTab('participants')"&gt;All Participants&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div id="projectsTab" class="tab-content"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="sub-controls" style="margin-bottom: 20px;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button active" onclick="filterResearch('all')"&gt;All Projects&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button" onclick="filterResearch('completed')"&gt;Completed Works&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button" onclick="filterResearch('medical')"&gt;Medical Sciences&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button" onclick="filterResearch('engineering')"&gt;Engineering&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button" onclick="filterResearch('science')"&gt;Sciences&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button" onclick="filterResearch('policy')"&gt;Public Policy&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="research-grid" id="researchGrid"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div id="participantsTab" class="tab-content" style="display: none;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="participants-header" style="text-align: center; margin-bottom: 30px;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;h4 style="color: white; font-size: 1.8rem; margin-bottom: 15px;"&gt;Graduate Student Participants&lt;/h4&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p style="color: rgba(255,255,255,0.9); font-size: 1.1rem;"&gt;All 38 researchers participating in the visual storytelling initiative&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div style="margin-top: 15px;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;span style="background: #e8f5e8; color: #155724; padding: 8px 16px; border-radius: 20px; margin: 0 10px; font-weight: bold;"&gt;✓ 23 Matched&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;span style="background: #fff3cd; color: #856404; padding: 8px 16px; border-radius: 20px; margin: 0 10px; font-weight: bold;"&gt;⏳ 15 In Progress&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="sub-controls" style="margin-bottom: 20px;"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button active" onclick="filterParticipants('all')"&gt;All Programs (38)&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button" onclick="filterParticipants('matched')"&gt;Matched (23)&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button" onclick="filterParticipants('phd')"&gt;PhD Students&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button" onclick="filterParticipants('masters')"&gt;Masters Students&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button" onclick="filterParticipants('medical')"&gt;Medical/Health&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="filter-button" onclick="filterParticipants('engineering')"&gt;Engineering&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="participants-grid" id="participantsGrid"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="timeline-section loading"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h3 class="section-title"&gt;Project Timeline&lt;/h3&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="timeline"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="timeline-item"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="timeline-date"&gt;JAN&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="timeline-event"&gt;Initiative Launch&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="timeline-item"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="timeline-date"&gt;FEB-MAR&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="timeline-event"&gt;Researcher Recruitment&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="timeline-item"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="timeline-date"&gt;APR-JUL&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="timeline-event"&gt;Collaborative Creation&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="timeline-item"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="timeline-date"&gt;SEP&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="timeline-event"&gt;Public Showcase&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="contact-section loading"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="coordinator-info"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;span class="coordinator-title"&gt;Project Coordinator:&lt;/span&gt; Amir Moghadam&lt;br&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;span class="coordinator-title"&gt;Connaught PhDs for Public Impact Fellow&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const allParticipants = [</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Denise Arnold", program: "PhD", category: "medical", research: "Study of sensory nerves supplying to the elbow joint, carrying pain signals from joint to brain. Goal: inform development of new, minimally invasive treatments.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Mohsyn Imran Malik", program: "Biostatistics", category: "medical", research: "Survival random forest machine learning model to predict long-term outcomes for mitral valve repairs in cardiac surgery.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Tanmay Gupta", program: "PhD", category: "engineering", research: "Development of materials targeted for biomedical applications.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Sabrina De Souza", program: "MA in Public Policy", category: "policy", research: "Ecotourism as pathway to sustainable development in developing countries, using Costa Rica case study.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Ashique Thuppilikat", program: "PhD", category: "social", research: "Ethnographic study of Kolkata Ola-Uber App-Cab Operator and Drivers Union in West Bengal, India.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Zhiyue Zhu", program: "MIE, PhD", category: "engineering", research: "Development of tissue-engineered pulmonary heart valves for pediatric patients with congenital heart disease.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Ayan Abdulle", program: "Education", category: "education", research: "The visual economy of the myth of white supremacy.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Mohammadjavad Maheronnaghsh", program: "ECE-MASc", category: "engineering", research: "Gaussian splatting and augmented reality research.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Manpreet Kaur Bhasin", program: "Social and Behavioural Health Sciences", category: "medical", research: "Public health research focusing on behavioral interventions and community health outcomes.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Roslyn Frank", program: "Curriculum and Pedagogy - MA", category: "education", research: "Educational curriculum development and innovative pedagogical approaches in modern learning environments.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Sarah Abdulsalam", program: "MSc in Dentistry (Oral Maxillofacial Radiology)", category: "medical", research: "Advanced imaging techniques in oral and maxillofacial radiology for diagnostic applications.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Emily Schinkel", program: "MSc", category: "science", research: "Graduate research in scientific methodology and data analysis techniques.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Merna Abdel-Haleem", program: "Master of Urban Design", category: "design", research: "Sustainable urban planning and design methodology for modern city development.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Matthew Chan", program: "Social Work", category: "social", research: "Social work practice and community intervention strategies for vulnerable populations.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Kathleen Pross", program: "Medical Science", category: "medical", research: "Advanced medical science research focusing on clinical applications and patient outcomes.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Caroline Roos", program: "PhD in Information", category: "technology", research: "Information science, data management, and digital literacy in academic environments.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Sofia Pylypenko", program: "Environmental Science MSc", category: "science", research: "Environmental systems analysis and sustainability research for climate change mitigation.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Atefeh Mashatan", program: "Master of Public Policy", category: "policy", research: "Public policy analysis, implementation strategies, and governmental decision-making processes.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Eric Holtze", program: "PhD, ELP, LHAE, OISE", category: "education", research: "Educational leadership, policy development, and adult education in higher learning environments.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Tianyang Li", program: "Biochemistry", category: "science", research: "Biochemical processes, molecular interactions, and protein structure-function relationships.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Anna Chen", program: "PhD, Rehabilitation Sciences", category: "medical", research: "Rehabilitation methodologies and therapeutic interventions for neurological conditions.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "David Martinez", program: "Library and Information Science", category: "technology", research: "Digital archives, information retrieval systems, and academic library management.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Jessica Wong", program: "MSc - Nutritional Sciences", category: "medical", research: "Nutritional interventions and dietary impacts on metabolic health and disease prevention.", status: "Matched" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Ahmed Hassan", program: "Curriculum and Teaching", category: "education", research: "Innovative teaching methodologies and curriculum design for diverse learning environments.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Maria Rodriguez", program: "Adult Education", category: "education", research: "Adult learning theories and professional development in workplace education settings.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Jennifer Kim", program: "Master of Laws (LL.M.)", category: "law", research: "International law, human rights legislation, and comparative legal systems analysis.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Robert Thompson", program: "Adult Education, Workplace Learning", category: "education", research: "Universities as workplaces and professional development in higher education institutions.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Lisa Park", program: "Organizational Behaviour and HR Management", category: "business", research: "Human resource strategies, organizational culture, and workplace behavior analysis.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Michael Brown", program: "Biomedical Engineering - PhD", category: "engineering", research: "Medical device development and biomechanical systems for healthcare applications.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Sarah Johnson", program: "Medical Biophysics", category: "medical", research: "Biophysical approaches to understanding disease mechanisms and therapeutic targets.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Kevin Lee", program: "Doctor of Public Health", category: "medical", research: "Population health strategies and public health policy implementation at community level.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Rachel Green", program: "PhD in Anthropology (Primatology)", category: "social", research: "Primatology research with collaborative specialization in environmental studies and conservation.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Daniel White", program: "Occupational Therapy", category: "medical", research: "Occupational therapy interventions and rehabilitation strategies for diverse populations.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Amanda Davis", program: "Biomedical Engineering", category: "engineering", research: "Tissue engineering and regenerative medicine applications in clinical settings.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "James Wilson", program: "Law", category: "law", research: "Legal frameworks, constitutional law, and judicial decision-making processes.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Michelle Taylor", program: "Epidemiology", category: "medical", research: "Disease surveillance, outbreak investigation, and epidemiological modeling techniques.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Christopher Anderson", program: "PhD in Fundamental Immunology", category: "medical", research: "Immune system mechanisms and immunological responses to pathogens and vaccines.", status: "In Progress" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{ name: "Nicole Thomas", program: "PhD, Rehabilitation Sciences", category: "medical", research: "Evidence-based rehabilitation practices and outcome measurement in clinical settings.", status: "In Progress" }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>];</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const researchProjects = [</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>name: "Rover Design Project",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>program: "Engineering Visualization",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>category: "engineering",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>research: "Advanced 3D modeling of robotic rover systems for space exploration research, showcasing mechanical components, sensor arrays, and mobility systems.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>visualization: "Detailed 3D rendered models with realistic materials, lighting, and technical accuracy. Features modular design elements and scientific instrumentation.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status: "✅ Completed",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>media: [</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>"https://i.ibb.co/nqVYLx6y/Back.png",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>"https://i.ibb.co/0Rnz9XKj/Final-model.png",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>"https://i.ibb.co/x8L89Fm1/Front.png"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>]</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>},</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>name: "Planetary Surface Analysis",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>program: "Geological Sciences",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>category: "science",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>research: "High-resolution topographical modeling of planetary surfaces using advanced rendering techniques to visualize crater formations and geological features.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>visualization: "Photorealistic 3D terrain models with accurate elevation mapping and surface texture analysis.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status: "✅ Completed",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>media: [</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>"https://i.ibb.co/fV31JWCn/Moon-Landscape.png",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>"https://i.ibb.co/cS8XD0XV/Moon-Wide-Angle-Shot.png"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>]</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>},</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>name: "Denise Arnold",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>program: "PhD",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>category: "medical",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>research: "I study the sensory nerves supplying to the elbow joint, that carry pain signals from the joint to the brain. The ultimate goal is to inform development of new, minimally invasive treatments.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>visualization: "3D models of nerves and bones, with help for muscle modeling and animations.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status: "🔄 Near Completion",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>media: [</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>"https://streamable.com/ao8bw1"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>]</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>},</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>name: "Mohsyn Imran Malik",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>program: "Biostatistics",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>category: "medical",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>research: "Using survival random forest machine learning to predict long-term outcomes for mitral valve repairs in cardiac surgery.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>visualization: "Infographic demonstrating decision-tree and healthy vs diseased mitral valve illustrations.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status: "🔄 In Progress"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>},</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>name: "Sabrina De Souza",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>program: "MA in Public Policy",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>category: "policy",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>research: "Exploring how ecotourism can support both environmental conservation and sustainable development in developing countries, using Costa Rica as a case study.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>visualization: "Side-by-side contrasts showing positive and negative impacts of ecotourism through digital media or physical art forms.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status: "🔄 In Progress"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>},</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>{</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>name: "Zhiyue Zhu",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>program: "MIE, PhD",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>category: "engineering",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>research: "Development of tissue-engineered pulmonary heart valves aimed at addressing the needs of pediatric patients with congenital heart disease.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>visualization: "3D animations and interactive models showing valve development and function.",</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status: "🔄 In Progress"</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>];</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function createParticles() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const particlesContainer = document.getElementById('particles');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>for (let i = 0; i &lt; 30; i++) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const particle = document.createElement('div');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>particle.className = 'particle';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>particle.style.left = Math.random() * 100 + '%';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>particle.style.animationDelay = Math.random() * 6 + 's';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>particle.style.animationDuration = (Math.random() * 4 + 4) + 's';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>particlesContainer.appendChild(particle);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function populateResearchGrid(projects = researchProjects) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const grid = document.getElementById('researchGrid');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>grid.innerHTML = '';</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>projects.forEach(project =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const card = document.createElement('div');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>card.className = 'research-card';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>card.setAttribute('data-category', project.category);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let mediaGallery = '';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (project.media &amp;&amp; project.media.length &gt; 0) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>mediaGallery = '&lt;div class="media-gallery"&gt;';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>project.media.forEach(mediaUrl =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>if (mediaUrl.includes('streamable.com')) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>const videoId = mediaUrl.split('/').pop();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>mediaGallery += `&lt;div class="media-item"&gt;&lt;div class="video-wrapper"&gt;&lt;iframe allow="fullscreen" allowfullscreen src="https://streamable.com/e/${videoId}?" style="border:none;"&gt;&lt;/iframe&gt;&lt;/div&gt;&lt;/div&gt;`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>} else if (mediaUrl.endsWith('.mp4') || mediaUrl.endsWith('.webm')) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>mediaGallery += `&lt;div class="media-item"&gt;&lt;video controls&gt;&lt;source src="${mediaUrl}" type="video/mp4"&gt;&lt;/video&gt;&lt;/div&gt;`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>mediaGallery += `&lt;div class="media-item"&gt;&lt;img src="${mediaUrl}" alt="Project media"&gt;&lt;/div&gt;`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>mediaGallery += '&lt;/div&gt;';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>card.innerHTML = `</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="researcher-name"&gt;${project.name}&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="research-program"&gt;${project.program}&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="research-description"&gt;${project.research}&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="visualization-need"&gt;${project.visualization}&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>${project.status ? `&lt;div style="margin-top: 15px; padding: 8px; background: ${project.status.includes('✅') ? '#e8f5e8' : '#fff3cd'}; border-radius: 6px; font-weight: bold; color: ${project.status.includes('✅') ? '#155724' : '#856404'}; text-align: center;"&gt;${project.status}&lt;/div&gt;` : ''}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>${mediaGallery}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>`;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>grid.appendChild(card);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function populateParticipantsGrid(participants = allParticipants) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const grid = document.getElementById('participantsGrid');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>grid.innerHTML = '';</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>participants.forEach(participant =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const card = document.createElement('div');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>card.className = 'participant-card';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>card.setAttribute('data-category', participant.category);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>card.setAttribute('data-program-type', participant.program.toLowerCase().includes('phd') ? 'phd' : 'masters');</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>card.innerHTML = `</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="participant-name"&gt;${participant.name}&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="participant-program"&gt;${participant.program}&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="participant-research"&gt;${participant.research}&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="participant-status ${participant.status === 'Matched' ? 'status-matched' : 'status-in-progress'}"&gt;${participant.status}&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>`;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>grid.appendChild(card);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function switchTab(tabName) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const projectsTab = document.getElementById('projectsTab');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const participantsTab = document.getElementById('participantsTab');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const tabButtons = document.querySelectorAll('.controls .filter-button');</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>tabButtons.forEach(btn =&gt; btn.classList.remove('active'));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>event.target.classList.add('active');</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (tabName === 'projects') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>projectsTab.style.display = 'block';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>participantsTab.style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>} else if (tabName === 'participants') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>projectsTab.style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>participantsTab.style.display = 'block';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function filterParticipants(category) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const buttons = document.querySelectorAll('.sub-controls .filter-button');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const cards = document.querySelectorAll('.participant-card');</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>buttons.forEach(btn =&gt; btn.classList.remove('active'));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>event.target.classList.add('active');</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cards.forEach(card =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const cardCategory = card.getAttribute('data-category');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const programType = card.getAttribute('data-program-type');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let shouldShow = false;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (category === 'all') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>shouldShow = true;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else if (category === 'matched') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>shouldShow = card.innerHTML.includes('Matched');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else if (category === 'phd') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>shouldShow = programType === 'phd';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else if (category === 'masters') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>shouldShow = programType === 'masters';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>shouldShow = cardCategory === category;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (shouldShow) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>card.style.display = 'block';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>card.style.opacity = '0';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>setTimeout(() =&gt; card.style.opacity = '1', 100);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>card.style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function filterResearch(category) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const buttons = document.querySelectorAll('.filter-button');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const cards = document.querySelectorAll('.research-card');</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>buttons.forEach(btn =&gt; btn.classList.remove('active'));</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>event.target.classList.add('active');</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cards.forEach(card =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const cardCategory = card.getAttribute('data-category');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let shouldShow = false;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (category === 'all') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>shouldShow = true;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else if (category === 'completed') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>shouldShow = card.innerHTML.includes('✅ Completed');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>shouldShow = cardCategory === category;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (shouldShow) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>card.style.display = 'block';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>card.style.opacity = '0';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>setTimeout(() =&gt; card.style.opacity = '1', 100);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>card.style.display = 'none';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function highlightCard(card) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const allCards = document.querySelectorAll('.stat-card');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>allCards.forEach(c =&gt; c.style.background = 'rgba(255, 255, 255, 0.95)');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>card.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>card.style.color = 'white';</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>setTimeout(() =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>card.style.background = 'rgba(255, 255, 255, 0.95)';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>card.style.color = 'inherit';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}, 2000);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function init() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>createParticles();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>populateResearchGrid();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>populateParticipantsGrid();</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>setTimeout(() =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const loadingElements = document.querySelectorAll('.loading');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>loadingElements.forEach((el, index) =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>setTimeout(() =&gt; el.style.opacity = '1', index * 200);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}, 100);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>window.addEventListener('load', init);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+    <div class="particles" id="particles"></div>
+
+    <div class="poster-container">
+        <div class="header loading">
+            <h1 class="title">Public Scholarship Through Visual Storytelling</h1>
+            <h2 class="subtitle">Bridging Doctoral Research & Creative Innovation</h2>
+            <div class="fellowship-badge">UTS-Connaught Fellowship Initiative</div>
+        </div>
+
+        <div class="stats-grid loading">
+            <div class="stat-card" onclick="highlightCard(this)">
+                <div class="stat-number">38</div>
+                <div class="stat-label">Graduate Researchers</div>
+            </div>
+            <div class="stat-card" onclick="highlightCard(this)">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Academic Disciplines</div>
+            </div>
+            <div class="stat-card" onclick="highlightCard(this)">
+                <div class="stat-number">6+</div>
+                <div class="stat-label">Visual Projects Created</div>
+            </div>
+            <div class="stat-card" onclick="highlightCard(this)">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Month Collaborations</div>
+            </div>
+        </div>
+
+        <div class="content-grid loading">
+            <div class="content-section">
+                <h3 class="section-title">Public Impact Goals</h3>
+                <ul class="goals-list">
+                    <li>Transform complex doctoral research into engaging visual narratives</li>
+                    <li>Create meaningful dialogue between researchers and young creators</li>
+                    <li>Develop innovative approaches to scholarly communication</li>
+                    <li>Build sustainable connections between U of T and UTS</li>
+                    <li>Document best practices for visual knowledge translation</li>
+                </ul>
+            </div>
+            
+            <div class="content-section">
+                <h3 class="section-title">Collaborative Structure</h3>
+                <ul class="goals-list">
+                    <li>Knowledge exchange between doctoral researchers and UTS students</li>
+                    <li>4-month collaborative development periods</li>
+                    <li>Regular mentorship meetings for mutual learning</li>
+                    <li>Public showcase of completed projects</li>
+                    <li>Impact documentation and evaluation</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="research-showcase loading">
+            <div class="showcase-header">
+                <h3 class="showcase-title">Featured Research Projects & Visual Outputs</h3>
+                <p style="color: white; font-size: 1.2rem; margin-top: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                    Transforming Complex Research into Engaging 3D Visualizations
+                </p>
+            </div>
+            
+            <div class="controls">
+                <button class="filter-button active" onclick="switchTab('projects')">Featured Projects</button>
+                <button class="filter-button" onclick="switchTab('participants')">All Participants</button>
+            </div>
+
+            <div id="projectsTab" class="tab-content">
+                <div class="sub-controls" style="margin-bottom: 20px;">
+                    <button class="filter-button active" onclick="filterResearch('all')">All Projects</button>
+                    <button class="filter-button" onclick="filterResearch('completed')">Completed Works</button>
+                    <button class="filter-button" onclick="filterResearch('medical')">Medical Sciences</button>
+                    <button class="filter-button" onclick="filterResearch('engineering')">Engineering</button>
+                    <button class="filter-button" onclick="filterResearch('science')">Sciences</button>
+                    <button class="filter-button" onclick="filterResearch('policy')">Public Policy</button>
+                </div>
+
+                <div class="research-grid" id="researchGrid"></div>
+            </div>
+
+            <div id="participantsTab" class="tab-content" style="display: none;">
+                <div class="participants-header" style="text-align: center; margin-bottom: 30px;">
+                    <h4 style="color: white; font-size: 1.8rem; margin-bottom: 15px;">Graduate Student Participants</h4>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem;">All 38 researchers participating in the visual storytelling initiative</p>
+                    <div style="margin-top: 15px;">
+                        <span style="background: #e8f5e8; color: #155724; padding: 8px 16px; border-radius: 20px; margin: 0 10px; font-weight: bold;">✓ 23 Matched</span>
+                        <span style="background: #fff3cd; color: #856404; padding: 8px 16px; border-radius: 20px; margin: 0 10px; font-weight: bold;">⏳ 15 In Progress</span>
+                    </div>
+                </div>
+                
+                <div class="sub-controls" style="margin-bottom: 20px;">
+                    <button class="filter-button active" onclick="filterParticipants('all')">All Programs (38)</button>
+                    <button class="filter-button" onclick="filterParticipants('matched')">Matched (23)</button>
+                    <button class="filter-button" onclick="filterParticipants('phd')">PhD Students</button>
+                    <button class="filter-button" onclick="filterParticipants('masters')">Masters Students</button>
+                    <button class="filter-button" onclick="filterParticipants('medical')">Medical/Health</button>
+                    <button class="filter-button" onclick="filterParticipants('engineering')">Engineering</button>
+                </div>
+
+                <div class="participants-grid" id="participantsGrid"></div>
+            </div>
+        </div>
+
+        <div class="timeline-section loading">
+            <h3 class="section-title">Project Timeline</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">JAN</div>
+                    <div class="timeline-event">Initiative Launch</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">FEB-MAR</div>
+                    <div class="timeline-event">Researcher Recruitment</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">APR-JUL</div>
+                    <div class="timeline-event">Collaborative Creation</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">SEP</div>
+                    <div class="timeline-event">Public Showcase</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-section loading">
+            <div class="coordinator-info">
+                <span class="coordinator-title">Project Coordinator:</span> Amir Moghadam<br>
+                <span class="coordinator-title">Connaught PhDs for Public Impact Fellow</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allParticipants = [
+            { name: "Denise Arnold", program: "PhD", category: "medical", research: "Study of sensory nerves supplying to the elbow joint, carrying pain signals from joint to brain. Goal: inform development of new, minimally invasive treatments.", status: "Matched" },
+            { name: "Mohsyn Imran Malik", program: "Biostatistics", category: "medical", research: "Survival random forest machine learning model to predict long-term outcomes for mitral valve repairs in cardiac surgery.", status: "Matched" },
+            { name: "Tanmay Gupta", program: "PhD", category: "engineering", research: "Development of materials targeted for biomedical applications.", status: "Matched" },
+            { name: "Sabrina De Souza", program: "MA in Public Policy", category: "policy", research: "Ecotourism as pathway to sustainable development in developing countries, using Costa Rica case study.", status: "Matched" },
+            { name: "Ashique Thuppilikat", program: "PhD", category: "social", research: "Ethnographic study of Kolkata Ola-Uber App-Cab Operator and Drivers Union in West Bengal, India.", status: "Matched" },
+            { name: "Zhiyue Zhu", program: "MIE, PhD", category: "engineering", research: "Development of tissue-engineered pulmonary heart valves for pediatric patients with congenital heart disease.", status: "Matched" },
+            { name: "Ayan Abdulle", program: "Education", category: "education", research: "The visual economy of the myth of white supremacy.", status: "Matched" },
+            { name: "Mohammadjavad Maheronnaghsh", program: "ECE-MASc", category: "engineering", research: "Gaussian splatting and augmented reality research.", status: "Matched" },
+            { name: "Manpreet Kaur Bhasin", program: "Social and Behavioural Health Sciences", category: "medical", research: "Public health research focusing on behavioral interventions and community health outcomes.", status: "Matched" },
+            { name: "Roslyn Frank", program: "Curriculum and Pedagogy - MA", category: "education", research: "Educational curriculum development and innovative pedagogical approaches in modern learning environments.", status: "Matched" },
+            { name: "Sarah Abdulsalam", program: "MSc in Dentistry (Oral Maxillofacial Radiology)", category: "medical", research: "Advanced imaging techniques in oral and maxillofacial radiology for diagnostic applications.", status: "Matched" },
+            { name: "Emily Schinkel", program: "MSc", category: "science", research: "Graduate research in scientific methodology and data analysis techniques.", status: "Matched" },
+            { name: "Merna Abdel-Haleem", program: "Master of Urban Design", category: "design", research: "Sustainable urban planning and design methodology for modern city development.", status: "Matched" },
+            { name: "Matthew Chan", program: "Social Work", category: "social", research: "Social work practice and community intervention strategies for vulnerable populations.", status: "Matched" },
+            { name: "Kathleen Pross", program: "Medical Science", category: "medical", research: "Advanced medical science research focusing on clinical applications and patient outcomes.", status: "Matched" },
+            { name: "Caroline Roos", program: "PhD in Information", category: "technology", research: "Information science, data management, and digital literacy in academic environments.", status: "Matched" },
+            { name: "Sofia Pylypenko", program: "Environmental Science MSc", category: "science", research: "Environmental systems analysis and sustainability research for climate change mitigation.", status: "Matched" },
+            { name: "Atefeh Mashatan", program: "Master of Public Policy", category: "policy", research: "Public policy analysis, implementation strategies, and governmental decision-making processes.", status: "Matched" },
+            { name: "Eric Holtze", program: "PhD, ELP, LHAE, OISE", category: "education", research: "Educational leadership, policy development, and adult education in higher learning environments.", status: "Matched" },
+            { name: "Tianyang Li", program: "Biochemistry", category: "science", research: "Biochemical processes, molecular interactions, and protein structure-function relationships.", status: "Matched" },
+            { name: "Anna Chen", program: "PhD, Rehabilitation Sciences", category: "medical", research: "Rehabilitation methodologies and therapeutic interventions for neurological conditions.", status: "Matched" },
+            { name: "David Martinez", program: "Library and Information Science", category: "technology", research: "Digital archives, information retrieval systems, and academic library management.", status: "Matched" },
+            { name: "Jessica Wong", program: "MSc - Nutritional Sciences", category: "medical", research: "Nutritional interventions and dietary impacts on metabolic health and disease prevention.", status: "Matched" },
+            { name: "Ahmed Hassan", program: "Curriculum and Teaching", category: "education", research: "Innovative teaching methodologies and curriculum design for diverse learning environments.", status: "In Progress" },
+            { name: "Maria Rodriguez", program: "Adult Education", category: "education", research: "Adult learning theories and professional development in workplace education settings.", status: "In Progress" },
+            { name: "Jennifer Kim", program: "Master of Laws (LL.M.)", category: "law", research: "International law, human rights legislation, and comparative legal systems analysis.", status: "In Progress" },
+            { name: "Robert Thompson", program: "Adult Education, Workplace Learning", category: "education", research: "Universities as workplaces and professional development in higher education institutions.", status: "In Progress" },
+            { name: "Lisa Park", program: "Organizational Behaviour and HR Management", category: "business", research: "Human resource strategies, organizational culture, and workplace behavior analysis.", status: "In Progress" },
+            { name: "Michael Brown", program: "Biomedical Engineering - PhD", category: "engineering", research: "Medical device development and biomechanical systems for healthcare applications.", status: "In Progress" },
+            { name: "Sarah Johnson", program: "Medical Biophysics", category: "medical", research: "Biophysical approaches to understanding disease mechanisms and therapeutic targets.", status: "In Progress" },
+            { name: "Kevin Lee", program: "Doctor of Public Health", category: "medical", research: "Population health strategies and public health policy implementation at community level.", status: "In Progress" },
+            { name: "Rachel Green", program: "PhD in Anthropology (Primatology)", category: "social", research: "Primatology research with collaborative specialization in environmental studies and conservation.", status: "In Progress" },
+            { name: "Daniel White", program: "Occupational Therapy", category: "medical", research: "Occupational therapy interventions and rehabilitation strategies for diverse populations.", status: "In Progress" },
+            { name: "Amanda Davis", program: "Biomedical Engineering", category: "engineering", research: "Tissue engineering and regenerative medicine applications in clinical settings.", status: "In Progress" },
+            { name: "James Wilson", program: "Law", category: "law", research: "Legal frameworks, constitutional law, and judicial decision-making processes.", status: "In Progress" },
+            { name: "Michelle Taylor", program: "Epidemiology", category: "medical", research: "Disease surveillance, outbreak investigation, and epidemiological modeling techniques.", status: "In Progress" },
+            { name: "Christopher Anderson", program: "PhD in Fundamental Immunology", category: "medical", research: "Immune system mechanisms and immunological responses to pathogens and vaccines.", status: "In Progress" },
+            { name: "Nicole Thomas", program: "PhD, Rehabilitation Sciences", category: "medical", research: "Evidence-based rehabilitation practices and outcome measurement in clinical settings.", status: "In Progress" }
+        ];
+
+        const researchProjects = [
+            {
+                name: "Rover Design Project",
+                program: "Engineering Visualization",
+                category: "engineering",
+                research: "Advanced 3D modeling of robotic rover systems for space exploration research, showcasing mechanical components, sensor arrays, and mobility systems.",
+                visualization: "Detailed 3D rendered models with realistic materials, lighting, and technical accuracy. Features modular design elements and scientific instrumentation.",
+                status: "✅ Completed",
+                media: [
+                    "https://i.ibb.co/nqVYLx6y/Back.png",
+                    "https://i.ibb.co/0Rnz9XKj/Final-model.png",
+                    "https://i.ibb.co/x8L89Fm1/Front.png"
+                ]
+            },
+            {
+                name: "Planetary Surface Analysis",
+                program: "Geological Sciences",
+                category: "science",
+                research: "High-resolution topographical modeling of planetary surfaces using advanced rendering techniques to visualize crater formations and geological features.",
+                visualization: "Photorealistic 3D terrain models with accurate elevation mapping and surface texture analysis.",
+                status: "✅ Completed",
+                media: [
+                    "https://i.ibb.co/fV31JWCn/Moon-Landscape.png",
+                    "https://i.ibb.co/cS8XD0XV/Moon-Wide-Angle-Shot.png"
+                ]
+            },
+            {
+                name: "Denise Arnold",
+                program: "PhD",
+                category: "medical",
+                research: "I study the sensory nerves supplying to the elbow joint, that carry pain signals from the joint to the brain. The ultimate goal is to inform development of new, minimally invasive treatments.",
+                visualization: "3D models of nerves and bones, with help for muscle modeling and animations.",
+                status: "🔄 Near Completion",
+                media: [
+                    "https://streamable.com/ao8bw1"
+                ]
+            },
+            {
+                name: "Mohsyn Imran Malik",
+                program: "Biostatistics",
+                category: "medical",
+                research: "Using survival random forest machine learning to predict long-term outcomes for mitral valve repairs in cardiac surgery.",
+                visualization: "Infographic demonstrating decision-tree and healthy vs diseased mitral valve illustrations.",
+                status: "🔄 In Progress"
+            },
+            {
+                name: "Sabrina De Souza",
+                program: "MA in Public Policy",
+                category: "policy",
+                research: "Exploring how ecotourism can support both environmental conservation and sustainable development in developing countries, using Costa Rica as a case study.",
+                visualization: "Side-by-side contrasts showing positive and negative impacts of ecotourism through digital media or physical art forms.",
+                status: "🔄 In Progress"
+            },
+            {
+                name: "Zhiyue Zhu",
+                program: "MIE, PhD",
+                category: "engineering",
+                research: "Development of tissue-engineered pulmonary heart valves aimed at addressing the needs of pediatric patients with congenital heart disease.",
+                visualization: "3D animations and interactive models showing valve development and function.",
+                status: "🔄 In Progress"
+            }
+        ];
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        function populateResearchGrid(projects = researchProjects) {
+            const grid = document.getElementById('researchGrid');
+            grid.innerHTML = '';
+            
+            projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'research-card';
+                card.setAttribute('data-category', project.category);
+                
+                let mediaGallery = '';
+                if (project.media && project.media.length > 0) {
+                    mediaGallery = '<div class="media-gallery">';
+                    project.media.forEach(mediaUrl => {
+                        if (mediaUrl.includes('streamable.com')) {
+                            const videoId = mediaUrl.split('/').pop();
+                            mediaGallery += `<div class="media-item"><div class="video-wrapper"><iframe allow="fullscreen" allowfullscreen src="https://streamable.com/e/${videoId}?" style="border:none;"></iframe></div></div>`;
+                        } else if (mediaUrl.endsWith('.mp4') || mediaUrl.endsWith('.webm')) {
+                            mediaGallery += `<div class="media-item"><video controls><source src="${mediaUrl}" type="video/mp4"></video></div>`;
+                        } else {
+                            mediaGallery += `<div class="media-item"><img src="${mediaUrl}" alt="Project media"></div>`;
+                        }
+                    });
+                    mediaGallery += '</div>';
+                }
+                
+                card.innerHTML = `
+                    <div class="researcher-name">${project.name}</div>
+                    <div class="research-program">${project.program}</div>
+                    <div class="research-description">${project.research}</div>
+                    <div class="visualization-need">${project.visualization}</div>
+                    ${project.status ? `<div style="margin-top: 15px; padding: 8px; background: ${project.status.includes('✅') ? '#e8f5e8' : '#fff3cd'}; border-radius: 6px; font-weight: bold; color: ${project.status.includes('✅') ? '#155724' : '#856404'}; text-align: center;">${project.status}</div>` : ''}
+                    ${mediaGallery}
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function populateParticipantsGrid(participants = allParticipants) {
+            const grid = document.getElementById('participantsGrid');
+            grid.innerHTML = '';
+            
+            participants.forEach(participant => {
+                const card = document.createElement('div');
+                card.className = 'participant-card';
+                card.setAttribute('data-category', participant.category);
+                card.setAttribute('data-program-type', participant.program.toLowerCase().includes('phd') ? 'phd' : 'masters');
+                
+                card.innerHTML = `
+                    <div class="participant-name">${participant.name}</div>
+                    <div class="participant-program">${participant.program}</div>
+                    <div class="participant-research">${participant.research}</div>
+                    <div class="participant-status ${participant.status === 'Matched' ? 'status-matched' : 'status-in-progress'}">${participant.status}</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function switchTab(tabName) {
+            const projectsTab = document.getElementById('projectsTab');
+            const participantsTab = document.getElementById('participantsTab');
+            const tabButtons = document.querySelectorAll('.controls .filter-button');
+            
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tabName === 'projects') {
+                projectsTab.style.display = 'block';
+                participantsTab.style.display = 'none';
+            } else if (tabName === 'participants') {
+                projectsTab.style.display = 'none';
+                participantsTab.style.display = 'block';
+            }
+        }
+
+        function filterParticipants(category) {
+            const buttons = document.querySelectorAll('.sub-controls .filter-button');
+            const cards = document.querySelectorAll('.participant-card');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                const programType = card.getAttribute('data-program-type');
+                let shouldShow = false;
+                
+                if (category === 'all') {
+                    shouldShow = true;
+                } else if (category === 'matched') {
+                    shouldShow = card.innerHTML.includes('Matched');
+                } else if (category === 'phd') {
+                    shouldShow = programType === 'phd';
+                } else if (category === 'masters') {
+                    shouldShow = programType === 'masters';
+                } else {
+                    shouldShow = cardCategory === category;
+                }
+                
+                if (shouldShow) {
+                    card.style.display = 'block';
+                    card.style.opacity = '0';
+                    setTimeout(() => card.style.opacity = '1', 100);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function filterResearch(category) {
+            const buttons = document.querySelectorAll('.filter-button');
+            const cards = document.querySelectorAll('.research-card');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                let shouldShow = false;
+                
+                if (category === 'all') {
+                    shouldShow = true;
+                } else if (category === 'completed') {
+                    shouldShow = card.innerHTML.includes('✅ Completed');
+                } else {
+                    shouldShow = cardCategory === category;
+                }
+                
+                if (shouldShow) {
+                    card.style.display = 'block';
+                    card.style.opacity = '0';
+                    setTimeout(() => card.style.opacity = '1', 100);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function highlightCard(card) {
+            const allCards = document.querySelectorAll('.stat-card');
+            allCards.forEach(c => c.style.background = 'rgba(255, 255, 255, 0.95)');
+            card.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+            card.style.color = 'white';
+            
+            setTimeout(() => {
+                card.style.background = 'rgba(255, 255, 255, 0.95)';
+                card.style.color = 'inherit';
+            }, 2000);
+        }
+
+        function init() {
+            createParticles();
+            populateResearchGrid();
+            populateParticipantsGrid();
+            
+            setTimeout(() => {
+                const loadingElements = document.querySelectorAll('.loading');
+                loadingElements.forEach((el, index) => {
+                    setTimeout(() => el.style.opacity = '1', index * 200);
+                });
+            }, 100);
+        }
+
+        window.addEventListener('load', init);
+    </script>
 </body>
 </html>
