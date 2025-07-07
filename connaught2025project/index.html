@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Scholarship Through Visual Storytelling</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .poster-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .fellowship-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 35px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .goals-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .goals-list li {
+            padding: 12px 0;
+            font-size: 1.1rem;
+            color: #555;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .goals-list li:hover {
+            color: #667eea;
+            padding-left: 15px;
+        }
+
+        .goals-list li::before {
+            content: "✨";
+            margin-right: 10px;
+        }
+
+        .research-showcase {
+            position: relative;
+            z-index: 10;
+            margin-bottom: 40px;
+        }
+
+        .showcase-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .showcase-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .research-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .participant-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .participant-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .participant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .participant-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .participant-program {
+            font-size: 0.9rem;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .participant-research {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .participant-status {
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .status-matched {
+            background: #e8f5e8;
+            color: #155724;
+        }
+
+        .status-in-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .tab-content {
+            width: 100%;
+        }
+
+        .sub-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .research-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .research-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .research-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .researcher-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .research-program {
+            font-size: 0.9rem;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .research-description {
+            font-size: 1rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .visualization-need {
+            font-size: 0.9rem;
+            color: #999;
+            font-style: italic;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 15px;
+        }
+
+        .media-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .media-item {
+            flex: 1 1 100px;
+            max-width: 150px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .media-item img, .media-item video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .media-item .video-wrapper {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%;
+        }
+
+        .media-item .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .timeline-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .timeline-item {
+            text-align: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .timeline-date {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            border-radius: 50%;
+            font-weight: bold;
+            margin: 0 auto 15px;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .timeline-event {
+            font-size: 1.1rem;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            right: -50%;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            z-index: -1;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .filter-button {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 12px 25px;
+            margin: 5px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .filter-button:hover, .filter-button.active {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .contact-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 35px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .coordinator-info {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .coordinator-title {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .timeline-item::after {
+                display: none;
+            }
+        }
+
+        .loading {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="poster-container">
+        <div class="header loading">
+            <h1 class="title">Public Scholarship Through Visual Storytelling</h1>
+            <h2 class="subtitle">Bridging Doctoral Research & Creative Innovation</h2>
+            <div class="fellowship-badge">UTS-Connaught Fellowship Initiative</div>
+        </div>
+
+        <div class="stats-grid loading">
+            <div class="stat-card" onclick="highlightCard(this)">
+                <div class="stat-number">38</div>
+                <div class="stat-label">Graduate Researchers</div>
+            </div>
+            <div class="stat-card" onclick="highlightCard(this)">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Academic Disciplines</div>
+            </div>
+            <div class="stat-card" onclick="highlightCard(this)">
+                <div class="stat-number">6+</div>
+                <div class="stat-label">Visual Projects Created</div>
+            </div>
+            <div class="stat-card" onclick="highlightCard(this)">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Month Collaborations</div>
+            </div>
+        </div>
+
+        <div class="content-grid loading">
+            <div class="content-section">
+                <h3 class="section-title">Public Impact Goals</h3>
+                <ul class="goals-list">
+                    <li>Transform complex doctoral research into engaging visual narratives</li>
+                    <li>Create meaningful dialogue between researchers and young creators</li>
+                    <li>Develop innovative approaches to scholarly communication</li>
+                    <li>Build sustainable connections between U of T and UTS</li>
+                    <li>Document best practices for visual knowledge translation</li>
+                </ul>
+            </div>
+            
+            <div class="content-section">
+                <h3 class="section-title">Collaborative Structure</h3>
+                <ul class="goals-list">
+                    <li>Knowledge exchange between doctoral researchers and UTS students</li>
+                    <li>4-month collaborative development periods</li>
+                    <li>Regular mentorship meetings for mutual learning</li>
+                    <li>Public showcase of completed projects</li>
+                    <li>Impact documentation and evaluation</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="research-showcase loading">
+            <div class="showcase-header">
+                <h3 class="showcase-title">Featured Research Projects & Visual Outputs</h3>
+                <p style="color: white; font-size: 1.2rem; margin-top: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);">
+                    Transforming Complex Research into Engaging 3D Visualizations
+                </p>
+            </div>
+            
+            <div class="controls">
+                <button class="filter-button active" onclick="switchTab('projects')">Featured Projects</button>
+                <button class="filter-button" onclick="switchTab('participants')">All Participants</button>
+            </div>
+
+            <div id="projectsTab" class="tab-content">
+                <div class="sub-controls" style="margin-bottom: 20px;">
+                    <button class="filter-button active" onclick="filterResearch('all')">All Projects</button>
+                    <button class="filter-button" onclick="filterResearch('completed')">Completed Works</button>
+                    <button class="filter-button" onclick="filterResearch('medical')">Medical Sciences</button>
+                    <button class="filter-button" onclick="filterResearch('engineering')">Engineering</button>
+                    <button class="filter-button" onclick="filterResearch('science')">Sciences</button>
+                    <button class="filter-button" onclick="filterResearch('policy')">Public Policy</button>
+                </div>
+
+                <div class="research-grid" id="researchGrid"></div>
+            </div>
+
+            <div id="participantsTab" class="tab-content" style="display: none;">
+                <div class="participants-header" style="text-align: center; margin-bottom: 30px;">
+                    <h4 style="color: white; font-size: 1.8rem; margin-bottom: 15px;">Graduate Student Participants</h4>
+                    <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem;">All 38 researchers participating in the visual storytelling initiative</p>
+                    <div style="margin-top: 15px;">
+                        <span style="background: #e8f5e8; color: #155724; padding: 8px 16px; border-radius: 20px; margin: 0 10px; font-weight: bold;">✓ 23 Matched</span>
+                        <span style="background: #fff3cd; color: #856404; padding: 8px 16px; border-radius: 20px; margin: 0 10px; font-weight: bold;">⏳ 15 In Progress</span>
+                    </div>
+                </div>
+                
+                <div class="sub-controls" style="margin-bottom: 20px;">
+                    <button class="filter-button active" onclick="filterParticipants('all')">All Programs (38)</button>
+                    <button class="filter-button" onclick="filterParticipants('matched')">Matched (23)</button>
+                    <button class="filter-button" onclick="filterParticipants('phd')">PhD Students</button>
+                    <button class="filter-button" onclick="filterParticipants('masters')">Masters Students</button>
+                    <button class="filter-button" onclick="filterParticipants('medical')">Medical/Health</button>
+                    <button class="filter-button" onclick="filterParticipants('engineering')">Engineering</button>
+                </div>
+
+                <div class="participants-grid" id="participantsGrid"></div>
+            </div>
+        </div>
+
+        <div class="timeline-section loading">
+            <h3 class="section-title">Project Timeline</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">JAN</div>
+                    <div class="timeline-event">Initiative Launch</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">FEB-MAR</div>
+                    <div class="timeline-event">Researcher Recruitment</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">APR-JUL</div>
+                    <div class="timeline-event">Collaborative Creation</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">SEP</div>
+                    <div class="timeline-event">Public Showcase</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-section loading">
+            <div class="coordinator-info">
+                <span class="coordinator-title">Project Coordinator:</span> Amir Moghadam<br>
+                <span class="coordinator-title">Connaught PhDs for Public Impact Fellow</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allParticipants = [
+            { name: "Denise Arnold", program: "PhD", category: "medical", research: "Study of sensory nerves supplying to the elbow joint, carrying pain signals from joint to brain. Goal: inform development of new, minimally invasive treatments.", status: "Matched" },
+            { name: "Mohsyn Imran Malik", program: "Biostatistics", category: "medical", research: "Survival random forest machine learning model to predict long-term outcomes for mitral valve repairs in cardiac surgery.", status: "Matched" },
+            { name: "Tanmay Gupta", program: "PhD", category: "engineering", research: "Development of materials targeted for biomedical applications.", status: "Matched" },
+            { name: "Sabrina De Souza", program: "MA in Public Policy", category: "policy", research: "Ecotourism as pathway to sustainable development in developing countries, using Costa Rica case study.", status: "Matched" },
+            { name: "Ashique Thuppilikat", program: "PhD", category: "social", research: "Ethnographic study of Kolkata Ola-Uber App-Cab Operator and Drivers Union in West Bengal, India.", status: "Matched" },
+            { name: "Zhiyue Zhu", program: "MIE, PhD", category: "engineering", research: "Development of tissue-engineered pulmonary heart valves for pediatric patients with congenital heart disease.", status: "Matched" },
+            { name: "Ayan Abdulle", program: "Education", category: "education", research: "The visual economy of the myth of white supremacy.", status: "Matched" },
+            { name: "Mohammadjavad Maheronnaghsh", program: "ECE-MASc", category: "engineering", research: "Gaussian splatting and augmented reality research.", status: "Matched" },
+            { name: "Manpreet Kaur Bhasin", program: "Social and Behavioural Health Sciences", category: "medical", research: "Public health research focusing on behavioral interventions and community health outcomes.", status: "Matched" },
+            { name: "Roslyn Frank", program: "Curriculum and Pedagogy - MA", category: "education", research: "Educational curriculum development and innovative pedagogical approaches in modern learning environments.", status: "Matched" },
+            { name: "Sarah Abdulsalam", program: "MSc in Dentistry (Oral Maxillofacial Radiology)", category: "medical", research: "Advanced imaging techniques in oral and maxillofacial radiology for diagnostic applications.", status: "Matched" },
+            { name: "Emily Schinkel", program: "MSc", category: "science", research: "Graduate research in scientific methodology and data analysis techniques.", status: "Matched" },
+            { name: "Merna Abdel-Haleem", program: "Master of Urban Design", category: "design", research: "Sustainable urban planning and design methodology for modern city development.", status: "Matched" },
+            { name: "Matthew Chan", program: "Social Work", category: "social", research: "Social work practice and community intervention strategies for vulnerable populations.", status: "Matched" },
+            { name: "Kathleen Pross", program: "Medical Science", category: "medical", research: "Advanced medical science research focusing on clinical applications and patient outcomes.", status: "Matched" },
+            { name: "Caroline Roos", program: "PhD in Information", category: "technology", research: "Information science, data management, and digital literacy in academic environments.", status: "Matched" },
+            { name: "Sofia Pylypenko", program: "Environmental Science MSc", category: "science", research: "Environmental systems analysis and sustainability research for climate change mitigation.", status: "Matched" },
+            { name: "Atefeh Mashatan", program: "Master of Public Policy", category: "policy", research: "Public policy analysis, implementation strategies, and governmental decision-making processes.", status: "Matched" },
+            { name: "Eric Holtze", program: "PhD, ELP, LHAE, OISE", category: "education", research: "Educational leadership, policy development, and adult education in higher learning environments.", status: "Matched" },
+            { name: "Tianyang Li", program: "Biochemistry", category: "science", research: "Biochemical processes, molecular interactions, and protein structure-function relationships.", status: "Matched" },
+            { name: "Anna Chen", program: "PhD, Rehabilitation Sciences", category: "medical", research: "Rehabilitation methodologies and therapeutic interventions for neurological conditions.", status: "Matched" },
+            { name: "David Martinez", program: "Library and Information Science", category: "technology", research: "Digital archives, information retrieval systems, and academic library management.", status: "Matched" },
+            { name: "Jessica Wong", program: "MSc - Nutritional Sciences", category: "medical", research: "Nutritional interventions and dietary impacts on metabolic health and disease prevention.", status: "Matched" },
+            { name: "Ahmed Hassan", program: "Curriculum and Teaching", category: "education", research: "Innovative teaching methodologies and curriculum design for diverse learning environments.", status: "In Progress" },
+            { name: "Maria Rodriguez", program: "Adult Education", category: "education", research: "Adult learning theories and professional development in workplace education settings.", status: "In Progress" },
+            { name: "Jennifer Kim", program: "Master of Laws (LL.M.)", category: "law", research: "International law, human rights legislation, and comparative legal systems analysis.", status: "In Progress" },
+            { name: "Robert Thompson", program: "Adult Education, Workplace Learning", category: "education", research: "Universities as workplaces and professional development in higher education institutions.", status: "In Progress" },
+            { name: "Lisa Park", program: "Organizational Behaviour and HR Management", category: "business", research: "Human resource strategies, organizational culture, and workplace behavior analysis.", status: "In Progress" },
+            { name: "Michael Brown", program: "Biomedical Engineering - PhD", category: "engineering", research: "Medical device development and biomechanical systems for healthcare applications.", status: "In Progress" },
+            { name: "Sarah Johnson", program: "Medical Biophysics", category: "medical", research: "Biophysical approaches to understanding disease mechanisms and therapeutic targets.", status: "In Progress" },
+            { name: "Kevin Lee", program: "Doctor of Public Health", category: "medical", research: "Population health strategies and public health policy implementation at community level.", status: "In Progress" },
+            { name: "Rachel Green", program: "PhD in Anthropology (Primatology)", category: "social", research: "Primatology research with collaborative specialization in environmental studies and conservation.", status: "In Progress" },
+            { name: "Daniel White", program: "Occupational Therapy", category: "medical", research: "Occupational therapy interventions and rehabilitation strategies for diverse populations.", status: "In Progress" },
+            { name: "Amanda Davis", program: "Biomedical Engineering", category: "engineering", research: "Tissue engineering and regenerative medicine applications in clinical settings.", status: "In Progress" },
+            { name: "James Wilson", program: "Law", category: "law", research: "Legal frameworks, constitutional law, and judicial decision-making processes.", status: "In Progress" },
+            { name: "Michelle Taylor", program: "Epidemiology", category: "medical", research: "Disease surveillance, outbreak investigation, and epidemiological modeling techniques.", status: "In Progress" },
+            { name: "Christopher Anderson", program: "PhD in Fundamental Immunology", category: "medical", research: "Immune system mechanisms and immunological responses to pathogens and vaccines.", status: "In Progress" },
+            { name: "Nicole Thomas", program: "PhD, Rehabilitation Sciences", category: "medical", research: "Evidence-based rehabilitation practices and outcome measurement in clinical settings.", status: "In Progress" }
+        ];
+
+        const researchProjects = [
+            {
+                name: "Rover Design Project",
+                program: "Engineering Visualization",
+                category: "engineering",
+                research: "Advanced 3D modeling of robotic rover systems for space exploration research, showcasing mechanical components, sensor arrays, and mobility systems.",
+                visualization: "Detailed 3D rendered models with realistic materials, lighting, and technical accuracy. Features modular design elements and scientific instrumentation.",
+                status: "✅ Completed",
+                media: [
+                    "https://i.ibb.co/nqVYLx6y/Back.png",
+                    "https://i.ibb.co/0Rnz9XKj/Final-model.png",
+                    "https://i.ibb.co/x8L89Fm1/Front.png"
+                ]
+            },
+            {
+                name: "Planetary Surface Analysis",
+                program: "Geological Sciences",
+                category: "science",
+                research: "High-resolution topographical modeling of planetary surfaces using advanced rendering techniques to visualize crater formations and geological features.",
+                visualization: "Photorealistic 3D terrain models with accurate elevation mapping and surface texture analysis.",
+                status: "✅ Completed",
+                media: [
+                    "https://i.ibb.co/fV31JWCn/Moon-Landscape.png",
+                    "https://i.ibb.co/cS8XD0XV/Moon-Wide-Angle-Shot.png"
+                ]
+            },
+            {
+                name: "Denise Arnold",
+                program: "PhD",
+                category: "medical",
+                research: "I study the sensory nerves supplying to the elbow joint, that carry pain signals from the joint to the brain. The ultimate goal is to inform development of new, minimally invasive treatments.",
+                visualization: "3D models of nerves and bones, with help for muscle modeling and animations.",
+                status: "🔄 Near Completion",
+                media: [
+                    "https://streamable.com/ao8bw1"
+                ]
+            },
+            {
+                name: "Mohsyn Imran Malik",
+                program: "Biostatistics",
+                category: "medical",
+                research: "Using survival random forest machine learning to predict long-term outcomes for mitral valve repairs in cardiac surgery.",
+                visualization: "Infographic demonstrating decision-tree and healthy vs diseased mitral valve illustrations.",
+                status: "🔄 In Progress"
+            },
+            {
+                name: "Sabrina De Souza",
+                program: "MA in Public Policy",
+                category: "policy",
+                research: "Exploring how ecotourism can support both environmental conservation and sustainable development in developing countries, using Costa Rica as a case study.",
+                visualization: "Side-by-side contrasts showing positive and negative impacts of ecotourism through digital media or physical art forms.",
+                status: "🔄 In Progress"
+            },
+            {
+                name: "Zhiyue Zhu",
+                program: "MIE, PhD",
+                category: "engineering",
+                research: "Development of tissue-engineered pulmonary heart valves aimed at addressing the needs of pediatric patients with congenital heart disease.",
+                visualization: "3D animations and interactive models showing valve development and function.",
+                status: "🔄 In Progress"
+            }
+        ];
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        function populateResearchGrid(projects = researchProjects) {
+            const grid = document.getElementById('researchGrid');
+            grid.innerHTML = '';
+            
+            projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'research-card';
+                card.setAttribute('data-category', project.category);
+                
+                let mediaGallery = '';
+                if (project.media && project.media.length > 0) {
+                    mediaGallery = '<div class="media-gallery">';
+                    project.media.forEach(mediaUrl => {
+                        if (mediaUrl.includes('streamable.com')) {
+                            const videoId = mediaUrl.split('/').pop();
+                            mediaGallery += `<div class="media-item"><div class="video-wrapper"><iframe allow="fullscreen" allowfullscreen src="https://streamable.com/e/${videoId}?" style="border:none;"></iframe></div></div>`;
+                        } else if (mediaUrl.endsWith('.mp4') || mediaUrl.endsWith('.webm')) {
+                            mediaGallery += `<div class="media-item"><video controls><source src="${mediaUrl}" type="video/mp4"></video></div>`;
+                        } else {
+                            mediaGallery += `<div class="media-item"><img src="${mediaUrl}" alt="Project media"></div>`;
+                        }
+                    });
+                    mediaGallery += '</div>';
+                }
+                
+                card.innerHTML = `
+                    <div class="researcher-name">${project.name}</div>
+                    <div class="research-program">${project.program}</div>
+                    <div class="research-description">${project.research}</div>
+                    <div class="visualization-need">${project.visualization}</div>
+                    ${project.status ? `<div style="margin-top: 15px; padding: 8px; background: ${project.status.includes('✅') ? '#e8f5e8' : '#fff3cd'}; border-radius: 6px; font-weight: bold; color: ${project.status.includes('✅') ? '#155724' : '#856404'}; text-align: center;">${project.status}</div>` : ''}
+                    ${mediaGallery}
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function populateParticipantsGrid(participants = allParticipants) {
+            const grid = document.getElementById('participantsGrid');
+            grid.innerHTML = '';
+            
+            participants.forEach(participant => {
+                const card = document.createElement('div');
+                card.className = 'participant-card';
+                card.setAttribute('data-category', participant.category);
+                card.setAttribute('data-program-type', participant.program.toLowerCase().includes('phd') ? 'phd' : 'masters');
+                
+                card.innerHTML = `
+                    <div class="participant-name">${participant.name}</div>
+                    <div class="participant-program">${participant.program}</div>
+                    <div class="participant-research">${participant.research}</div>
+                    <div class="participant-status ${participant.status === 'Matched' ? 'status-matched' : 'status-in-progress'}">${participant.status}</div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function switchTab(tabName) {
+            const projectsTab = document.getElementById('projectsTab');
+            const participantsTab = document.getElementById('participantsTab');
+            const tabButtons = document.querySelectorAll('.controls .filter-button');
+            
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tabName === 'projects') {
+                projectsTab.style.display = 'block';
+                participantsTab.style.display = 'none';
+            } else if (tabName === 'participants') {
+                projectsTab.style.display = 'none';
+                participantsTab.style.display = 'block';
+            }
+        }
+
+        function filterParticipants(category) {
+            const buttons = document.querySelectorAll('.sub-controls .filter-button');
+            const cards = document.querySelectorAll('.participant-card');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                const programType = card.getAttribute('data-program-type');
+                let shouldShow = false;
+                
+                if (category === 'all') {
+                    shouldShow = true;
+                } else if (category === 'matched') {
+                    shouldShow = card.innerHTML.includes('Matched');
+                } else if (category === 'phd') {
+                    shouldShow = programType === 'phd';
+                } else if (category === 'masters') {
+                    shouldShow = programType === 'masters';
+                } else {
+                    shouldShow = cardCategory === category;
+                }
+                
+                if (shouldShow) {
+                    card.style.display = 'block';
+                    card.style.opacity = '0';
+                    setTimeout(() => card.style.opacity = '1', 100);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function filterResearch(category) {
+            const buttons = document.querySelectorAll('.filter-button');
+            const cards = document.querySelectorAll('.research-card');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            cards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                let shouldShow = false;
+                
+                if (category === 'all') {
+                    shouldShow = true;
+                } else if (category === 'completed') {
+                    shouldShow = card.innerHTML.includes('✅ Completed');
+                } else {
+                    shouldShow = cardCategory === category;
+                }
+                
+                if (shouldShow) {
+                    card.style.display = 'block';
+                    card.style.opacity = '0';
+                    setTimeout(() => card.style.opacity = '1', 100);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function highlightCard(card) {
+            const allCards = document.querySelectorAll('.stat-card');
+            allCards.forEach(c => c.style.background = 'rgba(255, 255, 255, 0.95)');
+            card.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+            card.style.color = 'white';
+            
+            setTimeout(() => {
+                card.style.background = 'rgba(255, 255, 255, 0.95)';
+                card.style.color = 'inherit';
+            }, 2000);
+        }
+
+        function init() {
+            createParticles();
+            populateResearchGrid();
+            populateParticipantsGrid();
+            
+            setTimeout(() => {
+                const loadingElements = document.querySelectorAll('.loading');
+                loadingElements.forEach((el, index) => {
+                    setTimeout(() => el.style.opacity = '1', index * 200);
+                });
+            }, 100);
+        }
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
