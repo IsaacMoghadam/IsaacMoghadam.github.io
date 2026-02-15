@@ -247,6 +247,18 @@
       background: var(--jady-color); color: white; box-shadow: var(--shadow);
     }
 
+    .toggle-slider {
+      position: absolute; inset: 0; background: var(--border);
+      border-radius: 999px; transition: all var(--transition); cursor: pointer;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; height: 18px; width: 18px;
+      left: 3px; bottom: 3px; background: white; border-radius: 50%;
+      transition: all var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    input:checked + .toggle-slider { background: var(--primary); }
+    input:checked + .toggle-slider::before { transform: translateX(20px); }
+
     .submit-btn {
       width: 100%; padding: 12px; border: none;
       border-radius: var(--radius-xs); background: var(--primary);
@@ -533,6 +545,20 @@
             </div>
           </div>
         </div>
+        <div class="form-row" style="margin-bottom:16px;">
+          <div class="form-group" style="flex:1;">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 0;">
+              <span style="position:relative;display:inline-block;width:44px;height:24px;">
+                <input type="checkbox" id="expTrackBudget" checked onchange="onTrackBudgetChange()" style="opacity:0;width:0;height:0;">
+                <span class="toggle-slider"></span>
+              </span>
+              <span style="font-size:14px;font-weight:500;text-transform:none;letter-spacing:0;">Count toward budget</span>
+            </label>
+            <div id="budgetHint" style="display:none;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--primary-light);color:var(--primary);display:inline-block;">
+              Debt tracking only — won't affect budget
+            </div>
+          </div>
+        </div>
         <button type="submit" class="submit-btn" id="submitBtn">
           <span>Add Expense</span>
         </button>
@@ -763,6 +789,11 @@
     return state.expenses.filter(e => e.date && e.date.startsWith(state.currentMonth));
   }
 
+  function getBudgetExpenses() {
+    // Only expenses that count toward budget (trackBudget is true or undefined for backwards compat)
+    return getMonthExpenses().filter(e => e.trackBudget !== false);
+  }
+
   function progressColor(pct) {
     if (pct >= 90) return 'red';
     if (pct >= 70) return 'amber';
@@ -968,7 +999,7 @@
   }
 
   function renderSummary() {
-    const expenses = getMonthExpenses();
+    const expenses = getBudgetExpenses();
     const budgets = state.budgets.filter(b => b.month === state.currentMonth);
     const totalBudget = budgets.reduce((s, b) => s + Number(b.totalBudget), 0);
     const totalSpent = expenses.reduce((s, e) => s + Number(e.amount), 0);
@@ -1008,7 +1039,7 @@
   }
 
   function renderBudgetCards() {
-    const expenses = getMonthExpenses();
+    const expenses = getBudgetExpenses();
     const budgets = state.budgets.filter(b => b.month === state.currentMonth);
     const grid = document.getElementById('budgetGrid');
 
@@ -1091,8 +1122,10 @@
       const icon = CAT_ICONS[e.category] || '📁';
       const personClass = e.paidBy === 'Amir' ? 'badge-amir' : 'badge-jady';
 
+      const debtOnly = e.trackBudget === false;
+
       return `
-        <div class="expense-item">
+        <div class="expense-item" ${debtOnly ? 'style="border-left:3px solid var(--warning);opacity:0.85;"' : ''}>
           <div class="expense-icon" style="background:${bg};color:${color};">${icon}</div>
           <div class="expense-details">
             <div class="expense-desc">${escapeHtml(e.description)}</div>
@@ -1100,6 +1133,7 @@
               <span>${formatDate(e.date)}</span>
               <span class="badge ${personClass}">${e.paidBy}</span>
               <span class="badge-category" style="background:${bg};color:${color};">${e.category}</span>
+              ${debtOnly ? '<span class="badge" style="background:var(--warning-light);color:#92400E;">Debt only</span>' : ''}
             </div>
           </div>
           <div class="expense-amount" style="color:${color};">${formatCurrency(e.amount)}</div>
@@ -1263,7 +1297,7 @@
   }
 
   function renderCharts() {
-    const expenses = getMonthExpenses();
+    const expenses = getBudgetExpenses();
     const budgets = state.budgets.filter(b => b.month === state.currentMonth);
 
     // Destroy old charts
@@ -1515,6 +1549,15 @@
     }
   }, 250);
 
+  window.onTrackBudgetChange = function() {
+    const checked = document.getElementById('expTrackBudget').checked;
+    const hint = document.getElementById('budgetHint');
+    const catGroup = document.getElementById('expCategory').closest('.form-group');
+    hint.style.display = checked ? 'none' : 'inline-block';
+    // Category is optional when not tracking budget
+    document.getElementById('expCategory').required = checked;
+  };
+
   window.onSplitChange = function() {
     const val = document.getElementById('expSplit').value;
     state.splitType = val;
@@ -1571,12 +1614,14 @@
       else jadyOwes = 0;
     }
 
+    const trackBudget = document.getElementById('expTrackBudget').checked;
+
     const expense = {
       id: generateId(),
       date,
       amount,
       description,
-      category,
+      category: trackBudget ? category : (category || 'N/A'),
       paidBy: state.paidBy,
       autoCategory: autoCategory || '',
       wasCorrected,
@@ -1585,6 +1630,7 @@
       splitJadyPct: state.splitJadyPct,
       amirOwes,
       jadyOwes,
+      trackBudget,
       timestamp: new Date().toISOString()
     };
 
@@ -1609,6 +1655,9 @@
     document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
     document.getElementById('expSplit').value = '50/50';
     document.getElementById('customSplitRow').style.display = 'none';
+    document.getElementById('expTrackBudget').checked = true;
+    document.getElementById('budgetHint').style.display = 'none';
+    document.getElementById('expCategory').required = true;
     state.splitType = '50/50'; state.splitAmirPct = 50; state.splitJadyPct = 50;
 
     btn.disabled = false;
