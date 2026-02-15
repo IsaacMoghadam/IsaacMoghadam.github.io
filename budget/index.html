@@ -431,8 +431,9 @@
       .form-group { min-width: 100%; }
       .expense-item { flex-wrap: wrap; }
       .fab { display: flex; }
-      .tabs { gap: 2px; }
-      .tab { padding: 8px 10px; font-size: 12px; }
+      .tabs { gap: 2px; scrollbar-width: none; -ms-overflow-style: none; }
+      .tabs::-webkit-scrollbar { display: none; }
+      .tab { flex: 0 0 auto; padding: 8px 14px; font-size: 12px; }
       .header h1 { font-size: 15px; }
     }
     @media (max-width: 480px) {
