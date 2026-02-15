@@ -1,7 +1,1639 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker — Amir & Jady</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #6366F1;
+      --primary-hover: #4F46E5;
+      --primary-light: #EEF2FF;
+      --success: #10B981;
+      --success-light: #D1FAE5;
+      --warning: #F59E0B;
+      --warning-light: #FEF3C7;
+      --danger: #EF4444;
+      --danger-light: #FEE2E2;
+      --bg: #F8FAFC;
+      --card: #FFFFFF;
+      --text: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #94A3B8;
+      --border: #E2E8F0;
+      --border-light: #F1F5F9;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-xs: 6px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.03);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.08);
+      --amir-color: #6366F1;
+      --amir-light: #EEF2FF;
+      --jady-color: #EC4899;
+      --jady-light: #FCE7F3;
+      --cat-rent: #8B5CF6;
+      --cat-grocery: #10B981;
+      --cat-eating: #F59E0B;
+      --cat-bills: #3B82F6;
+      --transition: 0.2s ease;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ============ APP SHELL ============ */
+    .app { max-width: 1200px; margin: 0 auto; padding: 0 16px 100px; }
+
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(248,250,252,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      margin: 0 -16px; padding-left: 16px; padding-right: 16px;
+    }
+    .header-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+    .header h1 span { color: var(--primary); }
+    .month-nav {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 999px; padding: 4px;
+    }
+    .month-nav button {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: none; background: transparent; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-secondary); font-size: 16px;
+      transition: all var(--transition);
+    }
+    .month-nav button:hover { background: var(--primary-light); color: var(--primary); }
+    .month-nav .month-label {
+      font-size: 14px; font-weight: 600; min-width: 120px;
+      text-align: center; color: var(--text);
+    }
+
+    /* ============ TABS ============ */
+    .tabs {
+      display: flex; gap: 4px; margin: 20px 0 16px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 4px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+    }
+    .tab {
+      flex: 1; min-width: 0; padding: 10px 16px;
+      border: none; background: transparent; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      color: var(--text-muted); transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--text-secondary); background: var(--border-light); }
+    .tab.active { background: var(--primary); color: white; box-shadow: var(--shadow); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ============ CARDS ============ */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+      box-shadow: var(--shadow); transition: box-shadow var(--transition);
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+    .card-title {
+      font-size: 13px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 12px;
+    }
+
+    /* ============ SUMMARY ============ */
+    .summary-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+      margin-bottom: 16px;
+    }
+    .summary-stat {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 16px;
+    }
+    .summary-stat .label { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; }
+    .summary-stat .value { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+    .summary-stat .sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .summary-stat.total { grid-column: 1 / -1; }
+    .summary-stat.total .value { font-size: 32px; }
+    .summary-stat.amir .value { color: var(--amir-color); }
+    .summary-stat.jady .value { color: var(--jady-color); }
+
+    /* ============ PROGRESS BARS ============ */
+    .progress-container { margin-top: 8px; }
+    .progress-bar {
+      height: 8px; background: var(--border-light);
+      border-radius: 999px; overflow: hidden; position: relative;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 999px;
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+    }
+    .progress-fill.green { background: linear-gradient(90deg, #34D399, #10B981); }
+    .progress-fill.amber { background: linear-gradient(90deg, #FBBF24, #F59E0B); }
+    .progress-fill.red { background: linear-gradient(90deg, #F87171, #EF4444); }
+    .progress-labels {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--text-muted); margin-top: 4px;
+    }
+
+    /* ============ BUDGET CARDS GRID ============ */
+    .budget-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px; margin-top: 16px;
+    }
+    .budget-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px; position: relative;
+      border-left: 4px solid var(--cat-color);
+      transition: all var(--transition);
+    }
+    .budget-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .budget-card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px;
+    }
+    .budget-card-title { font-size: 15px; font-weight: 600; }
+    .budget-card-amount { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+    .budget-card-sub { font-size: 12px; color: var(--text-muted); }
+    .budget-card .edit-btn {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--card);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: var(--text-muted);
+      transition: all var(--transition);
+    }
+    .budget-card .edit-btn:hover {
+      background: var(--primary-light); color: var(--primary);
+      border-color: var(--primary);
+    }
+    .person-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 4px 0; font-size: 13px;
+    }
+    .person-row .name { color: var(--text-secondary); }
+    .person-row .spent { font-weight: 600; }
+
+    /* ============ EXPENSE FORM ============ */
+    .expense-form-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; margin-bottom: 16px;
+    }
+    .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+    .form-group { flex: 1; min-width: 140px; }
+    .form-group label {
+      display: block; font-size: 12px; font-weight: 600;
+      color: var(--text-secondary); margin-bottom: 4px; text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .form-group input, .form-group select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border);
+      border-radius: var(--radius-xs); font-size: 15px;
+      background: var(--bg); transition: all var(--transition);
+      color: var(--text);
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none; border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+    .form-group .amount-input {
+      position: relative;
+    }
+    .form-group .amount-input::before {
+      content: '$'; position: absolute; left: 12px; top: 50%;
+      transform: translateY(-50%); color: var(--text-muted); font-size: 15px;
+      pointer-events: none;
+    }
+    .form-group .amount-input input { padding-left: 24px; }
+    .auto-hint {
+      font-size: 11px; margin-top: 3px;
+      padding: 2px 8px; border-radius: 999px; display: inline-block;
+    }
+    .auto-hint.matched { background: var(--success-light); color: #065F46; }
+    .auto-hint.no-match { background: var(--warning-light); color: #92400E; }
+
+    .person-toggle {
+      display: flex; gap: 4px; background: var(--bg);
+      border-radius: var(--radius-xs); padding: 3px; border: 1px solid var(--border);
+    }
+    .person-toggle button {
+      flex: 1; padding: 8px 16px; border: none;
+      border-radius: var(--radius-xs); font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all var(--transition);
+      background: transparent; color: var(--text-muted);
+    }
+    .person-toggle button.active-amir {
+      background: var(--amir-color); color: white; box-shadow: var(--shadow);
+    }
+    .person-toggle button.active-jady {
+      background: var(--jady-color); color: white; box-shadow: var(--shadow);
+    }
+
+    .submit-btn {
+      width: 100%; padding: 12px; border: none;
+      border-radius: var(--radius-xs); background: var(--primary);
+      color: white; font-size: 15px; font-weight: 600;
+      cursor: pointer; transition: all var(--transition);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .submit-btn:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .submit-btn:active { transform: translateY(0); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    /* ============ EXPENSE LIST ============ */
+    .expense-list { margin-top: 16px; }
+    .expense-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; background: var(--card);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      margin-bottom: 8px; transition: all var(--transition);
+    }
+    .expense-item:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+    .expense-icon {
+      width: 40px; height: 40px; border-radius: var(--radius-xs);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .expense-details { flex: 1; min-width: 0; }
+    .expense-desc { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .expense-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .expense-amount { font-size: 16px; font-weight: 700; white-space: nowrap; }
+    .expense-delete {
+      width: 28px; height: 28px; border-radius: 50%; border: none;
+      background: transparent; color: var(--text-muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition); flex-shrink: 0; font-size: 14px;
+    }
+    .expense-delete:hover { background: var(--danger-light); color: var(--danger); }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 2px 8px;
+      border-radius: 999px; font-size: 11px; font-weight: 600;
+    }
+    .badge-amir { background: var(--amir-light); color: var(--amir-color); }
+    .badge-jady { background: var(--jady-light); color: var(--jady-color); }
+    .badge-category {
+      padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600;
+    }
+
+    /* ============ DEBT TRACKER ============ */
+    .debt-summary {
+      text-align: center; padding: 32px 20px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); margin-bottom: 16px;
+    }
+    .debt-amount { font-size: 48px; font-weight: 800; letter-spacing: -0.03em; margin: 8px 0; }
+    .debt-direction { font-size: 16px; color: var(--text-secondary); }
+    .debt-settled { color: var(--success); }
+
+    .debt-breakdown {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;
+    }
+    .debt-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 16px;
+    }
+    .debt-card h4 { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .debt-item {
+      display: flex; justify-content: space-between; padding: 6px 0;
+      font-size: 14px; border-bottom: 1px solid var(--border-light);
+    }
+    .debt-item:last-child { border-bottom: none; }
+
+    /* ============ CHARTS ============ */
+    .charts-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px; margin-top: 16px;
+    }
+    .chart-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+    }
+    .chart-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 16px; color: var(--text-secondary); }
+    .chart-container { position: relative; width: 100%; }
+    .chart-container canvas { width: 100% !important; }
+
+    /* ============ MODAL ============ */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(4px); z-index: 200;
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--card); border-radius: var(--radius);
+      padding: 24px; width: 100%; max-width: 420px;
+      box-shadow: var(--shadow-lg);
+      animation: modalIn 0.2s ease;
+    }
+    @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+    .modal .form-group { margin-bottom: 12px; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 20px; }
+    .modal-actions button { flex: 1; padding: 10px; border-radius: var(--radius-xs); font-size: 14px; font-weight: 600; cursor: pointer; transition: all var(--transition); }
+    .btn-cancel { border: 1px solid var(--border); background: var(--card); color: var(--text-secondary); }
+    .btn-cancel:hover { background: var(--bg); }
+    .btn-save { border: none; background: var(--primary); color: white; }
+    .btn-save:hover { background: var(--primary-hover); }
+
+    /* ============ TOAST ============ */
+    .toast-container {
+      position: fixed; top: 80px; right: 20px; z-index: 300;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .toast {
+      padding: 12px 20px; border-radius: var(--radius-xs);
+      font-size: 14px; font-weight: 500; color: white;
+      box-shadow: var(--shadow-lg);
+      animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
+    }
+    .toast.success { background: var(--success); }
+    .toast.error { background: var(--danger); }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toastOut { to { opacity: 0; transform: translateX(40px); } }
+
+    /* ============ LOADING ============ */
+    .skeleton {
+      background: linear-gradient(90deg, var(--border-light) 25%, var(--border) 50%, var(--border-light) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-xs);
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .empty-state {
+      text-align: center; padding: 48px 20px; color: var(--text-muted);
+    }
+    .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state p { font-size: 15px; }
+
+    /* ============ SETUP BANNER ============ */
+    .setup-banner {
+      background: var(--warning-light); border: 1px solid #FDE68A;
+      border-radius: var(--radius); padding: 16px 20px; margin: 16px 0;
+      font-size: 14px; color: #92400E;
+    }
+    .setup-banner code {
+      background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 4px;
+      font-size: 13px;
+    }
+
+    /* ============ FAB ============ */
+    .fab {
+      position: fixed; bottom: 24px; right: 24px; z-index: 50;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--primary); color: white; border: none;
+      font-size: 28px; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+      display: none; align-items: center; justify-content: center;
+      transition: all var(--transition);
+    }
+    .fab:hover { transform: scale(1.1); box-shadow: 0 6px 16px rgba(99,102,241,0.5); }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 768px) {
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+      .budget-grid { grid-template-columns: 1fr; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .debt-breakdown { grid-template-columns: 1fr; }
+      .form-row { flex-direction: column; }
+      .form-group { min-width: 100%; }
+      .expense-item { flex-wrap: wrap; }
+      .fab { display: flex; }
+      .tabs { gap: 2px; }
+      .tab { padding: 8px 10px; font-size: 12px; }
+      .header h1 { font-size: 15px; }
+    }
+    @media (max-width: 480px) {
+      .summary-stat .value { font-size: 20px; }
+      .summary-stat.total .value { font-size: 26px; }
+      .debt-amount { font-size: 36px; }
+    }
+
+    /* ============ SCROLLBAR ============ */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+  </style>
+</head>
 <body>
-<h1>Hello World</h1>
-<p>I'm hosted with GitHub Pages.</p>
+
+<div class="app" id="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-inner">
+      <h1>💰 <span>Budget</span> Tracker</h1>
+      <div class="month-nav">
+        <button onclick="changeMonth(-1)" title="Previous month">◀</button>
+        <span class="month-label" id="monthLabel"></span>
+        <button onclick="changeMonth(1)" title="Next month">▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('dashboard')">Dashboard</button>
+    <button class="tab" onclick="switchTab('add')">Add Expense</button>
+    <button class="tab" onclick="switchTab('expenses')">Expenses</button>
+    <button class="tab" onclick="switchTab('debts')">Who Owes Who</button>
+    <button class="tab" onclick="switchTab('charts')">Charts</button>
+    <button class="tab" onclick="switchTab('settings')">Budget Settings</button>
+  </div>
+
+  <!-- Setup Banner -->
+  <div class="setup-banner" id="setupBanner" style="display:none;">
+    <strong>⚙️ Setup Required:</strong> Set your Google Apps Script URL in the config.
+    Open <code>index.html</code> and replace <code>APPS_SCRIPT_URL</code> with your deployed script URL.
+    See the setup guide at the bottom of this page.
+  </div>
+
+  <!-- TAB: Dashboard -->
+  <div class="tab-content active" id="tab-dashboard">
+    <div class="summary-grid" id="summaryGrid"></div>
+    <div class="budget-grid" id="budgetGrid"></div>
+  </div>
+
+  <!-- TAB: Add Expense -->
+  <div class="tab-content" id="tab-add">
+    <div class="expense-form-card">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">New Expense</h2>
+      <form id="expenseForm" onsubmit="handleExpenseSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Amount</label>
+            <div class="amount-input">
+              <input type="number" id="expAmount" step="0.01" min="0" placeholder="0.00" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="expDate" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:2;">
+            <label>Description</label>
+            <input type="text" id="expDesc" placeholder="e.g. Trader Joe's groceries" oninput="onDescriptionInput()" required>
+            <div id="autoHint"></div>
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="expCategory" required>
+              <option value="">Select...</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+          <label>Paid By</label>
+          <div class="person-toggle">
+            <button type="button" id="btnAmir" class="active-amir" onclick="setPaidBy('Amir')">Amir</button>
+            <button type="button" id="btnJady" onclick="setPaidBy('Jady')">Jady</button>
+          </div>
+        </div>
+        <button type="submit" class="submit-btn" id="submitBtn">
+          <span>Add Expense</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TAB: Expenses List -->
+  <div class="tab-content" id="tab-expenses">
+    <div id="expenseList"></div>
+  </div>
+
+  <!-- TAB: Who Owes Who -->
+  <div class="tab-content" id="tab-debts">
+    <div id="debtContent"></div>
+  </div>
+
+  <!-- TAB: Charts -->
+  <div class="tab-content" id="tab-charts">
+    <div class="charts-grid" id="chartsGrid">
+      <div class="chart-card">
+        <h3>Spending by Category</h3>
+        <div class="chart-container"><canvas id="chartCategory"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Amir vs Jady Spending</h3>
+        <div class="chart-container"><canvas id="chartPerson"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Daily Spending Trend</h3>
+        <div class="chart-container"><canvas id="chartDaily"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Budget vs Actual</h3>
+        <div class="chart-container"><canvas id="chartBudgetVsActual"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: Budget Settings -->
+  <div class="tab-content" id="tab-settings">
+    <div id="settingsContent"></div>
+  </div>
+</div>
+
+<!-- Budget Edit Modal -->
+<div class="modal-overlay" id="budgetModal">
+  <div class="modal">
+    <h2 id="modalTitle">Edit Budget</h2>
+    <div class="form-group">
+      <label>Total Budget</label>
+      <input type="number" id="modalTotal" step="0.01" min="0" oninput="onModalTotalChange()">
+    </div>
+    <div class="form-group">
+      <label>Amir's Share</label>
+      <input type="number" id="modalAmir" step="0.01" min="0">
+    </div>
+    <div class="form-group">
+      <label>Jady's Share</label>
+      <input type="number" id="modalJady" step="0.01" min="0">
+    </div>
+    <div id="modalWarning" style="color:var(--danger);font-size:13px;display:none;"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeBudgetModal()">Cancel</button>
+      <button class="btn-save" onclick="saveBudget()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <h2>Delete Expense</h2>
+    <p style="color:var(--text-secondary);margin-bottom:16px;" id="deleteDesc">Are you sure you want to delete this expense?</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn-save" style="background:var(--danger);" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- FAB for mobile -->
+<button class="fab" onclick="switchTab('add')">+</button>
+
+<script>
+(function() {
+  'use strict';
+
+  // ==========================================
+  // CONFIG — REPLACE THIS URL AFTER DEPLOYING APPS SCRIPT
+  // ==========================================
+  const APPS_SCRIPT_URL = '';
+
+  const CATEGORIES = ['Rent', 'Grocery', 'Eating Out & Activities', 'Bills & Utilities'];
+  const CAT_COLORS = {
+    'Rent': '#8B5CF6',
+    'Grocery': '#10B981',
+    'Eating Out & Activities': '#F59E0B',
+    'Bills & Utilities': '#3B82F6'
+  };
+  const CAT_ICONS = {
+    'Rent': '🏠',
+    'Grocery': '🛒',
+    'Eating Out & Activities': '🍽️',
+    'Bills & Utilities': '📄'
+  };
+  const CAT_BG = {
+    'Rent': '#F3F0FF',
+    'Grocery': '#ECFDF5',
+    'Eating Out & Activities': '#FFFBEB',
+    'Bills & Utilities': '#EFF6FF'
+  };
+  const PEOPLE = ['Amir', 'Jady'];
+
+  const DEFAULT_BUDGETS = [
+    { category: 'Rent', totalBudget: 3200, amirBudget: 1600, jadyBudget: 1600 },
+    { category: 'Grocery', totalBudget: 600, amirBudget: 500, jadyBudget: 100 },
+    { category: 'Eating Out & Activities', totalBudget: 400, amirBudget: 200, jadyBudget: 200 },
+    { category: 'Bills & Utilities', totalBudget: 400, amirBudget: 200, jadyBudget: 200 }
+  ];
+
+  const DEFAULT_KEYWORDS = [
+    ['rent', 'Rent'], ['mortgage', 'Rent'], ['lease', 'Rent'],
+    ['grocery', 'Grocery'], ['groceries', 'Grocery'], ['safeway', 'Grocery'],
+    ['trader joe', 'Grocery'], ['whole foods', 'Grocery'], ['costco', 'Grocery'],
+    ['walmart', 'Grocery'], ['target', 'Grocery'], ['sprouts', 'Grocery'],
+    ['kroger', 'Grocery'], ['aldi', 'Grocery'], ['food', 'Grocery'],
+    ['uber eats', 'Eating Out & Activities'], ['doordash', 'Eating Out & Activities'],
+    ['grubhub', 'Eating Out & Activities'], ['restaurant', 'Eating Out & Activities'],
+    ['cafe', 'Eating Out & Activities'], ['coffee', 'Eating Out & Activities'],
+    ['starbucks', 'Eating Out & Activities'], ['bar', 'Eating Out & Activities'],
+    ['movie', 'Eating Out & Activities'], ['theater', 'Eating Out & Activities'],
+    ['concert', 'Eating Out & Activities'], ['bowling', 'Eating Out & Activities'],
+    ['dinner', 'Eating Out & Activities'], ['lunch', 'Eating Out & Activities'],
+    ['brunch', 'Eating Out & Activities'], ['pizza', 'Eating Out & Activities'],
+    ['sushi', 'Eating Out & Activities'], ['takeout', 'Eating Out & Activities'],
+    ['pg&e', 'Bills & Utilities'], ['pge', 'Bills & Utilities'],
+    ['electric', 'Bills & Utilities'], ['water bill', 'Bills & Utilities'],
+    ['internet', 'Bills & Utilities'], ['comcast', 'Bills & Utilities'],
+    ['xfinity', 'Bills & Utilities'], ['phone bill', 'Bills & Utilities'],
+    ['t-mobile', 'Bills & Utilities'], ['verizon', 'Bills & Utilities'],
+    ['insurance', 'Bills & Utilities'], ['utility', 'Bills & Utilities'],
+    ['utilities', 'Bills & Utilities'], ['gas bill', 'Bills & Utilities'],
+    ['trash', 'Bills & Utilities'], ['sewer', 'Bills & Utilities'],
+    ['att', 'Bills & Utilities'], ['at&t', 'Bills & Utilities'],
+    ['netflix', 'Bills & Utilities'], ['spotify', 'Bills & Utilities'],
+    ['hulu', 'Bills & Utilities'], ['subscription', 'Bills & Utilities']
+  ];
+
+  // ==========================================
+  // STATE
+  // ==========================================
+  const state = {
+    currentMonth: getCurrentMonth(),
+    expenses: [],
+    budgets: [],
+    keywords: DEFAULT_KEYWORDS.map(([keyword, category]) => ({ keyword, category, source: 'default' })),
+    loading: true,
+    error: null,
+    paidBy: 'Amir',
+    editingCategory: null,
+    deletingExpenseId: null,
+    usingLocalMode: false,
+    charts: {}
+  };
+
+  // ==========================================
+  // UTILITIES
+  // ==========================================
+  function getCurrentMonth() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  function formatMonth(ym) {
+    const [y, m] = ym.split('-');
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    return `${months[parseInt(m) - 1]} ${y}`;
+  }
+
+  function formatCurrency(n) {
+    return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function formatDate(d) {
+    const date = new Date(d + 'T00:00:00');
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+  }
+
+  function debounce(fn, ms) {
+    let t; return function(...a) { clearTimeout(t); t = setTimeout(() => fn.apply(this, a), ms); };
+  }
+
+  function getMonthExpenses() {
+    return state.expenses.filter(e => e.date && e.date.startsWith(state.currentMonth));
+  }
+
+  function progressColor(pct) {
+    if (pct >= 90) return 'red';
+    if (pct >= 70) return 'amber';
+    return 'green';
+  }
+
+  // ==========================================
+  // LOCAL STORAGE (fallback / cache)
+  // ==========================================
+  function saveLocal() {
+    try {
+      localStorage.setItem('bt_expenses', JSON.stringify(state.expenses));
+      localStorage.setItem('bt_budgets', JSON.stringify(state.budgets));
+      localStorage.setItem('bt_keywords', JSON.stringify(state.keywords));
+    } catch(e) {}
+  }
+
+  function loadLocal() {
+    try {
+      const exp = localStorage.getItem('bt_expenses');
+      const bud = localStorage.getItem('bt_budgets');
+      const kw = localStorage.getItem('bt_keywords');
+      if (exp) state.expenses = JSON.parse(exp);
+      if (bud) state.budgets = JSON.parse(bud);
+      if (kw) state.keywords = JSON.parse(kw);
+    } catch(e) {}
+  }
+
+  // ==========================================
+  // API LAYER
+  // ==========================================
+  async function api(params) {
+    if (!APPS_SCRIPT_URL) return null;
+    const url = new URL(APPS_SCRIPT_URL);
+    Object.entries(params).forEach(([k, v]) => {
+      if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
+    });
+    try {
+      const res = await fetch(url.toString());
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json();
+    } catch(err) {
+      console.error('API error:', err);
+      throw err;
+    }
+  }
+
+  async function fetchAllData(month) {
+    if (!APPS_SCRIPT_URL) {
+      state.usingLocalMode = true;
+      loadLocal();
+      initBudgetsIfNeeded(month);
+      state.loading = false;
+      return;
+    }
+    try {
+      const data = await api({ action: 'getAllData', month });
+      if (data) {
+        if (data.expenses) state.expenses = data.expenses;
+        if (data.budgets) state.budgets = data.budgets;
+        if (data.keywords) state.keywords = data.keywords;
+        saveLocal();
+      }
+    } catch(err) {
+      state.error = 'Could not connect to Google Sheets. Using local data.';
+      state.usingLocalMode = true;
+      loadLocal();
+    }
+    initBudgetsIfNeeded(month);
+    state.loading = false;
+  }
+
+  function initBudgetsIfNeeded(month) {
+    const existing = state.budgets.filter(b => b.month === month);
+    if (existing.length === 0) {
+      const prevBudgets = state.budgets.filter(b => b.month < month).sort((a,b) => b.month.localeCompare(a.month));
+      for (const cat of CATEGORIES) {
+        const prev = prevBudgets.find(b => b.category === cat);
+        const def = DEFAULT_BUDGETS.find(b => b.category === cat);
+        state.budgets.push({
+          month,
+          category: cat,
+          totalBudget: prev ? prev.totalBudget : def.totalBudget,
+          amirBudget: prev ? prev.amirBudget : def.amirBudget,
+          jadyBudget: prev ? prev.jadyBudget : def.jadyBudget
+        });
+      }
+      saveLocal();
+    }
+  }
+
+  async function submitExpenseToAPI(expense) {
+    if (!APPS_SCRIPT_URL) return;
+    try {
+      await api({
+        action: 'addExpense',
+        id: expense.id,
+        date: expense.date,
+        amount: expense.amount,
+        description: expense.description,
+        category: expense.category,
+        paidBy: expense.paidBy,
+        autoCategory: expense.autoCategory || '',
+        wasCorrected: expense.wasCorrected || false
+      });
+    } catch(err) {
+      showToast('Saved locally. Will sync when connected.', 'error');
+    }
+  }
+
+  async function updateBudgetAPI(month, category, total, amir, jady) {
+    if (!APPS_SCRIPT_URL) return;
+    try {
+      await api({ action: 'updateBudget', month, category, totalBudget: total, amirBudget: amir, jadyBudget: jady });
+    } catch(err) {
+      showToast('Budget saved locally.', 'error');
+    }
+  }
+
+  async function deleteExpenseAPI(id) {
+    if (!APPS_SCRIPT_URL) return;
+    try {
+      await api({ action: 'deleteExpense', id });
+    } catch(err) {}
+  }
+
+  async function addKeywordAPI(keyword, category) {
+    if (!APPS_SCRIPT_URL) return;
+    try {
+      await api({ action: 'addKeyword', keyword, category });
+    } catch(err) {}
+  }
+
+  // ==========================================
+  // AUTO-CATEGORIZATION
+  // ==========================================
+  function categorize(description) {
+    const desc = description.toLowerCase().trim();
+    if (!desc) return null;
+    const sorted = [...state.keywords].sort((a, b) => b.keyword.length - a.keyword.length);
+    for (const kw of sorted) {
+      if (desc.includes(kw.keyword.toLowerCase())) {
+        return kw.category;
+      }
+    }
+    return null;
+  }
+
+  function learnFromCorrection(description, correctCategory) {
+    const words = description.toLowerCase()
+      .replace(/[^a-z0-9\s&'-]/g, '')
+      .split(/\s+/)
+      .filter(w => w.length > 2 && !['the','and','for','was','with','this','that','from'].includes(w));
+    const keyword = words.slice(0, 2).join(' ').trim();
+    if (keyword && !state.keywords.find(k => k.keyword === keyword)) {
+      state.keywords.push({ keyword, category: correctCategory, source: 'learned' });
+      saveLocal();
+      addKeywordAPI(keyword, correctCategory);
+    }
+  }
+
+  // ==========================================
+  // TOAST NOTIFICATIONS
+  // ==========================================
+  function showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  // ==========================================
+  // RENDERING
+  // ==========================================
+  function render() {
+    renderMonthLabel();
+    renderSummary();
+    renderBudgetCards();
+    renderExpenseForm();
+    renderExpenseList();
+    renderDebtTracker();
+    renderCharts();
+    renderSettings();
+    renderSetupBanner();
+  }
+
+  function renderSetupBanner() {
+    const banner = document.getElementById('setupBanner');
+    if (!APPS_SCRIPT_URL) {
+      banner.style.display = 'block';
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+
+  function renderMonthLabel() {
+    document.getElementById('monthLabel').textContent = formatMonth(state.currentMonth);
+  }
+
+  function renderSummary() {
+    const expenses = getMonthExpenses();
+    const budgets = state.budgets.filter(b => b.month === state.currentMonth);
+    const totalBudget = budgets.reduce((s, b) => s + Number(b.totalBudget), 0);
+    const totalSpent = expenses.reduce((s, e) => s + Number(e.amount), 0);
+    const remaining = totalBudget - totalSpent;
+    const amirSpent = expenses.filter(e => e.paidBy === 'Amir').reduce((s, e) => s + Number(e.amount), 0);
+    const jadySpent = expenses.filter(e => e.paidBy === 'Jady').reduce((s, e) => s + Number(e.amount), 0);
+    const pct = totalBudget > 0 ? Math.min((totalSpent / totalBudget) * 100, 100) : 0;
+
+    document.getElementById('summaryGrid').innerHTML = `
+      <div class="summary-stat total">
+        <div class="label">Remaining Budget</div>
+        <div class="value" style="color:${remaining >= 0 ? 'var(--success)' : 'var(--danger)'}">
+          ${formatCurrency(remaining)}
+        </div>
+        <div class="sub">${formatCurrency(totalSpent)} spent of ${formatCurrency(totalBudget)}</div>
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill ${progressColor(pct)}" style="width:${pct}%"></div>
+          </div>
+          <div class="progress-labels">
+            <span>${pct.toFixed(0)}% used</span>
+            <span>${(100 - pct).toFixed(0)}% left</span>
+          </div>
+        </div>
+      </div>
+      <div class="summary-stat amir">
+        <div class="label">Amir Spent</div>
+        <div class="value">${formatCurrency(amirSpent)}</div>
+        <div class="sub">${expenses.filter(e => e.paidBy === 'Amir').length} expenses</div>
+      </div>
+      <div class="summary-stat jady">
+        <div class="label">Jady Spent</div>
+        <div class="value">${formatCurrency(jadySpent)}</div>
+        <div class="sub">${expenses.filter(e => e.paidBy === 'Jady').length} expenses</div>
+      </div>
+    `;
+  }
+
+  function renderBudgetCards() {
+    const expenses = getMonthExpenses();
+    const budgets = state.budgets.filter(b => b.month === state.currentMonth);
+    const grid = document.getElementById('budgetGrid');
+
+    if (budgets.length === 0) {
+      grid.innerHTML = '<div class="empty-state"><div class="icon">📊</div><p>No budget data for this month</p></div>';
+      return;
+    }
+
+    grid.innerHTML = budgets.map(b => {
+      const catExpenses = expenses.filter(e => e.category === b.category);
+      const spent = catExpenses.reduce((s, e) => s + Number(e.amount), 0);
+      const remaining = Number(b.totalBudget) - spent;
+      const pct = b.totalBudget > 0 ? Math.min((spent / b.totalBudget) * 100, 100) : 0;
+      const amirSpent = catExpenses.filter(e => e.paidBy === 'Amir').reduce((s, e) => s + Number(e.amount), 0);
+      const jadySpent = catExpenses.filter(e => e.paidBy === 'Jady').reduce((s, e) => s + Number(e.amount), 0);
+      const color = CAT_COLORS[b.category] || '#6366F1';
+
+      return `
+        <div class="budget-card" style="--cat-color:${color};">
+          <div class="budget-card-header">
+            <div>
+              <div class="budget-card-title">${CAT_ICONS[b.category] || '📁'} ${b.category}</div>
+              <div class="budget-card-sub">Budget: ${formatCurrency(b.totalBudget)}</div>
+            </div>
+            <button class="edit-btn" onclick="openBudgetModal('${b.category}')" title="Edit budget">✏️</button>
+          </div>
+          <div class="budget-card-amount" style="color:${remaining >= 0 ? color : 'var(--danger)'}">
+            ${formatCurrency(remaining)} <span style="font-size:13px;color:var(--text-muted);font-weight:400;">left</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill ${progressColor(pct)}" style="width:${pct}%;background:${pct >= 90 ? '' : color}"></div>
+            </div>
+          </div>
+          <div style="margin-top:10px;">
+            <div class="person-row">
+              <span class="name">Amir</span>
+              <span class="spent">${formatCurrency(amirSpent)} / ${formatCurrency(b.amirBudget)}</span>
+            </div>
+            <div class="person-row">
+              <span class="name">Jady</span>
+              <span class="spent">${formatCurrency(jadySpent)} / ${formatCurrency(b.jadyBudget)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderExpenseForm() {
+    // Populate category dropdown
+    const sel = document.getElementById('expCategory');
+    if (sel.options.length <= 1) {
+      CATEGORIES.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = `${CAT_ICONS[cat] || ''} ${cat}`;
+        sel.appendChild(opt);
+      });
+    }
+    // Set default date to today
+    const dateInput = document.getElementById('expDate');
+    if (!dateInput.value) {
+      dateInput.value = new Date().toISOString().split('T')[0];
+    }
+  }
+
+  function renderExpenseList() {
+    const container = document.getElementById('expenseList');
+    const expenses = getMonthExpenses().sort((a, b) => b.date.localeCompare(a.date) || (b.timestamp || '').localeCompare(a.timestamp || ''));
+
+    if (expenses.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="icon">📝</div><p>No expenses this month yet.<br>Add your first expense!</p></div>';
+      return;
+    }
+
+    container.innerHTML = expenses.map(e => {
+      const color = CAT_COLORS[e.category] || '#6366F1';
+      const bg = CAT_BG[e.category] || '#F1F5F9';
+      const icon = CAT_ICONS[e.category] || '📁';
+      const personClass = e.paidBy === 'Amir' ? 'badge-amir' : 'badge-jady';
+
+      return `
+        <div class="expense-item">
+          <div class="expense-icon" style="background:${bg};color:${color};">${icon}</div>
+          <div class="expense-details">
+            <div class="expense-desc">${escapeHtml(e.description)}</div>
+            <div class="expense-meta">
+              <span>${formatDate(e.date)}</span>
+              <span class="badge ${personClass}">${e.paidBy}</span>
+              <span class="badge-category" style="background:${bg};color:${color};">${e.category}</span>
+            </div>
+          </div>
+          <div class="expense-amount" style="color:${color};">${formatCurrency(e.amount)}</div>
+          <button class="expense-delete" onclick="openDeleteModal('${e.id}')" title="Delete">🗑️</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderDebtTracker() {
+    const container = document.getElementById('debtContent');
+    const expenses = getMonthExpenses();
+    const budgets = state.budgets.filter(b => b.month === state.currentMonth);
+
+    // Calculate what each person SHOULD pay (their budget share) vs what they actually PAID
+    let amirShouldPay = 0;
+    let jadyShouldPay = 0;
+    let amirActuallyPaid = 0;
+    let jadyActuallyPaid = 0;
+
+    const catDetails = [];
+
+    for (const cat of CATEGORIES) {
+      const budget = budgets.find(b => b.category === cat);
+      const catExpenses = expenses.filter(e => e.category === cat);
+      const totalSpent = catExpenses.reduce((s, e) => s + Number(e.amount), 0);
+      const amirPaid = catExpenses.filter(e => e.paidBy === 'Amir').reduce((s, e) => s + Number(e.amount), 0);
+      const jadyPaid = catExpenses.filter(e => e.paidBy === 'Jady').reduce((s, e) => s + Number(e.amount), 0);
+
+      if (!budget || totalSpent === 0) continue;
+
+      // Each person's fair share of actual spending based on their budget ratio
+      const amirRatio = budget.totalBudget > 0 ? Number(budget.amirBudget) / Number(budget.totalBudget) : 0.5;
+      const jadyRatio = 1 - amirRatio;
+      const amirOwes = totalSpent * amirRatio;
+      const jadyOwes = totalSpent * jadyRatio;
+
+      amirShouldPay += amirOwes;
+      jadyShouldPay += jadyOwes;
+      amirActuallyPaid += amirPaid;
+      jadyActuallyPaid += jadyPaid;
+
+      catDetails.push({
+        category: cat,
+        totalSpent,
+        amirPaid,
+        jadyPaid,
+        amirOwes,
+        jadyOwes,
+        amirDiff: amirPaid - amirOwes,
+        jadyDiff: jadyPaid - jadyOwes
+      });
+    }
+
+    // Net: positive means they overpaid (are owed money)
+    const amirNet = amirActuallyPaid - amirShouldPay;
+    // amirNet > 0: Jady owes Amir
+    // amirNet < 0: Amir owes Jady
+
+    const oweAmount = Math.abs(amirNet);
+    let debtHtml;
+
+    if (oweAmount < 0.01) {
+      debtHtml = `
+        <div class="debt-summary">
+          <div style="font-size:48px;">✅</div>
+          <div class="debt-amount debt-settled">${formatCurrency(0)}</div>
+          <div class="debt-direction">All settled up for ${formatMonth(state.currentMonth)}!</div>
+        </div>
+      `;
+    } else if (amirNet > 0) {
+      debtHtml = `
+        <div class="debt-summary">
+          <div style="font-size:48px;">💸</div>
+          <div class="debt-amount" style="color:var(--jady-color);">${formatCurrency(oweAmount)}</div>
+          <div class="debt-direction"><strong>Jady</strong> owes <strong>Amir</strong></div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Based on budget share ratios and actual payments</div>
+        </div>
+      `;
+    } else {
+      debtHtml = `
+        <div class="debt-summary">
+          <div style="font-size:48px;">💸</div>
+          <div class="debt-amount" style="color:var(--amir-color);">${formatCurrency(oweAmount)}</div>
+          <div class="debt-direction"><strong>Amir</strong> owes <strong>Jady</strong></div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Based on budget share ratios and actual payments</div>
+        </div>
+      `;
+    }
+
+    // Category breakdown
+    if (catDetails.length > 0) {
+      debtHtml += `
+        <div class="debt-breakdown">
+          <div class="debt-card">
+            <h4>Amir's Ledger</h4>
+            ${catDetails.map(d => `
+              <div class="debt-item">
+                <span>${CAT_ICONS[d.category] || ''} ${d.category}</span>
+                <span style="color:${d.amirDiff >= 0 ? 'var(--success)' : 'var(--danger)'}; font-weight:600;">
+                  ${d.amirDiff >= 0 ? '+' : ''}${formatCurrency(d.amirDiff)}
+                </span>
+              </div>
+            `).join('')}
+            <div class="debt-item" style="font-weight:700;border-top:2px solid var(--border);">
+              <span>Net</span>
+              <span style="color:${amirNet >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                ${amirNet >= 0 ? 'Owed ' : 'Owes '}${formatCurrency(Math.abs(amirNet))}
+              </span>
+            </div>
+          </div>
+          <div class="debt-card">
+            <h4>Jady's Ledger</h4>
+            ${catDetails.map(d => `
+              <div class="debt-item">
+                <span>${CAT_ICONS[d.category] || ''} ${d.category}</span>
+                <span style="color:${d.jadyDiff >= 0 ? 'var(--success)' : 'var(--danger)'}; font-weight:600;">
+                  ${d.jadyDiff >= 0 ? '+' : ''}${formatCurrency(d.jadyDiff)}
+                </span>
+              </div>
+            `).join('')}
+            <div class="debt-item" style="font-weight:700;border-top:2px solid var(--border);">
+              <span>Net</span>
+              <span style="color:${-amirNet >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                ${-amirNet >= 0 ? 'Owed ' : 'Owes '}${formatCurrency(Math.abs(amirNet))}
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Summary table
+      debtHtml += `
+        <div class="card" style="margin-top:16px;">
+          <div class="card-title">Category Payment Details</div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;font-size:13px;border-collapse:collapse;">
+              <thead>
+                <tr style="border-bottom:2px solid var(--border);">
+                  <th style="text-align:left;padding:8px 4px;">Category</th>
+                  <th style="text-align:right;padding:8px 4px;">Total</th>
+                  <th style="text-align:right;padding:8px 4px;">Amir Paid</th>
+                  <th style="text-align:right;padding:8px 4px;">Amir Owes</th>
+                  <th style="text-align:right;padding:8px 4px;">Jady Paid</th>
+                  <th style="text-align:right;padding:8px 4px;">Jady Owes</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${catDetails.map(d => `
+                  <tr style="border-bottom:1px solid var(--border-light);">
+                    <td style="padding:8px 4px;">${CAT_ICONS[d.category] || ''} ${d.category}</td>
+                    <td style="text-align:right;padding:8px 4px;font-weight:600;">${formatCurrency(d.totalSpent)}</td>
+                    <td style="text-align:right;padding:8px 4px;">${formatCurrency(d.amirPaid)}</td>
+                    <td style="text-align:right;padding:8px 4px;color:var(--text-muted);">${formatCurrency(d.amirOwes)}</td>
+                    <td style="text-align:right;padding:8px 4px;">${formatCurrency(d.jadyPaid)}</td>
+                    <td style="text-align:right;padding:8px 4px;color:var(--text-muted);">${formatCurrency(d.jadyOwes)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    container.innerHTML = debtHtml;
+  }
+
+  function renderCharts() {
+    const expenses = getMonthExpenses();
+    const budgets = state.budgets.filter(b => b.month === state.currentMonth);
+
+    // Destroy old charts
+    Object.values(state.charts).forEach(c => { try { c.destroy(); } catch(e) {} });
+    state.charts = {};
+
+    // 1. Category pie chart
+    const catData = CATEGORIES.map(cat => {
+      return expenses.filter(e => e.category === cat).reduce((s, e) => s + Number(e.amount), 0);
+    });
+    const ctx1 = document.getElementById('chartCategory');
+    if (ctx1) {
+      state.charts.category = new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+          labels: CATEGORIES,
+          datasets: [{
+            data: catData,
+            backgroundColor: CATEGORIES.map(c => CAT_COLORS[c]),
+            borderWidth: 0,
+            hoverOffset: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, font: { size: 12 } } },
+            tooltip: {
+              callbacks: {
+                label: function(ctx) { return `${ctx.label}: ${formatCurrency(ctx.raw)}`; }
+              }
+            }
+          },
+          cutout: '65%'
+        }
+      });
+    }
+
+    // 2. Amir vs Jady bar chart per category
+    const ctx2 = document.getElementById('chartPerson');
+    if (ctx2) {
+      const amirData = CATEGORIES.map(cat =>
+        expenses.filter(e => e.category === cat && e.paidBy === 'Amir').reduce((s, e) => s + Number(e.amount), 0)
+      );
+      const jadyData = CATEGORIES.map(cat =>
+        expenses.filter(e => e.category === cat && e.paidBy === 'Jady').reduce((s, e) => s + Number(e.amount), 0)
+      );
+      const shortLabels = CATEGORIES.map(c => c.length > 12 ? c.substring(0, 10) + '…' : c);
+      state.charts.person = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: shortLabels,
+          datasets: [
+            { label: 'Amir', data: amirData, backgroundColor: 'rgba(99,102,241,0.8)', borderRadius: 6 },
+            { label: 'Jady', data: jadyData, backgroundColor: 'rgba(236,72,153,0.8)', borderRadius: 6 }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, font: { size: 12 } } },
+            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}` } }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { callback: v => '$' + v }, grid: { color: 'rgba(0,0,0,0.04)' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // 3. Daily spending trend (line)
+    const ctx3 = document.getElementById('chartDaily');
+    if (ctx3) {
+      const [year, month] = state.currentMonth.split('-').map(Number);
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const dailyData = Array(daysInMonth).fill(0);
+      const cumulativeData = Array(daysInMonth).fill(0);
+      expenses.forEach(e => {
+        const day = parseInt(e.date.split('-')[2]);
+        if (day >= 1 && day <= daysInMonth) dailyData[day - 1] += Number(e.amount);
+      });
+      let cumSum = 0;
+      for (let i = 0; i < daysInMonth; i++) {
+        cumSum += dailyData[i];
+        cumulativeData[i] = cumSum;
+      }
+      const totalBudget = budgets.reduce((s, b) => s + Number(b.totalBudget), 0);
+      const paceLine = Array(daysInMonth).fill(0).map((_, i) => (totalBudget / daysInMonth) * (i + 1));
+      const labels = Array(daysInMonth).fill(0).map((_, i) => i + 1);
+
+      state.charts.daily = new Chart(ctx3, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Cumulative Spending',
+              data: cumulativeData,
+              borderColor: '#6366F1', backgroundColor: 'rgba(99,102,241,0.08)',
+              fill: true, tension: 0.3, pointRadius: 0, borderWidth: 2
+            },
+            {
+              label: 'Budget Pace',
+              data: paceLine,
+              borderColor: '#94A3B8', borderDash: [6, 4],
+              fill: false, tension: 0, pointRadius: 0, borderWidth: 1.5
+            }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, font: { size: 12 } } },
+            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}` } }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { callback: v => '$' + v }, grid: { color: 'rgba(0,0,0,0.04)' } },
+            x: { title: { display: true, text: 'Day of Month' }, grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    // 4. Budget vs Actual (horizontal bar)
+    const ctx4 = document.getElementById('chartBudgetVsActual');
+    if (ctx4) {
+      const budgetAmounts = CATEGORIES.map(cat => {
+        const b = budgets.find(b => b.category === cat);
+        return b ? Number(b.totalBudget) : 0;
+      });
+      const actualAmounts = CATEGORIES.map(cat =>
+        expenses.filter(e => e.category === cat).reduce((s, e) => s + Number(e.amount), 0)
+      );
+      const shortLabels = CATEGORIES.map(c => c.length > 12 ? c.substring(0, 10) + '…' : c);
+
+      state.charts.budgetVsActual = new Chart(ctx4, {
+        type: 'bar',
+        data: {
+          labels: shortLabels,
+          datasets: [
+            { label: 'Budget', data: budgetAmounts, backgroundColor: 'rgba(148,163,184,0.4)', borderRadius: 6 },
+            { label: 'Actual', data: actualAmounts, backgroundColor: CATEGORIES.map(c => CAT_COLORS[c] + 'CC'), borderRadius: 6 }
+          ]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true, maintainAspectRatio: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, font: { size: 12 } } },
+            tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}` } }
+          },
+          scales: {
+            x: { beginAtZero: true, ticks: { callback: v => '$' + v }, grid: { color: 'rgba(0,0,0,0.04)' } },
+            y: { grid: { display: false } }
+          }
+        }
+      });
+    }
+  }
+
+  function renderSettings() {
+    const container = document.getElementById('settingsContent');
+    const budgets = state.budgets.filter(b => b.month === state.currentMonth);
+    const totalBudget = budgets.reduce((s, b) => s + Number(b.totalBudget), 0);
+
+    container.innerHTML = `
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Monthly Budget — ${formatMonth(state.currentMonth)}</div>
+        <div style="font-size:24px;font-weight:700;margin-bottom:16px;">Total: ${formatCurrency(totalBudget)}</div>
+        ${budgets.map(b => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-light);">
+            <div>
+              <div style="font-weight:600;">${CAT_ICONS[b.category] || ''} ${b.category}</div>
+              <div style="font-size:12px;color:var(--text-muted);">Amir: ${formatCurrency(b.amirBudget)} | Jady: ${formatCurrency(b.jadyBudget)}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="font-size:18px;font-weight:700;">${formatCurrency(b.totalBudget)}</span>
+              <button class="edit-btn" onclick="openBudgetModal('${b.category}')" title="Edit">✏️</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="card">
+        <div class="card-title">Learned Keywords</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">
+          The app learns from your category corrections. These are extra keywords beyond the defaults.
+        </div>
+        ${state.keywords.filter(k => k.source === 'learned').length === 0
+          ? '<p style="color:var(--text-muted);font-size:14px;">No learned keywords yet. When you correct a category, the app remembers it.</p>'
+          : state.keywords.filter(k => k.source === 'learned').map(k => `
+            <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid var(--border-light);">
+              <span>"${escapeHtml(k.keyword)}"</span>
+              <span class="badge-category" style="background:${CAT_BG[k.category] || '#F1F5F9'};color:${CAT_COLORS[k.category] || '#6366F1'};">${k.category}</span>
+            </div>
+          `).join('')
+        }
+      </div>
+    `;
+  }
+
+  // ==========================================
+  // EVENT HANDLERS
+  // ==========================================
+  window.switchTab = function(tabName) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelector(`#tab-${tabName}`).classList.add('active');
+    // Find matching tab button
+    const tabs = document.querySelectorAll('.tab');
+    const tabMap = { dashboard: 0, add: 1, expenses: 2, debts: 3, charts: 4, settings: 5 };
+    if (tabMap[tabName] !== undefined) tabs[tabMap[tabName]].classList.add('active');
+    // Re-render charts when switching to charts tab (canvas size issue)
+    if (tabName === 'charts') setTimeout(() => renderCharts(), 50);
+  };
+
+  window.changeMonth = function(dir) {
+    const [y, m] = state.currentMonth.split('-').map(Number);
+    const d = new Date(y, m - 1 + dir, 1);
+    state.currentMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    initBudgetsIfNeeded(state.currentMonth);
+    render();
+    // Also fetch from API if connected
+    if (APPS_SCRIPT_URL) {
+      fetchAllData(state.currentMonth).then(() => render());
+    }
+  };
+
+  window.setPaidBy = function(person) {
+    state.paidBy = person;
+    document.getElementById('btnAmir').className = person === 'Amir' ? 'active-amir' : '';
+    document.getElementById('btnJady').className = person === 'Jady' ? 'active-jady' : '';
+  };
+
+  window.onDescriptionInput = debounce(function() {
+    const desc = document.getElementById('expDesc').value;
+    const hint = document.getElementById('autoHint');
+    const sel = document.getElementById('expCategory');
+    const match = categorize(desc);
+
+    if (match) {
+      sel.value = match;
+      hint.innerHTML = `<span class="auto-hint matched">✓ Auto: ${match}</span>`;
+    } else if (desc.length > 2) {
+      hint.innerHTML = `<span class="auto-hint no-match">No match — please select category</span>`;
+    } else {
+      hint.innerHTML = '';
+    }
+  }, 250);
+
+  window.handleExpenseSubmit = async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span>Adding...</span>';
+
+    const amount = parseFloat(document.getElementById('expAmount').value);
+    const date = document.getElementById('expDate').value;
+    const description = document.getElementById('expDesc').value.trim();
+    const category = document.getElementById('expCategory').value;
+    const autoCategory = categorize(description);
+    const wasCorrected = autoCategory !== null && autoCategory !== category;
+
+    const expense = {
+      id: generateId(),
+      date,
+      amount,
+      description,
+      category,
+      paidBy: state.paidBy,
+      autoCategory: autoCategory || '',
+      wasCorrected,
+      timestamp: new Date().toISOString()
+    };
+
+    // Learn from correction
+    if (wasCorrected && description) {
+      learnFromCorrection(description, category);
+    }
+
+    // Optimistic local update
+    state.expenses.push(expense);
+    saveLocal();
+    render();
+
+    // Sync to API
+    await submitExpenseToAPI(expense);
+
+    // Reset form
+    document.getElementById('expAmount').value = '';
+    document.getElementById('expDesc').value = '';
+    document.getElementById('expCategory').value = '';
+    document.getElementById('autoHint').innerHTML = '';
+    document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
+
+    btn.disabled = false;
+    btn.innerHTML = '<span>Add Expense</span>';
+    showToast('Expense added!');
+    switchTab('dashboard');
+  };
+
+  // Budget modal
+  window.openBudgetModal = function(category) {
+    state.editingCategory = category;
+    const budget = state.budgets.find(b => b.month === state.currentMonth && b.category === category);
+    if (!budget) return;
+    document.getElementById('modalTitle').textContent = `Edit: ${category}`;
+    document.getElementById('modalTotal').value = budget.totalBudget;
+    document.getElementById('modalAmir').value = budget.amirBudget;
+    document.getElementById('modalJady').value = budget.jadyBudget;
+    document.getElementById('modalWarning').style.display = 'none';
+    document.getElementById('budgetModal').classList.add('open');
+  };
+
+  window.closeBudgetModal = function() {
+    document.getElementById('budgetModal').classList.remove('open');
+    state.editingCategory = null;
+  };
+
+  window.onModalTotalChange = function() {
+    const total = parseFloat(document.getElementById('modalTotal').value) || 0;
+    document.getElementById('modalAmir').value = (total / 2).toFixed(2);
+    document.getElementById('modalJady').value = (total / 2).toFixed(2);
+  };
+
+  window.saveBudget = async function() {
+    const total = parseFloat(document.getElementById('modalTotal').value) || 0;
+    const amir = parseFloat(document.getElementById('modalAmir').value) || 0;
+    const jady = parseFloat(document.getElementById('modalJady').value) || 0;
+    const warn = document.getElementById('modalWarning');
+
+    if (Math.abs(amir + jady - total) > 0.02) {
+      warn.textContent = `Shares ($${amir} + $${jady} = $${(amir+jady).toFixed(2)}) don't match total ($${total.toFixed(2)})`;
+      warn.style.display = 'block';
+      return;
+    }
+
+    const budget = state.budgets.find(b => b.month === state.currentMonth && b.category === state.editingCategory);
+    if (budget) {
+      budget.totalBudget = total;
+      budget.amirBudget = amir;
+      budget.jadyBudget = jady;
+      saveLocal();
+      render();
+    }
+
+    await updateBudgetAPI(state.currentMonth, state.editingCategory, total, amir, jady);
+    closeBudgetModal();
+    showToast('Budget updated!');
+  };
+
+  // Delete expense
+  window.openDeleteModal = function(id) {
+    state.deletingExpenseId = id;
+    const exp = state.expenses.find(e => e.id === id);
+    document.getElementById('deleteDesc').textContent =
+      exp ? `Delete "${exp.description}" (${formatCurrency(exp.amount)})?` : 'Delete this expense?';
+    document.getElementById('deleteModal').classList.add('open');
+  };
+
+  window.closeDeleteModal = function() {
+    document.getElementById('deleteModal').classList.remove('open');
+    state.deletingExpenseId = null;
+  };
+
+  window.confirmDelete = async function() {
+    if (!state.deletingExpenseId) return;
+    state.expenses = state.expenses.filter(e => e.id !== state.deletingExpenseId);
+    saveLocal();
+    await deleteExpenseAPI(state.deletingExpenseId);
+    closeDeleteModal();
+    render();
+    showToast('Expense deleted.');
+  };
+
+  // Close modals on overlay click
+  document.getElementById('budgetModal').addEventListener('click', function(e) {
+    if (e.target === this) closeBudgetModal();
+  });
+  document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteModal();
+  });
+
+  // ==========================================
+  // HELPERS
+  // ==========================================
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ==========================================
+  // AUTO-REFRESH
+  // ==========================================
+  setInterval(function() {
+    if (document.visibilityState === 'visible' && APPS_SCRIPT_URL) {
+      fetchAllData(state.currentMonth).then(() => render());
+    }
+  }, 60000);
+
+  // ==========================================
+  // INIT
+  // ==========================================
+  async function init() {
+    state.loading = true;
+    render();
+    await fetchAllData(state.currentMonth);
+    state.loading = false;
+    render();
+  }
+
+  init();
+})();
+</script>
 </body>
 </html>
