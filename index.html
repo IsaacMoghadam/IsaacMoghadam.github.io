@@ -504,11 +504,33 @@
             </select>
           </div>
         </div>
-        <div class="form-group" style="margin-bottom:16px;">
-          <label>Paid By</label>
-          <div class="person-toggle">
-            <button type="button" id="btnAmir" class="active-amir" onclick="setPaidBy('Amir')">Amir</button>
-            <button type="button" id="btnJady" onclick="setPaidBy('Jady')">Jady</button>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>Paid By</label>
+            <div class="person-toggle">
+              <button type="button" id="btnAmir" class="active-amir" onclick="setPaidBy('Amir')">Amir</button>
+              <button type="button" id="btnJady" onclick="setPaidBy('Jady')">Jady</button>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:16px;">
+            <label>Split</label>
+            <select id="expSplit" onchange="onSplitChange()">
+              <option value="50/50">50/50 Split</option>
+              <option value="no-split">No Split (payer covers all)</option>
+              <option value="custom">Custom Split</option>
+            </select>
+            <div id="customSplitRow" style="display:none;margin-top:8px;">
+              <div style="display:flex;gap:8px;align-items:center;">
+                <div style="flex:1;">
+                  <label style="font-size:11px;">Amir %</label>
+                  <input type="number" id="splitAmir" value="50" min="0" max="100" step="1" oninput="onCustomSplitInput('amir')">
+                </div>
+                <div style="flex:1;">
+                  <label style="font-size:11px;">Jady %</label>
+                  <input type="number" id="splitJady" value="50" min="0" max="100" step="1" oninput="onCustomSplitInput('jady')">
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <button type="submit" class="submit-btn" id="submitBtn">
@@ -576,6 +598,28 @@
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeBudgetModal()">Cancel</button>
       <button class="btn-save" onclick="saveBudget()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settle Up Modal -->
+<div class="modal-overlay" id="settleModal">
+  <div class="modal">
+    <h2>Settle Up</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;" id="settleDesc"></p>
+    <div class="form-group">
+      <label>Amount to Settle</label>
+      <div class="amount-input">
+        <input type="number" id="settleAmount" step="0.01" min="0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Note (optional)</label>
+      <input type="text" id="settleNote" placeholder="e.g. Venmo payment">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeSettleModal()">Cancel</button>
+      <button class="btn-save" style="background:var(--success);" onclick="confirmSettle()">Settle Up</button>
     </div>
   </div>
 </div>
@@ -670,10 +714,14 @@
     currentMonth: getCurrentMonth(),
     expenses: [],
     budgets: [],
+    settlements: [],  // { id, date, amount, from, to, note, timestamp }
     keywords: DEFAULT_KEYWORDS.map(([keyword, category]) => ({ keyword, category, source: 'default' })),
     loading: true,
     error: null,
     paidBy: 'Amir',
+    splitType: '50/50',  // '50/50', 'no-split', 'custom'
+    splitAmirPct: 50,
+    splitJadyPct: 50,
     editingCategory: null,
     deletingExpenseId: null,
     usingLocalMode: false,
@@ -729,6 +777,7 @@
       localStorage.setItem('bt_expenses', JSON.stringify(state.expenses));
       localStorage.setItem('bt_budgets', JSON.stringify(state.budgets));
       localStorage.setItem('bt_keywords', JSON.stringify(state.keywords));
+      localStorage.setItem('bt_settlements', JSON.stringify(state.settlements));
     } catch(e) {}
   }
 
@@ -737,9 +786,11 @@
       const exp = localStorage.getItem('bt_expenses');
       const bud = localStorage.getItem('bt_budgets');
       const kw = localStorage.getItem('bt_keywords');
+      const sett = localStorage.getItem('bt_settlements');
       if (exp) state.expenses = JSON.parse(exp);
       if (bud) state.budgets = JSON.parse(bud);
       if (kw) state.keywords = JSON.parse(kw);
+      if (sett) state.settlements = JSON.parse(sett);
     } catch(e) {}
   }
 
@@ -1060,161 +1111,155 @@
 
   function renderDebtTracker() {
     const container = document.getElementById('debtContent');
-    const expenses = getMonthExpenses();
-    const budgets = state.budgets.filter(b => b.month === state.currentMonth);
 
-    // Calculate what each person SHOULD pay (their budget share) vs what they actually PAID
-    let amirShouldPay = 0;
-    let jadyShouldPay = 0;
-    let amirActuallyPaid = 0;
-    let jadyActuallyPaid = 0;
+    // ---- RUNNING TOTAL across ALL months ----
+    // For each expense: if split, the other person owes their share
+    // Positive amirBalance = Jady owes Amir (Amir overpaid)
+    // Negative amirBalance = Amir owes Jady
+    let amirBalance = 0;
 
-    const catDetails = [];
+    // Go through ALL expenses (not just current month)
+    const allExpenses = [...state.expenses].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
-    for (const cat of CATEGORIES) {
-      const budget = budgets.find(b => b.category === cat);
-      const catExpenses = expenses.filter(e => e.category === cat);
-      const totalSpent = catExpenses.reduce((s, e) => s + Number(e.amount), 0);
-      const amirPaid = catExpenses.filter(e => e.paidBy === 'Amir').reduce((s, e) => s + Number(e.amount), 0);
-      const jadyPaid = catExpenses.filter(e => e.paidBy === 'Jady').reduce((s, e) => s + Number(e.amount), 0);
+    allExpenses.forEach(e => {
+      const amount = Number(e.amount);
+      // For old expenses without split data, default to 50/50
+      const splitType = e.splitType || '50/50';
 
-      if (!budget || totalSpent === 0) continue;
+      if (splitType === 'no-split') {
+        // No debt created
+        return;
+      } else if (splitType === '50/50') {
+        if (e.paidBy === 'Amir') amirBalance += amount / 2;   // Jady owes Amir half
+        else amirBalance -= amount / 2;                         // Amir owes Jady half
+      } else if (splitType === 'custom') {
+        const amirPct = Number(e.splitAmirPct) || 50;
+        const jadyPct = Number(e.splitJadyPct) || 50;
+        if (e.paidBy === 'Amir') {
+          // Jady owes her share
+          amirBalance += amount * (jadyPct / 100);
+        } else {
+          // Amir owes his share
+          amirBalance -= amount * (amirPct / 100);
+        }
+      }
+    });
 
-      // Each person's fair share of actual spending based on their budget ratio
-      const amirRatio = budget.totalBudget > 0 ? Number(budget.amirBudget) / Number(budget.totalBudget) : 0.5;
-      const jadyRatio = 1 - amirRatio;
-      const amirOwes = totalSpent * amirRatio;
-      const jadyOwes = totalSpent * jadyRatio;
+    // Apply settlements
+    state.settlements.forEach(s => {
+      // Settlement: "from" pays "to"
+      if (s.from === 'Amir' && s.to === 'Jady') {
+        amirBalance += Number(s.amount); // Amir paid Jady, so balance shifts toward Jady owing Amir
+      } else if (s.from === 'Jady' && s.to === 'Amir') {
+        amirBalance -= Number(s.amount); // Jady paid Amir, so balance shifts toward Amir owing Jady
+      }
+    });
 
-      amirShouldPay += amirOwes;
-      jadyShouldPay += jadyOwes;
-      amirActuallyPaid += amirPaid;
-      jadyActuallyPaid += jadyPaid;
+    const oweAmount = Math.abs(amirBalance);
+    let html = '';
 
-      catDetails.push({
-        category: cat,
-        totalSpent,
-        amirPaid,
-        jadyPaid,
-        amirOwes,
-        jadyOwes,
-        amirDiff: amirPaid - amirOwes,
-        jadyDiff: jadyPaid - jadyOwes
-      });
-    }
-
-    // Net: positive means they overpaid (are owed money)
-    const amirNet = amirActuallyPaid - amirShouldPay;
-    // amirNet > 0: Jady owes Amir
-    // amirNet < 0: Amir owes Jady
-
-    const oweAmount = Math.abs(amirNet);
-    let debtHtml;
-
+    // ---- BIG SUMMARY ----
     if (oweAmount < 0.01) {
-      debtHtml = `
+      html += `
         <div class="debt-summary">
           <div style="font-size:48px;">✅</div>
           <div class="debt-amount debt-settled">${formatCurrency(0)}</div>
-          <div class="debt-direction">All settled up for ${formatMonth(state.currentMonth)}!</div>
+          <div class="debt-direction">All settled up!</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Running total across all months</div>
         </div>
       `;
-    } else if (amirNet > 0) {
-      debtHtml = `
+    } else if (amirBalance > 0) {
+      html += `
         <div class="debt-summary">
           <div style="font-size:48px;">💸</div>
           <div class="debt-amount" style="color:var(--jady-color);">${formatCurrency(oweAmount)}</div>
           <div class="debt-direction"><strong>Jady</strong> owes <strong>Amir</strong></div>
-          <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Based on budget share ratios and actual payments</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Running total based on expense splits</div>
+          <button onclick="openSettleModal('Jady', 'Amir', ${oweAmount.toFixed(2)})" style="margin-top:12px;padding:8px 24px;border:none;border-radius:var(--radius-xs);background:var(--success);color:white;font-weight:600;cursor:pointer;font-size:14px;">Settle Up</button>
         </div>
       `;
     } else {
-      debtHtml = `
+      html += `
         <div class="debt-summary">
           <div style="font-size:48px;">💸</div>
           <div class="debt-amount" style="color:var(--amir-color);">${formatCurrency(oweAmount)}</div>
           <div class="debt-direction"><strong>Amir</strong> owes <strong>Jady</strong></div>
-          <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Based on budget share ratios and actual payments</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:4px;">Running total based on expense splits</div>
+          <button onclick="openSettleModal('Amir', 'Jady', ${oweAmount.toFixed(2)})" style="margin-top:12px;padding:8px 24px;border:none;border-radius:var(--radius-xs);background:var(--success);color:white;font-weight:600;cursor:pointer;font-size:14px;">Settle Up</button>
         </div>
       `;
     }
 
-    // Category breakdown
-    if (catDetails.length > 0) {
-      debtHtml += `
-        <div class="debt-breakdown">
-          <div class="debt-card">
-            <h4>Amir's Ledger</h4>
-            ${catDetails.map(d => `
-              <div class="debt-item">
-                <span>${CAT_ICONS[d.category] || ''} ${d.category}</span>
-                <span style="color:${d.amirDiff >= 0 ? 'var(--success)' : 'var(--danger)'}; font-weight:600;">
-                  ${d.amirDiff >= 0 ? '+' : ''}${formatCurrency(d.amirDiff)}
-                </span>
-              </div>
-            `).join('')}
-            <div class="debt-item" style="font-weight:700;border-top:2px solid var(--border);">
-              <span>Net</span>
-              <span style="color:${amirNet >= 0 ? 'var(--success)' : 'var(--danger)'}">
-                ${amirNet >= 0 ? 'Owed ' : 'Owes '}${formatCurrency(Math.abs(amirNet))}
-              </span>
-            </div>
-          </div>
-          <div class="debt-card">
-            <h4>Jady's Ledger</h4>
-            ${catDetails.map(d => `
-              <div class="debt-item">
-                <span>${CAT_ICONS[d.category] || ''} ${d.category}</span>
-                <span style="color:${d.jadyDiff >= 0 ? 'var(--success)' : 'var(--danger)'}; font-weight:600;">
-                  ${d.jadyDiff >= 0 ? '+' : ''}${formatCurrency(d.jadyDiff)}
-                </span>
-              </div>
-            `).join('')}
-            <div class="debt-item" style="font-weight:700;border-top:2px solid var(--border);">
-              <span>Net</span>
-              <span style="color:${-amirNet >= 0 ? 'var(--success)' : 'var(--danger)'}">
-                ${-amirNet >= 0 ? 'Owed ' : 'Owes '}${formatCurrency(Math.abs(amirNet))}
-              </span>
-            </div>
-          </div>
-        </div>
-      `;
+    // ---- RECENT SPLIT EXPENSES (current month) ----
+    const monthExpenses = getMonthExpenses()
+      .filter(e => (e.splitType || '50/50') !== 'no-split')
+      .sort((a, b) => b.date.localeCompare(a.date));
 
-      // Summary table
-      debtHtml += `
-        <div class="card" style="margin-top:16px;">
-          <div class="card-title">Category Payment Details</div>
-          <div style="overflow-x:auto;">
-            <table style="width:100%;font-size:13px;border-collapse:collapse;">
-              <thead>
-                <tr style="border-bottom:2px solid var(--border);">
-                  <th style="text-align:left;padding:8px 4px;">Category</th>
-                  <th style="text-align:right;padding:8px 4px;">Total</th>
-                  <th style="text-align:right;padding:8px 4px;">Amir Paid</th>
-                  <th style="text-align:right;padding:8px 4px;">Amir Owes</th>
-                  <th style="text-align:right;padding:8px 4px;">Jady Paid</th>
-                  <th style="text-align:right;padding:8px 4px;">Jady Owes</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${catDetails.map(d => `
-                  <tr style="border-bottom:1px solid var(--border-light);">
-                    <td style="padding:8px 4px;">${CAT_ICONS[d.category] || ''} ${d.category}</td>
-                    <td style="text-align:right;padding:8px 4px;font-weight:600;">${formatCurrency(d.totalSpent)}</td>
-                    <td style="text-align:right;padding:8px 4px;">${formatCurrency(d.amirPaid)}</td>
-                    <td style="text-align:right;padding:8px 4px;color:var(--text-muted);">${formatCurrency(d.amirOwes)}</td>
-                    <td style="text-align:right;padding:8px 4px;">${formatCurrency(d.jadyPaid)}</td>
-                    <td style="text-align:right;padding:8px 4px;color:var(--text-muted);">${formatCurrency(d.jadyOwes)}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
+    html += `<div class="card" style="margin-top:16px;">
+      <div class="card-title">Split Expenses — ${formatMonth(state.currentMonth)}</div>`;
+
+    if (monthExpenses.length === 0) {
+      html += `<p style="color:var(--text-muted);font-size:14px;padding:12px 0;">No split expenses this month.</p>`;
+    } else {
+      html += monthExpenses.map(e => {
+        const amount = Number(e.amount);
+        const splitType = e.splitType || '50/50';
+        let splitLabel = '50/50';
+        let otherOwes = 0;
+        const other = e.paidBy === 'Amir' ? 'Jady' : 'Amir';
+
+        if (splitType === '50/50') {
+          otherOwes = amount / 2;
+        } else if (splitType === 'custom') {
+          const pct = e.paidBy === 'Amir' ? (Number(e.splitJadyPct) || 50) : (Number(e.splitAmirPct) || 50);
+          otherOwes = amount * (pct / 100);
+          splitLabel = e.paidBy === 'Amir'
+            ? `${e.splitAmirPct}/${e.splitJadyPct}`
+            : `${e.splitAmirPct}/${e.splitJadyPct}`;
+        }
+
+        const personClass = e.paidBy === 'Amir' ? 'badge-amir' : 'badge-jady';
+        const color = CAT_COLORS[e.category] || '#6366F1';
+        const bg = CAT_BG[e.category] || '#F1F5F9';
+
+        return `
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-light);">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(e.description)}</div>
+              <div style="font-size:12px;color:var(--text-muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                <span>${formatDate(e.date)}</span>
+                <span class="badge ${personClass}">${e.paidBy} paid</span>
+                <span class="badge-category" style="background:${bg};color:${color};">${splitLabel}</span>
+              </div>
+            </div>
+            <div style="text-align:right;white-space:nowrap;">
+              <div style="font-size:15px;font-weight:700;">${formatCurrency(amount)}</div>
+              <div style="font-size:11px;color:var(--text-muted);">${other} owes ${formatCurrency(otherOwes)}</div>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }).join('');
+    }
+    html += `</div>`;
+
+    // ---- SETTLEMENT HISTORY ----
+    if (state.settlements.length > 0) {
+      const sortedSettlements = [...state.settlements].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      html += `<div class="card" style="margin-top:16px;">
+        <div class="card-title">Settlement History</div>
+        ${sortedSettlements.map(s => `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border-light);">
+            <div>
+              <div style="font-size:14px;font-weight:500;">${s.from} paid ${s.to}</div>
+              <div style="font-size:12px;color:var(--text-muted);">${formatDate(s.date)}${s.note ? ' — ' + escapeHtml(s.note) : ''}</div>
+            </div>
+            <div style="font-size:16px;font-weight:700;color:var(--success);">${formatCurrency(s.amount)}</div>
+          </div>
+        `).join('')}
+      </div>`;
     }
 
-    container.innerHTML = debtHtml;
+    container.innerHTML = html;
   }
 
   function renderCharts() {
@@ -1470,6 +1515,29 @@
     }
   }, 250);
 
+  window.onSplitChange = function() {
+    const val = document.getElementById('expSplit').value;
+    state.splitType = val;
+    const customRow = document.getElementById('customSplitRow');
+    customRow.style.display = val === 'custom' ? 'block' : 'none';
+    if (val === '50/50') { state.splitAmirPct = 50; state.splitJadyPct = 50; }
+    if (val === 'no-split') { state.splitAmirPct = 0; state.splitJadyPct = 0; }
+  };
+
+  window.onCustomSplitInput = function(who) {
+    const amirInput = document.getElementById('splitAmir');
+    const jadyInput = document.getElementById('splitJady');
+    if (who === 'amir') {
+      state.splitAmirPct = parseInt(amirInput.value) || 0;
+      state.splitJadyPct = 100 - state.splitAmirPct;
+      jadyInput.value = state.splitJadyPct;
+    } else {
+      state.splitJadyPct = parseInt(jadyInput.value) || 0;
+      state.splitAmirPct = 100 - state.splitJadyPct;
+      amirInput.value = state.splitAmirPct;
+    }
+  };
+
   window.handleExpenseSubmit = async function(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
@@ -1483,6 +1551,26 @@
     const autoCategory = categorize(description);
     const wasCorrected = autoCategory !== null && autoCategory !== category;
 
+    // Calculate split: how much the OTHER person owes
+    let splitType = state.splitType;
+    let amirOwes = 0;
+    let jadyOwes = 0;
+    if (splitType === '50/50') {
+      // The other person owes half
+      if (state.paidBy === 'Amir') jadyOwes = amount / 2;
+      else amirOwes = amount / 2;
+    } else if (splitType === 'no-split') {
+      // Payer covers all, no debt created
+      amirOwes = 0; jadyOwes = 0;
+    } else if (splitType === 'custom') {
+      // Based on custom percentages
+      amirOwes = amount * (state.splitAmirPct / 100);
+      jadyOwes = amount * (state.splitJadyPct / 100);
+      // The payer doesn't owe themselves
+      if (state.paidBy === 'Amir') amirOwes = 0;
+      else jadyOwes = 0;
+    }
+
     const expense = {
       id: generateId(),
       date,
@@ -1492,6 +1580,11 @@
       paidBy: state.paidBy,
       autoCategory: autoCategory || '',
       wasCorrected,
+      splitType,
+      splitAmirPct: state.splitAmirPct,
+      splitJadyPct: state.splitJadyPct,
+      amirOwes,
+      jadyOwes,
       timestamp: new Date().toISOString()
     };
 
@@ -1514,6 +1607,9 @@
     document.getElementById('expCategory').value = '';
     document.getElementById('autoHint').innerHTML = '';
     document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('expSplit').value = '50/50';
+    document.getElementById('customSplitRow').style.display = 'none';
+    state.splitType = '50/50'; state.splitAmirPct = 50; state.splitJadyPct = 50;
 
     btn.disabled = false;
     btn.innerHTML = '<span>Add Expense</span>';
@@ -1595,12 +1691,52 @@
     showToast('Expense deleted.');
   };
 
+  // Settle up
+  window.openSettleModal = function(from, to, amount) {
+    document.getElementById('settleDesc').textContent = `${from} pays ${to}`;
+    document.getElementById('settleAmount').value = amount.toFixed(2);
+    document.getElementById('settleNote').value = '';
+    document.getElementById('settleModal').classList.add('open');
+    // Store who's paying whom
+    state._settleFrom = from;
+    state._settleTo = to;
+  };
+
+  window.closeSettleModal = function() {
+    document.getElementById('settleModal').classList.remove('open');
+  };
+
+  window.confirmSettle = function() {
+    const amount = parseFloat(document.getElementById('settleAmount').value);
+    if (!amount || amount <= 0) return;
+    const note = document.getElementById('settleNote').value.trim();
+
+    const settlement = {
+      id: generateId(),
+      date: new Date().toISOString().split('T')[0],
+      amount,
+      from: state._settleFrom,
+      to: state._settleTo,
+      note,
+      timestamp: new Date().toISOString()
+    };
+
+    state.settlements.push(settlement);
+    saveLocal();
+    closeSettleModal();
+    render();
+    showToast(`Settled ${formatCurrency(amount)}!`);
+  };
+
   // Close modals on overlay click
   document.getElementById('budgetModal').addEventListener('click', function(e) {
     if (e.target === this) closeBudgetModal();
   });
   document.getElementById('deleteModal').addEventListener('click', function(e) {
     if (e.target === this) closeDeleteModal();
+  });
+  document.getElementById('settleModal').addEventListener('click', function(e) {
+    if (e.target === this) closeSettleModal();
   });
 
   // ==========================================
