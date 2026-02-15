@@ -900,7 +900,11 @@
         category: expense.category,
         paidBy: expense.paidBy,
         autoCategory: expense.autoCategory || '',
-        wasCorrected: expense.wasCorrected || false
+        wasCorrected: expense.wasCorrected || false,
+        splitType: expense.splitType || '50/50',
+        splitAmirPct: expense.splitAmirPct != null ? expense.splitAmirPct : 50,
+        splitJadyPct: expense.splitJadyPct != null ? expense.splitJadyPct : 50,
+        trackBudget: expense.trackBudget !== false ? 'true' : 'false'
       });
     } catch(err) {
       showToast('Saved locally. Will sync when connected.', 'error');

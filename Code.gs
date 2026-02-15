@@ -29,8 +29,8 @@ function setupSheet() {
   if (!expenses) {
     expenses = ss.insertSheet('Expenses');
   }
-  expenses.getRange(1, 1, 1, 9).setValues([[
-    'id', 'date', 'amount', 'description', 'category', 'paidBy', 'autoCategory', 'wasCorrected', 'timestamp'
+  expenses.getRange(1, 1, 1, 12).setValues([[
+    'id', 'date', 'amount', 'description', 'category', 'paidBy', 'autoCategory', 'wasCorrected', 'timestamp', 'splitType', 'splitAmirPct', 'trackBudget'
   ]]);
 
   // Create Budgets tab
@@ -150,9 +150,13 @@ function getAllData(month) {
   const expSheet = ss.getSheetByName('Expenses');
   const expenses = [];
   if (expSheet.getLastRow() > 1) {
-    const data = expSheet.getRange(2, 1, expSheet.getLastRow() - 1, 9).getValues();
+    const data = expSheet.getRange(2, 1, expSheet.getLastRow() - 1, 12).getValues();
     data.forEach(row => {
       if (row[0]) {
+        const splitType = String(row[9] || '50/50');
+        const splitAmirPct = row[10] !== '' && row[10] !== undefined ? Number(row[10]) : 50;
+        const trackBudgetRaw = row[11];
+        const trackBudget = trackBudgetRaw === false || trackBudgetRaw === 'false' ? false : true;
         expenses.push({
           id: String(row[0]),
           date: formatDateValue(row[1]),
@@ -162,7 +166,11 @@ function getAllData(month) {
           paidBy: String(row[5]),
           autoCategory: String(row[6]),
           wasCorrected: Boolean(row[7]),
-          timestamp: String(row[8])
+          timestamp: String(row[8]),
+          splitType: splitType,
+          splitAmirPct: splitAmirPct,
+          splitJadyPct: 100 - splitAmirPct,
+          trackBudget: trackBudget
         });
       }
     });
@@ -229,7 +237,10 @@ function addExpense(params) {
     params.paidBy,
     params.autoCategory || '',
     params.wasCorrected === 'true',
-    new Date().toISOString()
+    new Date().toISOString(),
+    params.splitType || '50/50',
+    params.splitAmirPct !== undefined ? Number(params.splitAmirPct) : 50,
+    params.trackBudget === 'false' ? 'false' : 'true'
   ]);
 
   return { success: true };
