@@ -795,6 +795,27 @@
     return getMonthExpenses().filter(e => e.trackBudget !== false);
   }
 
+  // Get each person's share of an expense based on the split
+  function getExpenseShares(e) {
+    const amount = Number(e.amount);
+    const splitType = e.splitType || '50/50';
+    let amirShare, jadyShare;
+    if (splitType === 'no-split') {
+      // Entire amount goes to whoever paid
+      amirShare = e.paidBy === 'Amir' ? amount : 0;
+      jadyShare = e.paidBy === 'Jady' ? amount : 0;
+    } else if (splitType === 'custom') {
+      const amirPct = Number(e.splitAmirPct) || 50;
+      amirShare = amount * amirPct / 100;
+      jadyShare = amount - amirShare;
+    } else {
+      // 50/50
+      amirShare = amount / 2;
+      jadyShare = amount / 2;
+    }
+    return { amirShare, jadyShare };
+  }
+
   function progressColor(pct) {
     if (pct >= 90) return 'red';
     if (pct >= 70) return 'amber';
@@ -1009,8 +1030,12 @@
     const totalBudget = budgets.reduce((s, b) => s + Number(b.totalBudget), 0);
     const totalSpent = expenses.reduce((s, e) => s + Number(e.amount), 0);
     const remaining = totalBudget - totalSpent;
-    const amirSpent = expenses.filter(e => e.paidBy === 'Amir').reduce((s, e) => s + Number(e.amount), 0);
-    const jadySpent = expenses.filter(e => e.paidBy === 'Jady').reduce((s, e) => s + Number(e.amount), 0);
+    let amirSpent = 0, jadySpent = 0;
+    expenses.forEach(e => {
+      const shares = getExpenseShares(e);
+      amirSpent += shares.amirShare;
+      jadySpent += shares.jadyShare;
+    });
     const pct = totalBudget > 0 ? Math.min((totalSpent / totalBudget) * 100, 100) : 0;
 
     document.getElementById('summaryGrid').innerHTML = `
@@ -1031,14 +1056,14 @@
         </div>
       </div>
       <div class="summary-stat amir">
-        <div class="label">Amir Spent</div>
+        <div class="label">Amir's Share</div>
         <div class="value">${formatCurrency(amirSpent)}</div>
-        <div class="sub">${expenses.filter(e => e.paidBy === 'Amir').length} expenses</div>
+        <div class="sub">of total budget used</div>
       </div>
       <div class="summary-stat jady">
-        <div class="label">Jady Spent</div>
+        <div class="label">Jady's Share</div>
         <div class="value">${formatCurrency(jadySpent)}</div>
-        <div class="sub">${expenses.filter(e => e.paidBy === 'Jady').length} expenses</div>
+        <div class="sub">of total budget used</div>
       </div>
     `;
   }
@@ -1058,8 +1083,12 @@
       const spent = catExpenses.reduce((s, e) => s + Number(e.amount), 0);
       const remaining = Number(b.totalBudget) - spent;
       const pct = b.totalBudget > 0 ? Math.min((spent / b.totalBudget) * 100, 100) : 0;
-      const amirSpent = catExpenses.filter(e => e.paidBy === 'Amir').reduce((s, e) => s + Number(e.amount), 0);
-      const jadySpent = catExpenses.filter(e => e.paidBy === 'Jady').reduce((s, e) => s + Number(e.amount), 0);
+      let amirSpent = 0, jadySpent = 0;
+      catExpenses.forEach(e => {
+        const shares = getExpenseShares(e);
+        amirSpent += shares.amirShare;
+        jadySpent += shares.jadyShare;
+      });
       const color = CAT_COLORS[b.category] || '#6366F1';
 
       return `
@@ -1695,7 +1724,7 @@
     document.getElementById('modalJady').value = (total / 2).toFixed(2);
   };
 
-  window.saveBudget = async function() {
+  window.saveBudget = function() {
     const total = parseFloat(document.getElementById('modalTotal').value) || 0;
     const amir = parseFloat(document.getElementById('modalAmir').value) || 0;
     const jady = parseFloat(document.getElementById('modalJady').value) || 0;
@@ -1707,18 +1736,21 @@
       return;
     }
 
-    const budget = state.budgets.find(b => b.month === state.currentMonth && b.category === state.editingCategory);
+    const category = state.editingCategory;
+    const budget = state.budgets.find(b => b.month === state.currentMonth && b.category === category);
     if (budget) {
       budget.totalBudget = total;
       budget.amirBudget = amir;
       budget.jadyBudget = jady;
       saveLocal();
-      render();
     }
 
-    await updateBudgetAPI(state.currentMonth, state.editingCategory, total, amir, jady);
     closeBudgetModal();
+    render();
     showToast('Budget updated!');
+
+    // Sync to API in background (don't block UI)
+    updateBudgetAPI(state.currentMonth, category, total, amir, jady);
   };
 
   // Delete expense
