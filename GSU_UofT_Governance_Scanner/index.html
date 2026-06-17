@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#eef2f5}
+  @keyframes tpop{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  a{color:inherit}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:#eef2f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1f2d36">
+
+  <header style="background:#003A5D;color:#fff;display:flex;align-items:center;gap:18px;padding:0 26px;height:62px">
+    <div style="height:44px;background:#fff;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;padding:0 13px;line-height:1">
+      <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:19px;color:#003A5D;letter-spacing:.5px">GM</div>
+      <div style="width:26px;height:3px;background:#EE3224;border-radius:2px;margin-top:3px"></div>
+    </div>
+    <div style="line-height:1.15">
+      <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;letter-spacing:.2px">Governance Monitor</div>
+      <div style="font-size:12px;color:#9fc6dd;font-weight:600">{{ orgName }} · U of T Meeting Tracker</div>
+    </div>
+    <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:#9fe6c4;margin-left:6px"><span style="width:7px;height:7px;border-radius:50%;background:#46d39a"></span>Last scan {{ scanDateLabel }}</span>
+    <div style="flex:1"></div>
+    <a href="{{ sourceUrl }}" target="_blank" style="text-decoration:none;color:#9fc6dd;font-size:13.5px;font-weight:600;padding:8px 6px">Source ↗</a>
+    <button onClick="{{ onRunScan }}" style="background:#EE3224;color:#fff;border:none;border-radius:7px;padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:6px">Run scan now</button>
+  </header>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;top:78px;left:50%;transform:translateX(-50%);z-index:50;background:#0c2f47;color:#fff;padding:12px 20px;border-radius:10px;box-shadow:0 8px 28px rgba(0,30,50,.28);font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;animation:tpop .25s ease">
+      <span style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#46d39a;flex:none;animation:spin .7s linear infinite"></span>{{ toast }}
+    </div>
+  </sc-if>
+
+  <main style="max-width:1080px;margin:0 auto;padding:30px 26px 80px">
+
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:16px">
+      <div>
+        <h1 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:26px;color:#003A5D">Meeting Packages &amp; Reports</h1>
+        <p style="font-size:14px;color:#5a6b75;margin-top:4px">Agenda packages and reports tracked automatically across U of T governing bodies · {{ academicYear }}</p>
+      </div>
+      <div style="display:flex;gap:10px">
+        <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:12px 18px;text-align:center;min-width:96px">
+          <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:24px;color:#EE3224">{{ newCount }}</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7e8d96;margin-top:2px">New this scan</div>
+        </div>
+        <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:12px 18px;text-align:center;min-width:96px">
+          <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:24px;color:#003A5D">{{ bodyCount }}</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7e8d96;margin-top:2px">Bodies tracked</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
+      <span style="background:#003A5D;color:#fff;font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;border-radius:7px;padding:8px 14px">{{ scanLabel }}</span>
+      <span style="font-size:12.5px;color:#9aabb4;font-weight:600">scheduled monthly · next {{ nextScanLabel }}</span>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap">
+      <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4">
+        <button onClick="{{ c.onPick }}" style="{{ c.style }}">{{ c.label }}</button>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:26px">
+      <sc-for list="{{ bodies }}" as="b" hint-placeholder-count="3">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+            <span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#003A5D;text-transform:uppercase;letter-spacing:.04em">{{ b.name }}</span>
+            <span style="{{ b.statusStyle }}">{{ b.statusLabel }}</span>
+            <div style="flex:1;height:1px;background:#e2e9ee"></div>
+            <a href="{{ b.url }}" target="_blank" style="font-size:12.5px;color:#5a6b75;font-weight:600;text-decoration:none">Body page ↗</a>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <sc-for list="{{ b.packages }}" as="p" hint-placeholder-count="1">
+              <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:20px 22px">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+                  <div style="flex:1;min-width:0">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap">
+                      <span style="display:inline-block;padding:3px 9px;border-radius:5px;background:#e8eef2;color:#3d5562;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase">{{ p.docType }}</span>
+                      <span style="{{ p.badgeStyle }}">{{ p.badgeLabel }}</span>
+                    </div>
+                    <h3 style="font-family:Montserrat,sans-serif;font-weight:700;font-size:18px;color:#0c2f47;line-height:1.3">{{ p.title }}</h3>
+                    <div style="font-size:13px;color:#5a6b75;margin-top:6px">Meeting <strong style="color:#33444d">{{ p.meetingLabel }}</strong> · detected {{ p.detectedLabel }}</div>
+                  </div>
+                </div>
+
+                <p style="font-size:14.5px;line-height:1.65;color:#33444d;margin-top:14px;text-wrap:pretty">{{ p.summary }}</p>
+
+                <sc-if value="{{ p.hasItems }}" hint-placeholder-val="{{ true }}">
+                  <div style="margin-top:14px;background:#f6f9fb;border:1px solid #e6edf2;border-radius:9px;padding:14px 16px">
+                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7e8d96;margin-bottom:9px">Key items</div>
+                    <div style="display:flex;flex-direction:column;gap:8px">
+                      <sc-for list="{{ p.keyItems }}" as="k" hint-placeholder-count="3">
+                        <div style="display:flex;gap:10px;align-items:flex-start">
+                          <span style="width:6px;height:6px;border-radius:1px;background:#EE3224;flex:none;margin-top:7px"></span>
+                          <span style="font-size:13.5px;line-height:1.5;color:#33444d">{{ k.text }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <div style="display:flex;align-items:center;gap:18px;margin-top:16px;padding-top:14px;border-top:1px solid #edf1f4">
+                  <a href="{{ p.docUrl }}" target="_blank" style="font-size:13.5px;font-weight:700;color:#EE3224;text-decoration:none">Open source package ↗</a>
+                  <span style="font-size:12px;color:#9aabb4;font-weight:600">AI-generated summary · verify against the original</span>
+                </div>
+              </div>
+            </sc-for>
+
+            <sc-if value="{{ b.isEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#fff;border:1px dashed #c9d4db;border-radius:11px;padding:22px;display:flex;align-items:center;gap:12px">
+                <span style="width:8px;height:8px;border-radius:50%;background:#c2ccd3;flex:none"></span>
+                <span style="font-size:13.5px;color:#7e8d96;font-weight:600">{{ b.emptyMsg }}</span>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <p style="text-align:center;font-size:12px;color:#9aabb4;margin-top:40px;line-height:1.6">Summaries generated automatically from posted agenda packages. Always confirm details against the official documents on the Governing Council Secretariat site.</p>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1080,&quot;height&quot;:900},&quot;orgName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;UTGSU&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showQuiet&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = { filter: 'all', data: null, toast: '' };
+
+  componentDidMount() {
+    fetch('data.json')
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(d => this.setState({ data: d }))
+      .catch(() => this.setState({ data: this.fallback() }));
+  }
+
+  fallback() {
+    return {
+      generatedAt: '2026-06-01T08:00:00Z',
+      academicYear: '2025–2026',
+      source: 'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies',
+      bodies: [
+        { id:'academic-board', name:'Academic Board', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/academic-board', status:'new', packages:[
+          { title:'Academic Board — Agenda Package', meetingDate:'2026-05-28', detectedOn:'2026-06-01', isNew:true, docUrl:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/academic-board',
+            summary:'The May meeting centred on approval of the 2026–27 operating budget framework and a planning report on undergraduate enrolment growth across the three campuses. Members reviewed proposed new graduate programs in the Faculty of Applied Science & Engineering and received the annual report on academic appeals.',
+            keyItems:['2026–27 operating budget framework recommended for approval','Three new graduate programs in Engineering brought forward','Annual report on student academic appeals received','Update on tri-campus enrolment growth strategy'] } ] },
+        { id:'business-board', name:'Business Board', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/business-board', status:'new', packages:[
+          { title:'Business Board — Agenda Package', meetingDate:'2026-05-21', detectedOn:'2026-06-01', isNew:true, docUrl:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/business-board',
+            summary:'Discussion focused on the capital projects portfolio, including a status update on the Spadina–Sussex student residence and approval of a major infrastructure renewal project. The board also reviewed the quarterly financial report and a proposed increase to ancillary fees.',
+            keyItems:['Capital project approval: campus infrastructure renewal','Spadina–Sussex residence construction status update','Q3 financial report and investment performance reviewed','Proposed ancillary fee adjustments for 2026–27'] } ] },
+        { id:'audit-committee', name:'Audit Committee', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/audit-committee', status:'new', packages:[
+          { title:'Audit Committee — Agenda Package', meetingDate:'2026-05-14', detectedOn:'2026-06-01', isNew:true, docUrl:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/audit-committee',
+            summary:"The committee received the external auditor's interim findings and an update on the enterprise risk management framework. Internal audit presented its workplan for the coming year, with attention to cybersecurity and research grant compliance.",
+            keyItems:['External auditor interim findings presented','Enterprise risk management framework update','Internal audit workplan for 2026–27 approved','Focus areas: cybersecurity, research grant compliance'] } ] },
+        { id:'agenda-committee', name:'Agenda Committee', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/agenda-committee', status:'unchanged', packages:[
+          { title:'Agenda Committee — Agenda Package', meetingDate:'2026-04-30', detectedOn:'2026-05-01', isNew:false, docUrl:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/agenda-committee',
+            summary:"The committee set the agenda and forward calendar for the Academic Board's final meeting of the academic year and confirmed the schedule of governance meetings for 2026–27.",
+            keyItems:['Forward agenda for Academic Board confirmed','2026–27 governance meeting calendar approved'] } ] },
+        { id:'university-affairs-board', name:'University Affairs Board', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/university-affairs-board', status:'unchanged', packages:[] },
+        { id:'executive-committee', name:'Executive Committee', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/executive-committee', status:'unchanged', packages:[] }
+      ]
+    };
+  }
+
+  fmt(iso) {
+    if (!iso) return '';
+    const d = new Date(iso.length <= 10 ? iso + 'T00:00:00' : iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  }
+  fmtShort(iso) {
+    if (!iso) return '';
+    const d = new Date(iso.length <= 10 ? iso + 'T00:00:00' : iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  }
+
+  chipStyle(active) {
+    return 'padding:7px 13px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid ' +
+      (active ? '#003A5D' : '#d2dbe1') + ';background:' + (active ? '#003A5D' : '#fff') + ';color:' + (active ? '#fff' : '#3d5562');
+  }
+  newBadge() { return 'display:inline-block;padding:4px 11px;border-radius:20px;background:#d6f2e4;color:#1f7a52;font-size:11.5px;font-weight:700;letter-spacing:.03em'; }
+  oldBadge() { return 'display:inline-block;padding:4px 11px;border-radius:20px;background:#eef2f5;color:#7e8d96;font-size:11.5px;font-weight:700;letter-spacing:.03em'; }
+
+  runScan() {
+    this.setState({ toast: 'Scanning governing bodies…' });
+    setTimeout(() => this.setState({ toast: '' }), 2600);
+  }
+
+  renderVals() {
+    const data = this.state.data || { bodies: [], academicYear: '', source: '#', generatedAt: '' };
+    const showQuiet = this.props.showQuiet ?? true;
+    const filter = this.state.filter;
+
+    const allNew = data.bodies.reduce((n, b) => n + (b.packages || []).filter(p => p.isNew).length, 0);
+
+    // chips
+    const chipDefs = [
+      { id:'all', label:'All bodies' },
+      { id:'new', label:'🟢 New this scan' }
+    ].concat(data.bodies.map(b => ({ id:b.id, label:b.name })));
+    const chips = chipDefs.map(c => ({
+      label: c.label,
+      style: this.chipStyle(filter === c.id),
+      onPick: () => this.setState({ filter: c.id })
+    }));
+
+    // filter bodies
+    let bodies = data.bodies;
+    if (filter === 'new') {
+      bodies = data.bodies
+        .map(b => ({ ...b, packages: (b.packages || []).filter(p => p.isNew) }))
+        .filter(b => b.packages.length > 0);
+    } else if (filter !== 'all') {
+      bodies = data.bodies.filter(b => b.id === filter);
+    }
+
+    const bodyVals = bodies.map(b => {
+      const pkgs = b.packages || [];
+      const newN = pkgs.filter(p => p.isNew).length;
+      let statusLabel, statusStyle;
+      if (newN > 0) { statusLabel = newN + (newN === 1 ? ' new package' : ' new packages'); statusStyle = this.newBadge(); }
+      else if (pkgs.length > 0) { statusLabel = 'No change'; statusStyle = this.oldBadge(); }
+      else { statusLabel = 'No packages yet'; statusStyle = this.oldBadge(); }
+
+      const visiblePkgs = (filter === 'all' && !showQuiet) ? pkgs : pkgs;
+      return {
+        name: b.name,
+        url: b.url,
+        statusLabel, statusStyle,
+        isEmpty: visiblePkgs.length === 0,
+        emptyMsg: 'No agenda package posted for the current academic year yet — checked ' + this.fmt(data.generatedAt) + '.',
+        packages: visiblePkgs.map(p => ({
+          title: p.title,
+          docType: p.docType || 'Agenda Package',
+          meetingLabel: this.fmt(p.meetingDate),
+          detectedLabel: this.fmtShort(p.detectedOn),
+          summary: p.summary,
+          docUrl: p.docUrl,
+          badgeLabel: p.isNew ? 'NEW' : 'Earlier',
+          badgeStyle: p.isNew ? this.newBadge() : this.oldBadge(),
+          hasItems: (p.keyItems || []).length > 0,
+          keyItems: (p.keyItems || []).map(t => ({ text: t }))
+        }))
+      };
+    }).filter(b => showQuiet || !b.isEmpty || filter !== 'all');
+
+    return {
+      orgName: this.props.orgName ?? 'UTGSU',
+      academicYear: data.academicYear,
+      sourceUrl: data.source,
+      scanDateLabel: this.fmt(data.generatedAt),
+      scanLabel: new Date((data.generatedAt || '2026-06-01') ).toLocaleDateString('en-US', { month:'long', year:'numeric' }) + ' scan',
+      nextScanLabel: this.nextScan(data.generatedAt),
+      newCount: allNew,
+      bodyCount: data.bodies.length,
+      chips,
+      bodies: bodyVals,
+      toast: this.state.toast,
+      onRunScan: () => this.runScan()
+    };
+  }
+
+  nextScan(iso) {
+    const d = new Date(iso || '2026-06-01T00:00:00Z');
+    if (isNaN(d)) return '';
+    const n = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+    return n.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  }
+}
+</script>
+</body>
+</html>

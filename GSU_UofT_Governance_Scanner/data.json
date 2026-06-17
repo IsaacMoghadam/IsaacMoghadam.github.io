@@ -1,0 +1,326 @@
+{
+  "generatedAt": "2026-06-01T08:00:00Z",
+  "academicYear": "2025–2026",
+  "source": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies",
+  "bodies": [
+    {
+      "id": "academic-board",
+      "name": "Academic Board",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/academic-board",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "new",
+      "packages": [
+        {
+          "title": "Academic Board — Agenda Package · May 28, 2026",
+          "docType": "Agenda Package",
+          "meetingDate": "2026-05-28",
+          "detectedOn": "2026-06-01",
+          "isNew": true,
+          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/academic-board/agenda-packages/may-28-2026",
+          "summary": "The May meeting centred on approval of the 2026–27 operating budget framework and a planning report on undergraduate enrolment growth across the three campuses. Members reviewed proposed new graduate programs in the Faculty of Applied Science & Engineering and received the annual report on academic appeals.",
+          "keyItems": [
+            "2026–27 operating budget framework recommended for approval",
+            "Three new graduate programs in Engineering brought forward",
+            "Annual report on student academic appeals received",
+            "Update on tri-campus enrolment growth strategy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "agenda-committee",
+      "name": "Agenda Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/agenda-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "unchanged",
+      "packages": [
+        {
+          "title": "Agenda Committee — Agenda Package · April 30, 2026",
+          "docType": "Agenda Package",
+          "meetingDate": "2026-04-30",
+          "detectedOn": "2026-05-01",
+          "isNew": false,
+          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/agenda-committee/agenda-packages/apr-30-2026",
+          "summary": "The committee set the agenda and forward calendar for the Academic Board's final meeting of the academic year and confirmed the schedule of governance meetings for 2026–27.",
+          "keyItems": [
+            "Forward agenda for Academic Board confirmed",
+            "2026–27 governance meeting calendar approved"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "audit-committee",
+      "name": "Audit Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/audit-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "new",
+      "packages": [
+        {
+          "title": "Audit Committee — Agenda Package · May 14, 2026",
+          "docType": "Agenda Package",
+          "meetingDate": "2026-05-14",
+          "detectedOn": "2026-06-01",
+          "isNew": true,
+          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/audit-committee/agenda-packages/may-14-2026",
+          "summary": "The committee received the external auditor's interim findings and an update on the enterprise risk management framework. Internal audit presented its workplan for the coming year, with attention to cybersecurity and research grant compliance.",
+          "keyItems": [
+            "External auditor interim findings presented",
+            "Enterprise risk management framework update",
+            "Internal audit workplan for 2026–27 approved",
+            "Focus areas: cybersecurity, research grant compliance"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "business-board",
+      "name": "Business Board",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/business-board",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "new",
+      "packages": [
+        {
+          "title": "Business Board — Agenda Package · June 18, 2026",
+          "docType": "Agenda Package",
+          "meetingDate": "2026-06-18",
+          "detectedOn": "2026-06-01",
+          "isNew": true,
+          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/business-board/agenda-packages/jun-18-2026",
+          "summary": "The year-end meeting covered the capital projects portfolio, including a status update on the Spadina–Sussex student residence, alongside the annual operating-budget approval and a review of investment performance.",
+          "keyItems": [
+            "Year-end capital projects portfolio review",
+            "Spadina–Sussex residence construction status update",
+            "Annual operating budget approved",
+            "Investment performance and ancillary fee update"
+          ]
+        },
+        {
+          "title": "Business Board — Report · April 22, 2026",
+          "docType": "Report",
+          "meetingDate": "2026-04-22",
+          "detectedOn": "2026-05-01",
+          "isNew": false,
+          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/business-board/reports/apr-22-2026",
+          "summary": "Report of the April Business Board meeting, recording approvals on capital and financial items and the items forwarded to the Executive Committee.",
+          "keyItems": [
+            "Record of April approvals",
+            "Items referred to Executive Committee"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "college-electors",
+      "name": "College of Electors",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/college-electors",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "committee-honorary-degrees",
+      "name": "Committee for Honorary Degrees",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/committee-honorary-degrees",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "committee-academic-policy-and-programs",
+      "name": "Committee on Academic Policy and Programs",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/committee-academic-policy-and-programs",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "elections-committee",
+      "name": "Elections Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/elections-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "executive-committee",
+      "name": "Executive Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/executive-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "governing-council",
+      "name": "Governing Council",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/governing-council",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "pension-committee",
+      "name": "Pension Committee (Dissolved)",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/pension-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "planning-and-budget-committee",
+      "name": "Planning and Budget Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/planning-and-budget-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "new",
+      "packages": [
+        {
+          "title": "Planning and Budget Committee — Agenda Package · May 12, 2026",
+          "docType": "Agenda Package",
+          "meetingDate": "2026-05-12",
+          "detectedOn": "2026-06-01",
+          "isNew": true,
+          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/planning-and-budget-committee/agenda-packages/may-12-2026",
+          "summary": "The committee reviewed the long-range budget guidelines and a report on deferred maintenance across the campuses ahead of recommending the operating budget to the Business Board and Academic Board.",
+          "keyItems": [
+            "Long-range budget guidelines reviewed",
+            "Deferred maintenance report received",
+            "Operating budget recommendation advanced"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "senior-appointments-and-compensation-committee",
+      "name": "Senior Appointments and Compensation Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/senior-appointments-and-compensation-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "university-affairs-board",
+      "name": "University Affairs Board",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/university-affairs-board",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "new",
+      "packages": [
+        {
+          "title": "University Affairs Board — Agenda Package · May 7, 2026",
+          "docType": "Agenda Package",
+          "meetingDate": "2026-05-07",
+          "detectedOn": "2026-06-01",
+          "isNew": true,
+          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/university-affairs-board/agenda-packages/may-07-2026",
+          "summary": "Members considered the annual report on student services and a proposed update to the policy on student societies, alongside an update on campus safety and mental-health supports.",
+          "keyItems": [
+            "Annual report on student services received",
+            "Policy on student societies update proposed",
+            "Campus safety and mental-health supports update"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "utm-academic-affairs-committee",
+      "name": "UTM Academic Affairs Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utm-academic-affairs-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "utm-agenda-committee",
+      "name": "UTM Agenda Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utm-agenda-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "utm-campus-affairs-committee",
+      "name": "UTM Campus Affairs Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utm-campus-affairs-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "utm-campus-council",
+      "name": "UTM Campus Council",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utm-campus-council",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "new",
+      "packages": [
+        {
+          "title": "UTM Campus Council — Agenda Package · May 6, 2026",
+          "docType": "Agenda Package",
+          "meetingDate": "2026-05-06",
+          "detectedOn": "2026-06-01",
+          "isNew": true,
+          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utm-campus-council/agenda-packages/may-06-2026",
+          "summary": "The council received the UTM principal's report and approved campus capital and operating priorities for the coming year, including new student-space projects.",
+          "keyItems": [
+            "UTM principal's report received",
+            "Campus capital priorities approved",
+            "New student-space projects endorsed"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "utsc-academic-affairs-committee",
+      "name": "UTSC Academic Affairs Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utsc-academic-affairs-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "utsc-agenda-committee",
+      "name": "UTSC Agenda Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utsc-agenda-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "utsc-campus-affairs-committee",
+      "name": "UTSC Campus Affairs Committee",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utsc-campus-affairs-committee",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    },
+    {
+      "id": "utsc-campus-council",
+      "name": "UTSC Campus Council",
+      "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utsc-campus-council",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "new",
+      "packages": [
+        {
+          "title": "UTSC Campus Council — Agenda Package · May 5, 2026",
+          "docType": "Agenda Package",
+          "meetingDate": "2026-05-05",
+          "detectedOn": "2026-06-01",
+          "isNew": true,
+          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utsc-campus-council/agenda-packages/may-05-2026",
+          "summary": "The council reviewed the UTSC principal's report and endorsed the campus master-plan update and several academic program changes.",
+          "keyItems": [
+            "UTSC principal's report received",
+            "Campus master-plan update endorsed",
+            "Academic program changes approved"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ad-hoc-committee-capital-projects",
+      "name": "Ad Hoc Committee for Capital Projects",
+      "url": "https://governingcouncil.utoronto.ca/ad-hoc-committee-capital-projects",
+      "lastChecked": "2026-06-01T08:00:00Z",
+      "status": "empty",
+      "packages": []
+    }
+  ]
+}
