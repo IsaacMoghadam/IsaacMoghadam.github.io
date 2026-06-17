@@ -1,1 +1,29 @@
-
+name: Monthly governance scan
+on:
+  schedule:
+    - cron: "0 8 1 * *"
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r GSU_UofT_Governance_Scanner/backend/requirements.txt
+      - name: Run the scan
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
+        run: python GSU_UofT_Governance_Scanner/backend/scan.py
+      - name: Commit updated data
+        run: |
+          git config user.name  "governance-monitor-bot"
+          git config user.email "actions@github.com"
+          git add GSU_UofT_Governance_Scanner/data.json GSU_UofT_Governance_Scanner/backend/state.json
+          git diff --cached --quiet || git commit -m "Monthly scan: $(date -u +%Y-%m-%d)"
+          git push
