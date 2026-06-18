@@ -99,6 +99,13 @@
 
                 <p style="font-size:14.5px;line-height:1.65;color:#33444d;margin-top:14px;text-wrap:pretty">{{ p.summary }}</p>
 
+                <sc-if value="{{ p.hasGrad }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;background:#fbe9e6;border:1px solid #f3cfc8;border-left:3px solid #EE3224;border-radius:8px;padding:13px 16px">
+                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#b3271a;margin-bottom:6px">Why it matters to grad students</div>
+                    <p style="font-size:13.5px;line-height:1.6;color:#5a3631;text-wrap:pretty">{{ p.gradRelevance }}</p>
+                  </div>
+                </sc-if>
+
                 <sc-if value="{{ p.hasItems }}" hint-placeholder-val="{{ true }}">
                   <div style="margin-top:14px;background:#f6f9fb;border:1px solid #e6edf2;border-radius:9px;padding:14px 16px">
                     <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7e8d96;margin-bottom:9px">Key items</div>
@@ -107,6 +114,23 @@
                         <div style="display:flex;gap:10px;align-items:flex-start">
                           <span style="width:6px;height:6px;border-radius:1px;background:#EE3224;flex:none;margin-top:7px"></span>
                           <span style="font-size:13.5px;line-height:1.5;color:#33444d">{{ k.text }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ p.hasDocs }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px">
+                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7e8d96;margin-bottom:10px">Reports &amp; presentations <span style="color:#b8c2c9">· {{ p.docCount }}</span></div>
+                    <div style="display:flex;flex-direction:column;gap:10px">
+                      <sc-for list="{{ p.documents }}" as="d" hint-placeholder-count="2">
+                        <div style="border:1px solid #e6edf2;border-radius:9px;padding:12px 14px">
+                          <a href="{{ d.url }}" target="_blank" style="font-size:13.5px;font-weight:700;color:#003A5D;text-decoration:none;line-height:1.35">{{ d.title }} ↗</a>
+                          <p style="font-size:13px;line-height:1.55;color:#33444d;margin-top:5px;text-wrap:pretty">{{ d.summary }}</p>
+                          <sc-if value="{{ d.hasGrad }}" hint-placeholder-val="{{ false }}">
+                            <p style="font-size:12.5px;line-height:1.5;color:#b3271a;margin-top:5px;font-weight:600;text-wrap:pretty">Grad-student angle: {{ d.gradRelevance }}</p>
+                          </sc-if>
                         </div>
                       </sc-for>
                     </div>
@@ -249,11 +273,22 @@ class Component extends DCLogic {
           meetingLabel: this.fmt(p.meetingDate),
           detectedLabel: this.fmtShort(p.detectedOn),
           summary: p.summary,
+          gradRelevance: p.gradRelevance || '',
+          hasGrad: !!(p.gradRelevance && p.gradRelevance.trim()),
           docUrl: p.docUrl,
           badgeLabel: p.isNew ? 'NEW' : 'Earlier',
           badgeStyle: p.isNew ? this.newBadge() : this.oldBadge(),
           hasItems: (p.keyItems || []).length > 0,
-          keyItems: (p.keyItems || []).map(t => ({ text: t }))
+          keyItems: (p.keyItems || []).map(t => ({ text: t })),
+          hasDocs: (p.documents || []).length > 0,
+          docCount: (p.documents || []).length,
+          documents: (p.documents || []).map(d => ({
+            title: d.title || 'Document',
+            url: d.url || p.docUrl,
+            summary: d.summary || '',
+            gradRelevance: d.gradRelevance || '',
+            hasGrad: !!(d.gradRelevance && d.gradRelevance.trim())
+          }))
         }))
       };
     }).filter(b => showQuiet || !b.isEmpty || filter !== 'all');

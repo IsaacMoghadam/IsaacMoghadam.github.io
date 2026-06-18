@@ -73,9 +73,15 @@ Full list: <https://governingcouncil.utoronto.ca/secretariat/page/governance-bod
 Edit the `cron` line in `.github/workflows/monthly-scan.yml`. It's UTC. `"0 8 1 * *"` = 08:00 on the 1st.
 
 ## Changing the AI model
-The scanner defaults to **`claude-sonnet-4-6`**. To use a different one without editing code, add a repo
-variable (**Settings → Secrets and variables → Actions → Variables → New variable**) named `CLAUDE_MODEL`
-with the model id (e.g. `claude-sonnet-4-5`). The workflow already passes it through.
+The scanner defaults to **`claude-haiku-4-5`** (cheapest). To use a different one without editing code,
+add/update a repo variable (**Settings → Secrets and variables → Actions → Variables**) named `CLAUDE_MODEL`
+with the model id (e.g. `claude-sonnet-4-6` for higher quality). The workflow passes it through automatically.
+
+## What each summary contains
+For every meeting the scanner produces: a plain-language synthesis of what happened (or will happen),
+a **"why it matters to graduate students"** note, the key agenda items, and a per-document list of every
+linked **report/presentation** — each with its own short summary, a grad-student-relevance line, and a link.
+Bumping `SCHEMA_VERSION` in `scan.py` forces a full re-summarize on the next run.
 
 ---
 
