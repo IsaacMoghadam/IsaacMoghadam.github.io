@@ -41,10 +41,10 @@ HEADERS = {"User-Agent": "GovernanceMonitor/2.0 (UTGSU meeting tracker)"}
 # Model: override with a CLAUDE_MODEL repo variable. `or` so a blank value still falls back.
 MODEL = os.environ.get("CLAUDE_MODEL") or "claude-haiku-4-5"
 
-SCHEMA_VERSION = 2          # bump this to force a full re-summarize on the next run
-MAX_PAGE_CHARS = 16000      # agenda/report page text fed to the model
-MAX_DOC_CHARS = 14000       # per attached document fed to the model
-MAX_DOCS_PER_MEETING = 8    # cap how many linked docs we open per meeting (cost/time)
+SCHEMA_VERSION = 3          # bump this to force a full re-summarize on the next run
+MAX_PAGE_CHARS = 26000      # agenda/report page text fed to the model
+MAX_DOC_CHARS = 20000       # per attached document fed to the model
+MAX_DOCS_PER_MEETING = 12   # cap how many linked docs we open per meeting (cost/time)
 
 
 # ---------------------------------------------------------------- academic year
@@ -116,8 +116,21 @@ def find_packages(body, session):
     return out
 
 
-def fetch_doc_text(url, session):
-    """Download a linked /media or .pdf document and return its text (trimmed)."""
+def _pdf_text(content):
+    try:
+        p = os.path.join(HERE, "_tmp.pdf")
+        with open(p, "wb") as f:
+            f.write(content)
+        txt = "\n".join((pg.extract_text() or "") for pg in PdfReader(p).pages)
+        os.remove(p)
+        return txt
+    except Exception as e:
+        print(f"    ! pdf parse failed: {e}")
+        return ""
+
+
+def fetch_doc_text(url, session, _depth=0):
+    """Fetch a linked document's text. Follows /media HTML wrappers to the real PDF/file."""
     try:
         resp = session.get(url, headers=HEADERS, timeout=60)
         resp.raise_for_status()
@@ -126,18 +139,18 @@ def fetch_doc_text(url, session):
         return ""
     ctype = resp.headers.get("Content-Type", "").lower()
     if "pdf" in ctype or url.lower().endswith(".pdf"):
-        try:
-            p = os.path.join(HERE, "_tmp.pdf")
-            with open(p, "wb") as f:
-                f.write(resp.content)
-            txt = "\n".join((pg.extract_text() or "") for pg in PdfReader(p).pages)
-            os.remove(p)
-            return txt[:MAX_DOC_CHARS]
-        except Exception as e:
-            print(f"    ! pdf parse failed {url}: {e}")
-            return ""
-    # otherwise it's an HTML doc — take its main text
-    return " ".join(get_main(BeautifulSoup(resp.text, "html.parser")).get_text().split())[:MAX_DOC_CHARS]
+        return _pdf_text(resp.content)[:MAX_DOC_CHARS]
+    # HTML — a /media/NNN page is often a wrapper around the real file; follow it once.
+    soup = BeautifulSoup(resp.text, "html.parser")
+    if _depth == 0:
+        for tag in soup.find_all(["a", "iframe", "embed"]):
+            link = tag.get("href") or tag.get("src")
+            if not link:
+                continue
+            low = link.lower()
+            if low.endswith(".pdf") or "/system/files" in low or "/sites/default/files" in low:
+                return fetch_doc_text(urljoin(url, link), session, _depth=1)
+    return " ".join(get_main(soup).get_text().split())[:MAX_DOC_CHARS]
 
 
 def extract_meeting(view_url, session):
@@ -181,33 +194,32 @@ def summarize_meeting(client, body_name, doc_type, meeting_date, page_text, docs
         docs_block += f"\n--- DOCUMENT {i + 1}: {d['title']} | {d['url']} ---\n{(d.get('text') or '')[:MAX_DOC_CHARS]}\n"
 
     today = dt.date.today().isoformat()
-    prompt = f"""You are briefing the University of Toronto Graduate Students' Union (UTGSU) on a meeting of the university's {body_name}. Your audience is graduate students.
+    prompt = f"""You are briefing the University of Toronto Graduate Students' Union (UTGSU) on a meeting of the university's {body_name}. Your readers are graduate students who will NOT open the source documents, so be SPECIFIC and CONCRETE — names, dollar figures, motion wording, programs, policies, dates, outcomes. Generic sentences are useless.
 
-Today is {today}. This is the meeting's {doc_type}, dated {meeting_date or "unknown"}.
-If the meeting date is in the future, describe what WILL be considered; if it is past, what WAS decided or presented.
+Today is {today}. This is the meeting's {doc_type}, dated {meeting_date or "unknown"}. If the date is in the future, describe what WILL be considered; if past, what WAS decided or presented.
 
-You are given the meeting's agenda/report text, plus the full text of its attached reports and presentations.
+You are given the meeting's full agenda/report text plus the full text of its attached reports and presentations. Read ALL of it and synthesize.
 
 Return ONLY valid JSON in exactly this shape (no markdown, no preamble):
 {{
-  "summary": "<4-6 plain-language sentences: what happened or will happen at this meeting>",
-  "gradRelevance": "<2-3 sentences: why this meeting matters specifically to graduate students — funding, tuition/fees, housing, TA/RA work and unionized labour, academic policy, student services, safety, accessibility, etc. If relevance is limited, say so briefly and honestly.>",
-  "keyItems": ["<short phrase>", "... 3 to 6 of the most important agenda items or decisions"],
+  "summary": "<4-7 sentences of SPECIFIC synthesis naming the actual items, motions, amounts, programs, policies, people and outcomes>",
+  "gradRelevance": "<3-4 sentences naming the SPECIFIC things in THIS meeting that affect graduate students: funding/stipend amounts, fee changes, TA/RA and unionized-labour matters, housing, named policies, services, accessibility. Be concrete; if some items have no grad relevance, say which do.>",
+  "keyItems": ["<a specific bullet of exactly what was discussed or decided, with detail>", "... 5 to 10 bullets, one per substantive agenda item"],
   "documents": [
-    {{"title": "<clear document name>", "url": "<the document's url>", "summary": "<1-2 sentence summary of THIS document>", "gradRelevance": "<1 sentence on why it matters to grad students, or an empty string>"}}
+    {{"title": "<clear document name>", "url": "<the document's url from the list above>", "summary": "<2-4 sentences on what THIS document actually contains: specific findings, figures, recommendations>", "gradRelevance": "<1-2 sentences: specifically why it matters to grad students, or empty string if genuinely none>"}}
   ]
 }}
 
 Rules:
-- Include one "documents" entry for each attached report/presentation that has real content; use the URLs given above.
-- Be factual and specific (names, dollar amounts, policies, dates). Do not invent anything.
+- Include one "documents" entry for EVERY attached report/presentation listed above that has readable content — do not skip any. Use the exact URLs given above.
+- Pull real specifics from the text (names, numbers, dates, dollar figures, motion wording). NEVER write generic placeholder sentences. Do not invent anything not in the text.
 
 MEETING TEXT:
 {page_text}
 {docs_block}"""
 
     try:
-        msg = client.messages.create(model=MODEL, max_tokens=2200,
+        msg = client.messages.create(model=MODEL, max_tokens=4000,
                                       messages=[{"role": "user", "content": prompt}])
         raw = msg.content[0].text.strip()
         raw = re.sub(r"^```(?:json)?|```$", "", raw, flags=re.M).strip()
