@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 """
-Governance Monitor — monthly scanner.
+Governance Monitor — monthly scanner (UTGSU).
 
 For each governing body in bodies.json:
-  1. Fetch the body's page on the U of T Governing Council site.
-  2. Find links to meeting agenda packages / reports (PDFs) for the current year.
-  3. Compare against what we saw last run (state.json) to detect NEW packages.
-  4. Download each new PDF and extract its text.
-  5. Ask Claude to write a short summary + key items.
-  6. Write data.json (the file the dashboard reads) and update state.json.
+  1. Read the body's "Meeting Agendas and Reports" listing and find this academic
+     year's meeting pages (agenda packages + reports).
+  2. For each NEW meeting page: read the agenda/report text straight off the page,
+     and collect every linked report/presentation (the /media/... item documents).
+  3. Open those linked documents and pull their text.
+  4. Ask Claude (Haiku by default) to synthesize, for a GRADUATE-STUDENT audience:
+       - what happened / will happen at the meeting,
+       - why it matters to grad students,
+       - a per-document summary + grad-student relevance, with links.
+  5. Write data.json (what the dashboard reads) and remember what we've seen.
 
-Designed to run unattended in GitHub Actions once a month.
-Set ANTHROPIC_API_KEY in the environment (GitHub repo secret).
+Runs unattended in GitHub Actions monthly. Needs ANTHROPIC_API_KEY in the env.
 """
 
 import os
@@ -28,16 +31,20 @@ from pypdf import PdfReader
 import anthropic
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)                      # repo root (where data.json lives)
+ROOT = os.path.dirname(HERE)
 BODIES_FILE = os.path.join(HERE, "bodies.json")
-STATE_FILE = os.path.join(HERE, "state.json")     # remembers which packages we've already seen
-DATA_FILE = os.path.join(ROOT, "data.json")       # what the dashboard reads
+STATE_FILE = os.path.join(HERE, "state.json")
+DATA_FILE = os.path.join(ROOT, "data.json")
 
-HEADERS = {"User-Agent": "GovernanceMonitor/1.0 (UTGSU meeting tracker; contact: your-email@example.com)"}
-# Which Claude model to use. Override by setting CLAUDE_MODEL in the environment
-# (e.g. a repo variable) — no code change needed. Falls back to a current Sonnet.
-MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
-MAX_PDF_CHARS = 60000                             # trim very long packages before sending to the model
+HEADERS = {"User-Agent": "GovernanceMonitor/2.0 (UTGSU meeting tracker)"}
+
+# Model: override with a CLAUDE_MODEL repo variable. `or` so a blank value still falls back.
+MODEL = os.environ.get("CLAUDE_MODEL") or "claude-haiku-4-5"
+
+SCHEMA_VERSION = 2          # bump this to force a full re-summarize on the next run
+MAX_PAGE_CHARS = 16000      # agenda/report page text fed to the model
+MAX_DOC_CHARS = 14000       # per attached document fed to the model
+MAX_DOCS_PER_MEETING = 8    # cap how many linked docs we open per meeting (cost/time)
 
 
 # ---------------------------------------------------------------- academic year
@@ -49,14 +56,33 @@ def current_academic_year(today=None):
     return f"{start}\u2013{start + 1}"
 
 
+def guess_meeting_date(text):
+    """Pull a date like 'May 28, 2026' out of a string -> ISO, else None."""
+    m = re.search(r"([A-Z][a-z]+ \d{1,2},? \d{4})", text or "")
+    if m:
+        try:
+            return dt.datetime.strptime(m.group(1).replace(",", ""), "%B %d %Y").date().isoformat()
+        except Exception:
+            return None
+    return None
+
+
 # ---------------------------------------------------------------- scraping
+
+def get_main(soup):
+    """Return the page's main content element (so we skip the site nav menus)."""
+    return (soup.find("main")
+            or soup.find(id="main-content")
+            or soup.find(attrs={"role": "main"})
+            or soup.find("article")
+            or soup)
+
 
 def find_packages(body, session):
     """Return [{title, docType, docUrl, meetingDate}] for the current academic year.
 
-    The listing page (body['agendaUrl']) is a table; each row links to a per-meeting
-    'View' page at .../<slug>/agenda-packages/<mon-dd-yyyy> or .../<slug>/reports/<...>.
-    We collect those View-page links (NOT the listing itself) and keep current-year ones.
+    The listing is a table; each row links to a per-meeting page at
+    .../<slug>/agenda-packages/<mon-dd-yyyy> or .../<slug>/reports/<...>.
     """
     listing = body.get("agendaUrl") or body["url"]
     try:
@@ -67,9 +93,8 @@ def find_packages(body, session):
         return []
 
     soup = BeautifulSoup(resp.text, "html.parser")
-    year_start = int(current_academic_year().split("\u2013")[0])   # e.g. 2025 for 2025-2026
-    out = []
-    seen = set()
+    year_start = int(current_academic_year().split("\u2013")[0])
+    out, seen = [], set()
     for a in soup.find_all("a", href=True):
         href = a["href"]
         if "/agenda-packages/" not in href and "/reports/" not in href:
@@ -80,9 +105,8 @@ def find_packages(body, session):
         seen.add(url)
         text = " ".join(a.get_text().split()).replace(" - View", "").strip()
         meeting = guess_meeting_date(text) or guess_meeting_date(href)
-        # keep only the current academic year (Sep year_start .. Aug year_start+1)
-        if meeting:
-            mo = int(meeting[5:7]); yr = int(meeting[0:4])
+        if meeting:                                   # keep only the current academic year
+            yr, mo = int(meeting[0:4]), int(meeting[5:7])
             in_year = (yr == year_start and mo >= 9) or (yr == year_start + 1 and mo <= 8)
             if not in_year:
                 continue
@@ -92,96 +116,145 @@ def find_packages(body, session):
     return out
 
 
-def resolve_pdf_url(view_url, session):
-    """A meeting 'View' page embeds/links the real PDF. Return the first PDF/media link."""
+def fetch_doc_text(url, session):
+    """Download a linked /media or .pdf document and return its text (trimmed)."""
+    try:
+        resp = session.get(url, headers=HEADERS, timeout=60)
+        resp.raise_for_status()
+    except Exception as e:
+        print(f"    ! doc fetch failed {url}: {e}")
+        return ""
+    ctype = resp.headers.get("Content-Type", "").lower()
+    if "pdf" in ctype or url.lower().endswith(".pdf"):
+        try:
+            p = os.path.join(HERE, "_tmp.pdf")
+            with open(p, "wb") as f:
+                f.write(resp.content)
+            txt = "\n".join((pg.extract_text() or "") for pg in PdfReader(p).pages)
+            os.remove(p)
+            return txt[:MAX_DOC_CHARS]
+        except Exception as e:
+            print(f"    ! pdf parse failed {url}: {e}")
+            return ""
+    # otherwise it's an HTML doc — take its main text
+    return " ".join(get_main(BeautifulSoup(resp.text, "html.parser")).get_text().split())[:MAX_DOC_CHARS]
+
+
+def extract_meeting(view_url, session):
+    """Read a meeting page: return {pageText, docs:[{title,url}]}.
+
+    pageText is the agenda/report itself (from the main content, not the nav menu).
+    docs are the linked reports/presentations for the meeting's items.
+    """
     try:
         resp = session.get(view_url, headers=HEADERS, timeout=30)
         resp.raise_for_status()
-    except Exception:
-        return None
-    ctype = resp.headers.get("Content-Type", "")
-    if "application/pdf" in ctype:
-        return view_url
-    soup = BeautifulSoup(resp.text, "html.parser")
-    for a in soup.find_all("a", href=True):
-        href = a["href"].lower()
-        if href.endswith(".pdf") or "/media/" in href or "/system/files" in href:
-            return urljoin(view_url, a["href"])
-    return None
-
-
-def extract_pdf_text(url, session):
-    """Resolve a meeting View page to its PDF, download it, return its text (trimmed)."""
-    pdf_url = resolve_pdf_url(url, session) or url
-    try:
-        resp = session.get(pdf_url, headers=HEADERS, timeout=60)
-        resp.raise_for_status()
-        if "application/pdf" not in resp.headers.get("Content-Type", "") and not pdf_url.lower().endswith(".pdf"):
-            # not a PDF — fall back to the page's visible text
-            return " ".join(BeautifulSoup(resp.text, "html.parser").get_text().split())[:MAX_PDF_CHARS]
-        path = os.path.join(HERE, "_tmp.pdf")
-        with open(path, "wb") as f:
-            f.write(resp.content)
-        reader = PdfReader(path)
-        text = "\n".join((p.extract_text() or "") for p in reader.pages)
-        os.remove(path)
-        return text[:MAX_PDF_CHARS]
     except Exception as e:
-        print(f"  ! could not read document {url}: {e}")
-        return ""
+        print(f"  ! could not fetch {view_url}: {e}")
+        return {"pageText": "", "docs": []}
+
+    main = get_main(BeautifulSoup(resp.text, "html.parser"))
+    page_text = " ".join(main.get_text().split())
+    docs, seen = [], set()
+    for a in main.find_all("a", href=True):
+        href = a["href"]
+        if ("/media/" in href) or href.lower().endswith(".pdf") or "/system/files" in href:
+            url = urljoin(view_url, href)
+            if url in seen:
+                continue
+            seen.add(url)
+            title = " ".join(a.get_text().split()) or "Document"
+            docs.append({"title": title, "url": url})
+    return {"pageText": page_text[:MAX_PAGE_CHARS], "docs": docs[:MAX_DOCS_PER_MEETING]}
 
 
 # ---------------------------------------------------------------- summarizing
 
-def summarize(client, body_name, doc_text):
-    """Ask Claude for a 2–3 sentence summary + 3–5 key items. Returns dict."""
-    if not doc_text.strip():
-        return {"summary": "Package detected, but no readable text could be extracted. Open the source document for details.",
-                "keyItems": []}
+def summarize_meeting(client, body_name, doc_type, meeting_date, page_text, docs):
+    """One Claude call per meeting: grad-student synthesis + per-document summaries."""
+    if not page_text.strip() and not docs:
+        return {"summary": "Meeting page detected, but no readable content was found. Open the source for details.",
+                "gradRelevance": "", "keyItems": [], "documents": []}
 
-    prompt = f"""You are summarizing a meeting agenda package for the University of Toronto's {body_name}.
-Write a concise, neutral summary for a student-government audience.
+    docs_block = ""
+    for i, d in enumerate(docs):
+        docs_block += f"\n--- DOCUMENT {i + 1}: {d['title']} | {d['url']} ---\n{(d.get('text') or '')[:MAX_DOC_CHARS]}\n"
 
-Return ONLY valid JSON in this exact shape:
-{{"summary": "<2-3 sentence overview>", "keyItems": ["<short item>", "<short item>", "..."]}}
+    today = dt.date.today().isoformat()
+    prompt = f"""You are briefing the University of Toronto Graduate Students' Union (UTGSU) on a meeting of the university's {body_name}. Your audience is graduate students.
+
+Today is {today}. This is the meeting's {doc_type}, dated {meeting_date or "unknown"}.
+If the meeting date is in the future, describe what WILL be considered; if it is past, what WAS decided or presented.
+
+You are given the meeting's agenda/report text, plus the full text of its attached reports and presentations.
+
+Return ONLY valid JSON in exactly this shape (no markdown, no preamble):
+{{
+  "summary": "<4-6 plain-language sentences: what happened or will happen at this meeting>",
+  "gradRelevance": "<2-3 sentences: why this meeting matters specifically to graduate students — funding, tuition/fees, housing, TA/RA work and unionized labour, academic policy, student services, safety, accessibility, etc. If relevance is limited, say so briefly and honestly.>",
+  "keyItems": ["<short phrase>", "... 3 to 6 of the most important agenda items or decisions"],
+  "documents": [
+    {{"title": "<clear document name>", "url": "<the document's url>", "summary": "<1-2 sentence summary of THIS document>", "gradRelevance": "<1 sentence on why it matters to grad students, or an empty string>"}}
+  ]
+}}
 
 Rules:
-- 3 to 5 key items, each a short phrase (not a full sentence).
-- Focus on decisions, approvals, reports, and items of interest to students.
-- No preamble, no markdown, JSON only.
+- Include one "documents" entry for each attached report/presentation that has real content; use the URLs given above.
+- Be factual and specific (names, dollar amounts, policies, dates). Do not invent anything.
 
-DOCUMENT:
-{doc_text}"""
+MEETING TEXT:
+{page_text}
+{docs_block}"""
 
-    msg = client.messages.create(
-        model=MODEL,
-        max_tokens=700,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    raw = msg.content[0].text.strip()
-    # be forgiving if the model wraps JSON in a code fence
-    raw = re.sub(r"^```(?:json)?|```$", "", raw, flags=re.M).strip()
     try:
-        data = json.loads(raw)
-        return {"summary": data.get("summary", ""), "keyItems": data.get("keyItems", [])[:5]}
-    except Exception:
-        return {"summary": raw[:600], "keyItems": []}
+        msg = client.messages.create(model=MODEL, max_tokens=2200,
+                                      messages=[{"role": "user", "content": prompt}])
+        raw = msg.content[0].text.strip()
+        raw = re.sub(r"^```(?:json)?|```$", "", raw, flags=re.M).strip()
+        d = json.loads(raw)
+        return {
+            "summary": d.get("summary", ""),
+            "gradRelevance": d.get("gradRelevance", ""),
+            "keyItems": (d.get("keyItems") or [])[:6],
+            "documents": (d.get("documents") or [])[:MAX_DOCS_PER_MEETING],
+        }
+    except Exception as e:
+        print(f"    ! summarize failed: {e}")
+        return {"summary": "", "gradRelevance": "", "keyItems": [], "documents": []}
 
 
 # ---------------------------------------------------------------- state
 
 def load_json(path, default):
     if os.path.exists(path):
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
+        try:
+            with open(path, encoding="utf-8") as f:
+                return json.load(f)
+        except Exception:
+            return default
     return default
+
+
+def find_previous(url):
+    """Reuse what we already generated for this meeting (avoid re-spending)."""
+    prev = load_json(DATA_FILE, {"bodies": []})
+    for b in prev.get("bodies", []):
+        for p in b.get("packages", []):
+            if p.get("docUrl") == url:
+                return {"summary": p.get("summary", ""), "gradRelevance": p.get("gradRelevance", ""),
+                        "keyItems": p.get("keyItems", []), "documents": p.get("documents", [])}
+    return {"summary": "", "gradRelevance": "", "keyItems": [], "documents": []}
 
 
 # ---------------------------------------------------------------- main
 
 def main():
     bodies_cfg = load_json(BODIES_FILE, {"bodies": []})["bodies"]
-    state = load_json(STATE_FILE, {"seen": {}})          # {docUrl: detectedOn}
+
+    state = load_json(STATE_FILE, {})
+    if state.get("schema") != SCHEMA_VERSION:        # schema changed -> re-summarize everything
+        print(f"State schema {state.get('schema')} != {SCHEMA_VERSION}; doing a full refresh.")
+        state = {"schema": SCHEMA_VERSION, "seen": {}}
     seen = state.get("seen", {})
 
     api_key = os.environ.get("ANTHROPIC_API_KEY")
@@ -197,24 +270,28 @@ def main():
     for body in bodies_cfg:
         print(f"Scanning {body['name']} …")
         packages = find_packages(body, session)
-        pkg_out = []
-        has_new = False
+        pkg_out, has_new = [], False
 
         for pkg in packages:
             url = pkg["docUrl"]
             is_new = url not in seen
             detected_on = seen.get(url, today)
+
             if is_new:
                 seen[url] = today
                 detected_on = today
                 has_new = True
-                print(f"  + NEW package: {pkg['title'][:70]}")
-                text = extract_pdf_text(url, session)
-                summary = summarize(client, body["name"], text)
-                time.sleep(1)  # be polite to the site + API
+                print(f"  + NEW: {pkg['title'][:70]}")
+                extracted = extract_meeting(url, session)
+                for d in extracted["docs"]:
+                    d["text"] = fetch_doc_text(d["url"], session)
+                    time.sleep(0.3)
+                print(f"      read {len(extracted['docs'])} linked document(s); summarizing…")
+                summary = summarize_meeting(client, body["name"], pkg.get("docType"),
+                                            pkg.get("meetingDate"), extracted["pageText"], extracted["docs"])
+                time.sleep(0.5)
             else:
-                # reuse the summary we already wrote last time, if present
-                summary = find_previous_summary(url)
+                summary = find_previous(url)
 
             pkg_out.append({
                 "title": pkg["title"],
@@ -224,7 +301,9 @@ def main():
                 "isNew": is_new,
                 "docUrl": url,
                 "summary": summary.get("summary", ""),
+                "gradRelevance": summary.get("gradRelevance", ""),
                 "keyItems": summary.get("keyItems", []),
+                "documents": summary.get("documents", []),
             })
 
         out_bodies.append({
@@ -242,36 +321,13 @@ def main():
         "source": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies",
         "bodies": out_bodies,
     }
-
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
-    state["seen"] = seen
     with open(STATE_FILE, "w", encoding="utf-8") as f:
-        json.dump(state, f, indent=2)
+        json.dump({"schema": SCHEMA_VERSION, "seen": seen}, f, indent=2)
 
     new_total = sum(1 for b in out_bodies for p in b["packages"] if p["isNew"])
-    print(f"\nDone. {new_total} new package(s) summarized. Wrote {DATA_FILE}.")
-
-
-def guess_meeting_date(title):
-    """Try to pull a date like 'May 28, 2026' out of the link text."""
-    m = re.search(r"([A-Z][a-z]+ \d{1,2},? \d{4})", title)
-    if m:
-        try:
-            return dt.datetime.strptime(m.group(1).replace(",", ""), "%B %d %Y").date().isoformat()
-        except Exception:
-            return None
-    return None
-
-
-def find_previous_summary(url):
-    """Reuse a summary we already generated for this URL (so we don't re-call the API)."""
-    prev = load_json(DATA_FILE, {"bodies": []})
-    for b in prev.get("bodies", []):
-        for p in b.get("packages", []):
-            if p.get("docUrl") == url:
-                return {"summary": p.get("summary", ""), "keyItems": p.get("keyItems", [])}
-    return {"summary": "", "keyItems": []}
+    print(f"\nDone. {new_total} new meeting(s) summarized. Wrote {DATA_FILE}.")
 
 
 if __name__ == "__main__":
