@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-18T01:33:34.801Z",
+  "generatedAt": "2026-06-18T02:00:48.264Z",
   "academicYear": "2025–2026",
   "source": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies",
   "bodies": [
@@ -7,129 +7,39 @@
       "id": "academic-board",
       "name": "Academic Board",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/academic-board",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
-      "status": "new",
-      "packages": [
-        {
-          "title": "Academic Board — Agenda Package · May 28, 2026",
-          "docType": "Agenda Package",
-          "meetingDate": "2026-05-28",
-          "detectedOn": "2026-06-18",
-          "isNew": true,
-          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/academic-board/agenda-packages/may-28-2026",
-          "summary": "The Academic Board considered the 2026–27 operating budget framework and a planning report on enrolment growth across the three campuses, alongside proposed new graduate programs in Engineering and the annual report on academic appeals.",
-          "gradRelevance": "The operating budget and new graduate programs shape funding packages, supervision capacity and program offerings that directly affect graduate students.",
-          "keyItems": [],
-          "documents": [
-            {
-              "title": "2026–27 Operating Budget Report",
-              "url": "https://governingcouncil.utoronto.ca/media/00000",
-              "summary": "Proposed University operating budget framework for the coming year.",
-              "gradRelevance": "Drives graduate funding, TA/RA budgets and program resourcing."
-            },
-            {
-              "title": "New Graduate Programs — Engineering",
-              "url": "https://governingcouncil.utoronto.ca/media/00000",
-              "summary": "Proposals for new graduate programs in the Faculty of Applied Science & Engineering.",
-              "gradRelevance": "New programs mean new graduate seats and funding lines."
-            }
-          ]
-        }
-      ]
+      "lastChecked": "2026-06-18T02:00:48.264Z",
+      "status": "empty",
+      "packages": []
     },
     {
       "id": "agenda-committee",
       "name": "Agenda Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/agenda-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
-      "status": "unchanged",
-      "packages": [
-        {
-          "title": "Agenda Committee — Agenda Package · April 30, 2026",
-          "docType": "Agenda Package",
-          "meetingDate": "2026-04-30",
-          "detectedOn": "2026-05-01",
-          "isNew": false,
-          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/agenda-committee/agenda-packages/apr-30-2026",
-          "summary": "The committee set the forward agenda for the Academic Board's final meeting and confirmed the 2026–27 governance meeting calendar.",
-          "gradRelevance": "Mostly procedural; limited direct relevance to graduate students.",
-          "keyItems": [],
-          "documents": []
-        }
-      ]
+      "lastChecked": "2026-06-18T02:00:48.264Z",
+      "status": "empty",
+      "packages": []
     },
     {
       "id": "audit-committee",
       "name": "Audit Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/audit-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
-      "status": "new",
-      "packages": [
-        {
-          "title": "Audit Committee — Agenda Package · May 14, 2026",
-          "docType": "Agenda Package",
-          "meetingDate": "2026-05-14",
-          "detectedOn": "2026-06-18",
-          "isNew": true,
-          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/audit-committee/agenda-packages/may-14-2026",
-          "summary": "The Audit Committee received the external auditor's interim findings and an enterprise risk management update, and approved the internal audit workplan with a focus on cybersecurity and research grant compliance.",
-          "gradRelevance": "Research grant compliance and risk oversight touch the funding and labs many graduate students work in.",
-          "keyItems": [],
-          "documents": []
-        }
-      ]
+      "lastChecked": "2026-06-18T02:00:48.264Z",
+      "status": "empty",
+      "packages": []
     },
     {
       "id": "business-board",
       "name": "Business Board",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/business-board",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
-      "status": "new",
-      "packages": [
-        {
-          "title": "Business Board — Agenda Package · June 18, 2026",
-          "docType": "Agenda Package",
-          "meetingDate": "2026-06-18",
-          "detectedOn": "2026-06-18",
-          "isNew": true,
-          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/business-board/agenda-packages/jun-18-2026",
-          "summary": "The year-end Business Board meeting reviewed the capital projects portfolio, including the Spadina–Sussex student residence, approved the annual operating budget, and reviewed investment performance and ancillary fees.",
-          "gradRelevance": "Ancillary fees and residence projects directly affect what graduate students pay and where they can live.",
-          "keyItems": [],
-          "documents": [
-            {
-              "title": "Capital Projects Portfolio Update",
-              "url": "https://governingcouncil.utoronto.ca/media/00000",
-              "summary": "Status of major capital projects including the Spadina–Sussex residence.",
-              "gradRelevance": "Affects graduate student housing supply."
-            },
-            {
-              "title": "Ancillary Fees Report 2026–27",
-              "url": "https://governingcouncil.utoronto.ca/media/00000",
-              "summary": "Proposed adjustments to ancillary fees for the coming year.",
-              "gradRelevance": "Sets fees grad students pay on top of tuition."
-            }
-          ]
-        },
-        {
-          "title": "Business Board — Report · April 22, 2026",
-          "docType": "Report",
-          "meetingDate": "2026-04-22",
-          "detectedOn": "2026-05-01",
-          "isNew": false,
-          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/business-board/reports/apr-22-2026",
-          "summary": "Report of the April Business Board meeting recording approvals on capital and financial items and items forwarded to the Executive Committee.",
-          "gradRelevance": "Records the financial decisions made at the April meeting.",
-          "keyItems": [],
-          "documents": []
-        }
-      ]
+      "lastChecked": "2026-06-18T02:00:48.264Z",
+      "status": "empty",
+      "packages": []
     },
     {
       "id": "college-electors",
       "name": "College of Electors",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/college-electors",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -137,7 +47,7 @@
       "id": "committee-honorary-degrees",
       "name": "Committee for Honorary Degrees",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/committee-honorary-degrees",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -145,7 +55,7 @@
       "id": "committee-academic-policy-and-programs",
       "name": "Committee on Academic Policy and Programs",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/committee-academic-policy-and-programs",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -153,7 +63,7 @@
       "id": "elections-committee",
       "name": "Elections Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/elections-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -161,7 +71,7 @@
       "id": "executive-committee",
       "name": "Executive Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/executive-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -169,7 +79,7 @@
       "id": "governing-council",
       "name": "Governing Council",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/governing-council",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -177,7 +87,7 @@
       "id": "pension-committee",
       "name": "Pension Committee (Dissolved)",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/pension-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -185,28 +95,15 @@
       "id": "planning-and-budget-committee",
       "name": "Planning and Budget Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/planning-and-budget-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
-      "status": "new",
-      "packages": [
-        {
-          "title": "Planning and Budget Committee — Agenda Package · May 12, 2026",
-          "docType": "Agenda Package",
-          "meetingDate": "2026-05-12",
-          "detectedOn": "2026-06-18",
-          "isNew": true,
-          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/planning-and-budget-committee/agenda-packages/may-12-2026",
-          "summary": "The committee reviewed long-range budget guidelines and a deferred-maintenance report before recommending the operating budget to the Business and Academic Boards.",
-          "gradRelevance": "Budget guidelines set the envelope for graduate funding and program support.",
-          "keyItems": [],
-          "documents": []
-        }
-      ]
+      "lastChecked": "2026-06-18T02:00:48.264Z",
+      "status": "empty",
+      "packages": []
     },
     {
       "id": "senior-appointments-and-compensation-committee",
       "name": "Senior Appointments and Compensation Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/senior-appointments-and-compensation-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -214,7 +111,7 @@
       "id": "university-affairs-board",
       "name": "University Affairs Board",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/university-affairs-board",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "new",
       "packages": [
         {
@@ -224,45 +121,60 @@
           "detectedOn": "2026-06-18",
           "isNew": true,
           "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/university-affairs-board/agenda-packages/oct-23-2025",
-          "summary": "The Cycle 1 University Affairs Board meeting opened with board orientation and the Report of the Senior Assessors, then turned to a substantial slate of student-facing items. Members considered proposed revisions to the Policy on Sexual Violence and Sexual Harassment and the annual report on activity under it, a recommendation to approve the MacMillan Theatre remediation capital project (~1,200 gsm, Provostial funds), a presentation on the Hart House Building Renewal, and the University's Multi-Year Accessibility Plan. The consent agenda included the previous meeting's report and the annual report on summer executive authority approvals.",
-          "gradRelevance": "Several items bear directly on graduate students: the Sexual Violence & Harassment policy revisions govern protections and reporting processes that apply to grad students, TAs and RAs; the accessibility plan shapes accommodations for disabled students; and Hart House and capital renewals affect the student spaces and services grad students pay for and use.",
-          "keyItems": [],
+          "summary": "At its Cycle 1 meeting (Oct 23, 2025, Council Chamber, Simcoe Hall), the University Affairs Board opened with board orientation and the Report of the Senior Assessors, then worked through a heavily student-facing agenda. For information it received proposed revisions to the University's Policy on Sexual Violence and Sexual Harassment plus the annual report on activity under that policy, a presentation on the Hart House Building Renewal, and the Multi-Year Accessibility Plan (MYAP). For recommendation it considered a motion to approve in principle the MacMillan Theatre Remediation capital project (~1,200 gross / 440 net assignable square metres, funded by Provostial funds), which it concurred with from the Academic Board. The consent agenda carried Report No. 247 of the May 21, 2025 meeting and the annual report on summer executive authority approvals; one item (item 15, the MacMillan Theatre capital report) was taken in camera under By-Law No. 2.",
+          "gradRelevance": "Multiple items hit graduate students directly. The Sexual Violence & Sexual Harassment policy revisions set the protections, supports and complaint process that cover grad students, TAs and RAs, and the annual report shows how often those supports are actually used. The Multi-Year Accessibility Plan determines accommodations available to disabled grad students, and the Hart House renewal affects a space funded partly by student fees. The MacMillan Theatre capital approval commits Provostial funds to teaching/performance space rather than other priorities.",
+          "keyItems": [
+            "Board orientation and Report of the Senior Assessors (for information)",
+            "Proposed revisions to the Policy on Sexual Violence and Sexual Harassment (for information)",
+            "Annual Report on activity under the SVSH Policy (for information)",
+            "Motion to approve in principle the MacMillan Theatre Remediation (~1,200 gsm / 440 nasm, Provostial funds) — for recommendation",
+            "Hart House Building Renewal project presentation (for information)",
+            "Multi-Year Accessibility Plan (MYAP) (for information)",
+            "Consent agenda: Report No. 247 (May 21, 2025) and Summer Executive Authority annual report",
+            "Item 15 (MacMillan Theatre capital report) considered in camera under By-Law No. 2"
+          ],
           "documents": [
             {
               "title": "Report of the Senior Assessors (Presentation)",
               "url": "https://governingcouncil.utoronto.ca/media/32465",
-              "summary": "Opening presentation from the senior administration framing the year's priorities for the Board's student-services and campus mandate.",
-              "gradRelevance": "Sets the administration's agenda on the services and policies grad students rely on."
+              "summary": "Opening administrative presentation framing the Board's Cycle 1 priorities across its student-services and campus mandate.",
+              "gradRelevance": "Signals the administration's agenda on the services and policies grad students rely on."
             },
             {
               "title": "Proposed Revisions: Policy on Sexual Violence and Sexual Harassment",
               "url": "https://governingcouncil.utoronto.ca/media/32466",
-              "summary": "Proposed amendments to the University-wide SVSH policy, brought for information ahead of approval, covering definitions, supports, and the complaints process.",
-              "gradRelevance": "Directly governs protections, supports and reporting options available to graduate students, TAs and RAs."
+              "summary": "Proposed amendments to the University-wide SVSH policy, brought for information ahead of approval — covering definitions, supports available, and the disclosure/complaint process.",
+              "gradRelevance": "Directly governs the protections, supports and reporting options available to graduate students, TAs and RAs."
             },
             {
               "title": "Annual Report: Activity under the SVSH Policy",
               "url": "https://governingcouncil.utoronto.ca/media/32468",
-              "summary": "Annual data on disclosures, reports and supports provided under the SVSH policy across the University.",
-              "gradRelevance": "Shows how the policy is actually being used and resourced for students."
+              "summary": "Annual data on disclosures, reports and supports provided under the SVSH policy across the University over the past year.",
+              "gradRelevance": "Shows how the policy is actually being used and resourced for students who experience harm."
             },
             {
               "title": "Capital Project: MacMillan Theatre Remediation — Project Planning Report",
               "url": "https://governingcouncil.utoronto.ca/media/32469",
-              "summary": "Recommendation to approve in principle the MacMillan Theatre remediation (~1,200 gsm / 440 nasm), funded by Provostial funds.",
-              "gradRelevance": "A capital commitment from University funds affecting teaching and performance space."
+              "summary": "Project planning report recommending approval in principle of the MacMillan Theatre remediation (~1,200 gsm / 440 nasm theatre space), to be funded by Provostial funds.",
+              "gradRelevance": "A capital commitment of University funds affecting teaching and performance space."
+            },
+            {
+              "title": "Hart House Building Renewal (Presentation)",
+              "url": "https://governingcouncil.utoronto.ca/media/32472",
+              "summary": "Presentation on the planned renewal of the Hart House building, its programming, and affected spaces.",
+              "gradRelevance": "Hart House is funded partly by student fees and used widely by graduate students."
             },
             {
               "title": "Multi-Year Accessibility Plan (MYAP)",
               "url": "https://governingcouncil.utoronto.ca/media/32470",
               "summary": "The University's multi-year plan for meeting accessibility obligations across facilities, services and academics.",
-              "gradRelevance": "Determines accommodations and accessibility supports available to disabled graduate students."
+              "gradRelevance": "Determines the accommodations and accessibility supports available to disabled graduate students."
             },
             {
-              "title": "Hart House Building Renewal (Presentation)",
-              "url": "https://governingcouncil.utoronto.ca/media/32472",
-              "summary": "Update on the planned renewal of the Hart House building and its programming and spaces.",
-              "gradRelevance": "Hart House is funded partly by student fees and used widely by grad students."
+              "title": "Summer Executive Authority: Annual Report on UAB Approvals",
+              "url": "https://governingcouncil.utoronto.ca/media/32471",
+              "summary": "Annual report on decisions approved under summer executive authority while the Board was not meeting.",
+              "gradRelevance": "Transparency on decisions made over the summer that can affect student services."
             }
           ]
         }
@@ -272,7 +184,7 @@
       "id": "utm-academic-affairs-committee",
       "name": "UTM Academic Affairs Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utm-academic-affairs-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -280,7 +192,7 @@
       "id": "utm-agenda-committee",
       "name": "UTM Agenda Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utm-agenda-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -288,7 +200,7 @@
       "id": "utm-campus-affairs-committee",
       "name": "UTM Campus Affairs Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utm-campus-affairs-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -296,28 +208,15 @@
       "id": "utm-campus-council",
       "name": "UTM Campus Council",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utm-campus-council",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
-      "status": "new",
-      "packages": [
-        {
-          "title": "UTM Campus Council — Agenda Package · May 6, 2026",
-          "docType": "Agenda Package",
-          "meetingDate": "2026-05-06",
-          "detectedOn": "2026-06-18",
-          "isNew": true,
-          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utm-campus-council/agenda-packages/may-06-2026",
-          "summary": "The UTM Campus Council received the principal's report and approved campus capital and operating priorities including new student-space projects.",
-          "gradRelevance": "UTM-based graduate students are affected by campus space and service decisions.",
-          "keyItems": [],
-          "documents": []
-        }
-      ]
+      "lastChecked": "2026-06-18T02:00:48.264Z",
+      "status": "empty",
+      "packages": []
     },
     {
       "id": "utsc-academic-affairs-committee",
       "name": "UTSC Academic Affairs Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utsc-academic-affairs-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -325,7 +224,7 @@
       "id": "utsc-agenda-committee",
       "name": "UTSC Agenda Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utsc-agenda-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -333,7 +232,7 @@
       "id": "utsc-campus-affairs-committee",
       "name": "UTSC Campus Affairs Committee",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utsc-campus-affairs-committee",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     },
@@ -341,28 +240,15 @@
       "id": "utsc-campus-council",
       "name": "UTSC Campus Council",
       "url": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utsc-campus-council",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
-      "status": "new",
-      "packages": [
-        {
-          "title": "UTSC Campus Council — Agenda Package · May 5, 2026",
-          "docType": "Agenda Package",
-          "meetingDate": "2026-05-05",
-          "detectedOn": "2026-06-18",
-          "isNew": true,
-          "docUrl": "https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/utsc-campus-council/agenda-packages/may-05-2026",
-          "summary": "The UTSC Campus Council reviewed the principal's report and endorsed the campus master-plan update and several academic program changes.",
-          "gradRelevance": "UTSC graduate students are affected by master-plan and program decisions.",
-          "keyItems": [],
-          "documents": []
-        }
-      ]
+      "lastChecked": "2026-06-18T02:00:48.264Z",
+      "status": "empty",
+      "packages": []
     },
     {
       "id": "ad-hoc-committee-capital-projects",
       "name": "Ad Hoc Committee for Capital Projects",
       "url": "https://governingcouncil.utoronto.ca/ad-hoc-committee-capital-projects",
-      "lastChecked": "2026-06-18T01:33:34.801Z",
+      "lastChecked": "2026-06-18T02:00:48.264Z",
       "status": "empty",
       "packages": []
     }
