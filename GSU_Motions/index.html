@@ -45,11 +45,20 @@
     </div>
     <span style="{{ connStyle }}"><span style="{{ connDotStyle }}"></span>{{ connLabel }}</span>
     <div style="flex:1"></div>
-    <button onClick="{{ goDashboard }}" style="{{ navDashStyle }}">Dashboard</button>
-    <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
-      <button onClick="{{ goEmails }}" style="{{ navMailStyle }}">Email log<sc-if value="{{ hasEmails }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:7px;border-radius:9px;background:#EE3224;color:#fff;font-size:11px;font-weight:700">{{ emailCount }}</span></sc-if></button>
+    <div style="display:flex;gap:3px;background:rgba(255,255,255,.1);border-radius:9px;padding:3px;margin-right:8px">
+      <button onClick="{{ onMotionsMode }}" style="{{ navMotionsStyle }}">Motions</button>
+      <button onClick="{{ onMeetingsMode }}" style="{{ navMeetingsStyle }}">Meetings</button>
+    </div>
+    <sc-if value="{{ isMotionsMode }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ goDashboard }}" style="{{ navDashStyle }}">Dashboard</button>
+      <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ goEmails }}" style="{{ navMailStyle }}">Email log<sc-if value="{{ hasEmails }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:7px;border-radius:9px;background:#EE3224;color:#fff;font-size:11px;font-weight:700">{{ emailCount }}</span></sc-if></button>
+      </sc-if>
+      <button onClick="{{ startNew }}" style="background:#EE3224;color:#fff;border:none;border-radius:7px;padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:6px">+ New motion</button>
     </sc-if>
-    <button onClick="{{ startNew }}" style="background:#EE3224;color:#fff;border:none;border-radius:7px;padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:6px">+ New motion</button>
+    <sc-if value="{{ isMeetingsMode }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ onStartCreateMeeting }}" style="background:#EE3224;color:#fff;border:none;border-radius:7px;padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:6px">+ New meeting</button>
+    </sc-if>
     <div style="width:1px;height:26px;background:rgba(255,255,255,.18);margin:0 4px"></div>
     <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
       <span style="display:inline-flex;align-items:center;gap:6px;background:rgba(238,50,36,.2);border:1px solid rgba(238,50,36,.55);color:#ffd9d4;border-radius:20px;padding:5px 11px;font-size:12px;font-weight:700;letter-spacing:.02em">● President · Admin</span>
@@ -88,6 +97,35 @@
         <div style="display:flex;gap:10px;margin-top:22px">
           <button onClick="{{ onConfirmDelete }}" style="flex:1;background:#b3271a;color:#fff;border:none;border-radius:8px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Delete permanently</button>
           <button onClick="{{ onCancelDelete }}" style="background:#fff;color:#003A5D;border:1px solid #c9d4db;border-radius:8px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== DELETE AGENDA ITEM MODAL ===== -->
+  <sc-if value="{{ showDeleteItem }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onCancelDeleteItem }}" style="position:fixed;inset:0;z-index:60;background:rgba(9,30,46,.55);display:flex;align-items:center;justify-content:center;padding:20px">
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;box-shadow:0 24px 60px rgba(0,20,40,.35);width:100%;max-width:380px;padding:26px 28px 22px">
+        <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:19px;color:#003A5D">Remove this agenda item?</div>
+        <p style="font-size:13.5px;color:#5a6b75;margin-top:8px;line-height:1.5">It will be removed from the agenda for everyone.</p>
+        <div style="display:flex;gap:10px;margin-top:22px">
+          <button onClick="{{ onConfirmDeleteItem }}" style="flex:1;background:#b3271a;color:#fff;border:none;border-radius:8px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Remove</button>
+          <button onClick="{{ onCancelDeleteItem }}" style="background:#fff;color:#003A5D;border:1px solid #c9d4db;border-radius:8px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== DELETE MEETING MODAL ===== -->
+  <sc-if value="{{ showDeleteMeeting }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onCancelDeleteMeeting }}" style="position:fixed;inset:0;z-index:60;background:rgba(9,30,46,.55);display:flex;align-items:center;justify-content:center;padding:20px">
+      <div onClick="{{ stop }}" style="background:#fff;border-radius:14px;box-shadow:0 24px 60px rgba(0,20,40,.35);width:100%;max-width:400px;padding:26px 28px 22px">
+        <div style="width:42px;height:42px;border-radius:11px;background:#fbe0dd;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:13px">🗑️</div>
+        <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:19px;color:#003A5D">Delete this meeting?</div>
+        <p style="font-size:13.5px;color:#5a6b75;margin-top:8px;line-height:1.5">The meeting and all of its agenda items and reports will be permanently removed for everyone. This cannot be undone.</p>
+        <div style="display:flex;gap:10px;margin-top:22px">
+          <button onClick="{{ onConfirmDeleteMeeting }}" style="flex:1;background:#b3271a;color:#fff;border:none;border-radius:8px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Delete permanently</button>
+          <button onClick="{{ onCancelDeleteMeeting }}" style="background:#fff;color:#003A5D;border:1px solid #c9d4db;border-radius:8px;padding:12px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Cancel</button>
         </div>
       </div>
     </div>
@@ -141,7 +179,8 @@
                 <sc-for list="{{ sec.cards }}" as="m" hint-placeholder-count="3">
                   <div onClick="{{ m.onOpen }}" style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:20px 22px;cursor:pointer;display:flex;gap:20px;align-items:flex-start">
                     <div style="flex:1;min-width:0">
-                      <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+                      <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap">
+                        <span style="{{ m.kindStyle }}">{{ m.kindLabel }}</span>
                         <span style="{{ m.catStyle }}">{{ m.category }}</span>
                         <span style="{{ m.statusStyle }}">{{ m.statusLabel }}</span>
                       </div>
@@ -180,12 +219,29 @@
       <div style="background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);overflow:hidden">
         <div style="padding:22px 26px;border-bottom:1px solid #edf1f4">
           <h2 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:21px;color:#003A5D">Submit a motion</h2>
-          <p style="font-size:13.5px;color:#5a6b75;margin-top:5px">Once submitted, this goes to the President (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="72020017011b16171c063207061501075c1113">[email&#160;protected]</a>) for approval before it opens to a vote.</p>
+          <p style="font-size:13.5px;color:#5a6b75;margin-top:5px">Once submitted, this goes to the President (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4e3e3c2b3d272a2b203a0e3b3a293d3b602d2f">[email&#160;protected]</a>) for approval before it opens to a vote.</p>
         </div>
         <div style="padding:24px 26px;display:flex;flex-direction:column;gap:20px">
           <div>
             <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:7px">Motion title</label>
             <input value="{{ draft.title }}" onInput="{{ onTitle }}" placeholder="e.g. Approve 2026 Orientation Week budget" style="width:100%;padding:11px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:15px;color:#1f2d36;background:#fff;font-family:inherit;outline:none">
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:7px">Motion type</label>
+            <div style="display:flex;gap:10px">
+              <button onClick="{{ onKindOnline }}" style="{{ kindOnlineStyle }}"><div style="font-weight:700;font-size:14px">Online motion</div><div style="font-size:11.5px;opacity:.8;margin-top:2px">Voted &amp; signed async by all members</div></button>
+              <button onClick="{{ onKindMeeting }}" style="{{ kindMeetingStyle }}"><div style="font-weight:700;font-size:14px">Meeting motion</div><div style="font-size:11.5px;opacity:.8;margin-top:2px">Brought to a specific meeting</div></button>
+            </div>
+            <sc-if value="{{ kindIsMeeting }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:11px">
+                <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:7px">Which meeting?</label>
+                <select value="{{ draft.meetingId }}" onChange="{{ onMeetingPick }}" style="width:100%;padding:11px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:15px;color:#1f2d36;background:#fff;font-family:inherit;outline:none;appearance:auto">
+                  <option value="next">{{ nextMeetingLabel }}</option>
+                  <sc-for list="{{ meetingPickOptions }}" as="mo" hint-placeholder-count="2"><option value="{{ mo.id }}">{{ mo.label }}</option></sc-for>
+                </select>
+                <p style="font-size:12px;color:#7e8d96;margin-top:7px;line-height:1.5">{{ nextMeetingHint }}</p>
+              </div>
+            </sc-if>
           </div>
           <div>
             <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:7px">Mover — who is moving this motion?</label>
@@ -231,7 +287,7 @@
           </sc-if>
           <div style="display:flex;gap:10px;align-items:center;padding-top:4px">
             <button onClick="{{ onSubmitMotion }}" style="background:#EE3224;color:#fff;border:none;border-radius:8px;padding:13px 26px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Submit for approval</button>
-            <span style="font-size:13px;color:#7e8d96">→ emails <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="02727067716b66676c764277766571772c6163">[email&#160;protected]</a></span>
+            <span style="font-size:13px;color:#7e8d96">→ emails <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fe8e8c9b8d979a9b908abe8b8a998d8bd09d9f">[email&#160;protected]</a></span>
           </div>
         </div>
       </div>
@@ -289,7 +345,8 @@
           <button onClick="{{ onAskDelete }}" style="background:#fff;color:#b3271a;border:1px solid #e3b4ad;border-radius:7px;padding:6px 12px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit">Delete motion</button>
         </sc-if>
       </div>
-      <div style="font-size:13.5px;color:#5a6b75;margin-bottom:18px">Moved by <strong style="color:#33444d">{{ cur.moverDisplay }}</strong>{{ cur.seconderLabel }}</div>
+      <div style="font-size:13.5px;color:#5a6b75;margin-bottom:4px">Moved by <strong style="color:#33444d">{{ cur.moverDisplay }}</strong>{{ cur.seconderLabel }}</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:#8b99a1;margin-bottom:18px"><span>{{ cur.submittedLabel }}</span><sc-if value="{{ cur.approvedLabel }}" hint-placeholder-val="{{ false }}"><span>·</span><span>{{ cur.approvedLabel }}</span></sc-if><sc-if value="{{ cur.closedLabel }}" hint-placeholder-val="{{ false }}"><span>·</span><span>{{ cur.closedLabel }}</span></sc-if></div>
 
       <div style="display:inline-flex;background:#e2e9ee;border-radius:9px;padding:4px;margin-bottom:20px;gap:3px">
         <button onClick="{{ tabVote }}" style="{{ tabVoteStyle }}">Cast a vote</button>
@@ -368,7 +425,7 @@
               </div>
             </sc-if>
             <sc-if value="{{ resultsSent }}" hint-placeholder-val="{{ false }}">
-              <div style="background:#f0f6f2;border:1px solid #cce6d6;border-radius:12px;padding:16px 20px;font-size:13.5px;color:#1f7a4d;font-weight:600">✓ Results have been emailed to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b2c2c0d7c1dbd6d7dcc6f2c7c6d5c1c79cd1d3">[email&#160;protected]</a>.</div>
+              <div style="background:#f0f6f2;border:1px solid #cce6d6;border-radius:12px;padding:16px 20px;font-size:13.5px;color:#1f7a4d;font-weight:600">✓ Results have been emailed to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="65151700160c01000b112510110216104b0604">[email&#160;protected]</a>.</div>
             </sc-if>
           </sc-if>
         </div>
@@ -386,7 +443,7 @@
                 <div style="flex:1;min-width:0">
                   <div style="font-size:13.5px;font-weight:600;color:#23323b;line-height:1.2">{{ r.name }}<sc-if value="{{ r.isMover }}" hint-placeholder-val="{{ false }}"><span style="margin-left:6px;font-size:10px;font-weight:700;letter-spacing:.04em;color:#1d4ed8;background:#dbeafe;padding:2px 6px;border-radius:10px;vertical-align:middle">MOVER</span></sc-if><sc-if value="{{ r.isSeconder }}" hint-placeholder-val="{{ false }}"><span style="margin-left:6px;font-size:10px;font-weight:700;letter-spacing:.04em;color:#8a5a00;background:#fdf0d5;padding:2px 6px;border-radius:10px;vertical-align:middle">SECONDER</span></sc-if></div>
                   <div style="font-size:11.5px;color:#8b99a1;line-height:1.3">{{ r.role }}</div>
-                  <sc-if value="{{ r.voted }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#9aabb4;font-family:Montserrat,cursive;font-style:italic">signed “{{ r.sig }}”</div></sc-if>
+                  <sc-if value="{{ r.voted }}" hint-placeholder-val="{{ false }}"><div style="font-size:11.5px;color:#9aabb4"><span style="font-family:Montserrat,cursive;font-style:italic">signed “{{ r.sig }}”</span> · {{ r.voteTime }}</div></sc-if>
                 </div>
                 <span style="{{ r.choiceStyle }}">{{ r.choiceLabel }}</span>
               </div>
@@ -448,6 +505,296 @@
       </sc-if>
     </sc-if>
 
+    <!-- ============ MEETINGS LIST ============ -->
+    <sc-if value="{{ isMeetingsList }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <h1 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:26px;color:#003A5D">Executive meetings</h1>
+          <p style="font-size:14px;color:#5a6b75;margin-top:4px">Build agendas, collect items &amp; reports, and run decisions. The agenda auto-emails to everyone 24 hours before each meeting.</p>
+        </div>
+      </div>
+      <sc-if value="{{ hasMeetings }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <sc-for list="{{ meetingCards }}" as="mt" hint-placeholder-count="2">
+            <div onClick="{{ mt.onOpen }}" style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:20px 22px;cursor:pointer;display:flex;gap:20px;align-items:flex-start">
+              <div style="flex:1;min-width:0">
+                <div style="margin-bottom:9px"><span style="{{ mt.statusStyle }}">{{ mt.statusLabel }}</span></div>
+                <h3 style="font-family:Montserrat,sans-serif;font-weight:700;font-size:18px;color:#0c2f47;line-height:1.3">{{ mt.title }}</h3>
+                <div style="font-size:13.5px;color:#33444d;margin-top:6px;font-weight:600">{{ mt.dateLabel }}</div>
+                <div style="font-size:13px;color:#5a6b75;margin-top:2px">{{ mt.timeLabel }} · {{ mt.location }}</div>
+                <div style="font-size:12.5px;color:#7e8d96;margin-top:8px">{{ mt.sub }}</div>
+              </div>
+              <div style="font-size:22px;color:#c9d4db;flex:none">›</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ noMeetings }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px dashed #c9d4db;border-radius:11px;padding:48px;text-align:center">
+          <p style="font-size:15px;color:#5a6b75;margin-bottom:16px">No meetings yet.</p>
+          <button onClick="{{ onStartCreateMeeting }}" style="background:#EE3224;color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">+ Create a meeting</button>
+        </div>
+      </sc-if>
+    </sc-if>
+
+    <!-- ============ CREATE MEETING ============ -->
+    <sc-if value="{{ isCreateMeeting }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ onCancelMeeting }}" style="background:none;border:none;color:#5a6b75;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;padding:0;margin-bottom:14px">‹ Back to meetings</button>
+      <div style="max-width:640px;background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);overflow:hidden">
+        <div style="padding:22px 26px;border-bottom:1px solid #edf1f4">
+          <h2 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:21px;color:#003A5D">New meeting</h2>
+          <p style="font-size:13.5px;color:#5a6b75;margin-top:5px">Once created, execs and staff can add agenda items and submit their reports.</p>
+        </div>
+        <div style="padding:24px 26px;display:flex;flex-direction:column;gap:18px">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:7px">Meeting title</label>
+            <input value="{{ meetingDraft.title }}" onInput="{{ mOnTitle }}" style="width:100%;padding:11px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:15px;color:#1f2d36;background:#fff;font-family:inherit;outline:none">
+          </div>
+          <div style="display:flex;gap:14px">
+            <div style="flex:1">
+              <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:7px">Date</label>
+              <input value="{{ meetingDraft.date }}" onInput="{{ mOnDate }}" type="date" style="width:100%;padding:11px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:15px;color:#1f2d36;background:#fff;font-family:inherit;outline:none">
+            </div>
+            <div style="width:120px">
+              <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:7px">Start</label>
+              <input value="{{ meetingDraft.start }}" onInput="{{ mOnStart }}" type="time" style="width:100%;padding:11px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:15px;color:#1f2d36;background:#fff;font-family:inherit;outline:none">
+            </div>
+            <div style="width:120px">
+              <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:7px">End</label>
+              <input value="{{ meetingDraft.end }}" onInput="{{ mOnEnd }}" type="time" style="width:100%;padding:11px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:15px;color:#1f2d36;background:#fff;font-family:inherit;outline:none">
+            </div>
+          </div>
+          <div style="display:flex;gap:14px">
+            <div style="flex:1">
+              <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:7px">Location</label>
+              <input value="{{ meetingDraft.location }}" onInput="{{ mOnLocation }}" style="width:100%;padding:11px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:15px;color:#1f2d36;background:#fff;font-family:inherit;outline:none">
+            </div>
+            <div style="flex:1">
+              <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:7px">Chair</label>
+              <select value="{{ meetingDraft.chair }}" onChange="{{ mOnChair }}" style="width:100%;padding:11px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:15px;color:#1f2d36;background:#fff;font-family:inherit;outline:none;appearance:auto">
+                <sc-for list="{{ chairOptions }}" as="c" hint-placeholder-count="6"><option value="{{ c.name }}">{{ c.name }}</option></sc-for>
+              </select>
+            </div>
+          </div>
+          <sc-if value="{{ meetingError }}" hint-placeholder-val="{{ false }}"><div style="font-size:13.5px;color:#b3271a;font-weight:600">{{ meetingError }}</div></sc-if>
+          <div style="display:flex;gap:10px;padding-top:4px">
+            <button onClick="{{ onCreateMeeting }}" style="background:#EE3224;color:#fff;border:none;border-radius:8px;padding:13px 26px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Create meeting</button>
+            <button onClick="{{ onCancelMeeting }}" style="background:#fff;color:#003A5D;border:1px solid #c9d4db;border-radius:8px;padding:13px 22px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ MEETING DETAIL ============ -->
+    <sc-if value="{{ isMeetingView }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ backToMeetings }}" style="background:none;border:none;color:#5a6b75;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;padding:0;margin-bottom:14px">‹ Back to meetings</button>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:6px">
+        <div>
+          <div style="margin-bottom:8px"><span style="{{ mv.statusStyle }}">{{ mv.statusLabel }}</span></div>
+          <h1 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:25px;color:#003A5D;line-height:1.2">{{ mv.title }}</h1>
+          <div style="font-size:14px;color:#33444d;margin-top:6px;font-weight:600">{{ mv.dateLabel }}</div>
+          <div style="font-size:13.5px;color:#5a6b75;margin-top:2px">{{ mv.timeLabel }} · {{ mv.location }} · Chair: {{ mv.chair }}</div>
+          <div style="font-size:12.5px;color:#8a5a00;background:#fdf0d5;display:inline-block;padding:4px 11px;border-radius:20px;margin-top:10px;font-weight:600">⏱ {{ mv.countdown }}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;flex:none;align-items:stretch">
+          <button onClick="{{ onDownloadAgenda }}" style="background:#003A5D;color:#fff;border:none;border-radius:8px;padding:11px 16px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">⬇ Download agenda (.docx)</button>
+          <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ onPublishAgenda }}" style="background:#fff;color:#1f7a4d;border:1px solid #b6e0c6;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">Publish &amp; email agenda now</button>
+            <button onClick="{{ onMarkComplete }}" style="background:#fff;color:#5a6b75;border:1px solid #d2dbe1;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Mark complete</button>
+            <button onClick="{{ onAskDeleteMeeting }}" style="background:#fff;color:#b3271a;border:1px solid #e3b4ad;border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Delete meeting</button>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:22px;align-items:start;margin-top:22px">
+        <!-- agenda items column -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <!-- standing procedural items (editable minutes) -->
+          <div style="background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:20px 22px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;color:#003A5D">Standing items &amp; minutes</div>
+              <button onClick="{{ onSaveMinutes }}" style="{{ saveMinutesStyle }}">Save minutes</button>
+            </div>
+            <div style="border:1px solid #e6ecf0;border-radius:9px;padding:13px 15px;margin-bottom:12px">
+              <div style="font-weight:700;font-size:14.5px;color:#0c2f47;margin-bottom:7px">Call to Order</div>
+              <div style="display:flex;align-items:center;gap:9px;font-size:13.5px;color:#5a6b75">The meeting is called to order at <input value="{{ minCallToOrder }}" onInput="{{ onCallToOrder }}" placeholder="4:06 PM" style="width:110px;padding:7px 10px;border:1px solid #c9d4db;border-radius:6px;font-size:13.5px;color:#1f2d36;background:#fff;font-family:inherit;outline:none"></div>
+            </div>
+            <sc-for list="{{ standingMotions }}" as="sm" hint-placeholder-count="2">
+              <div style="border:1px solid #e6ecf0;border-radius:9px;padding:13px 15px;margin-bottom:12px">
+                <div style="font-weight:700;font-size:14.5px;color:#0c2f47;margin-bottom:7px">{{ sm.title }}</div>
+                <div style="background:#f6f9fb;border-radius:8px;padding:11px 13px;font-size:13.5px;line-height:1.5;color:#23323b;margin-bottom:11px"><strong style="color:#003A5D">MOTION:</strong> {{ sm.birt }}</div>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+                  <div><div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#8b99a1;margin-bottom:4px">Mover</div>
+                    <select value="{{ sm.mover }}" onChange="{{ sm.onMover }}" style="padding:8px 10px;border:1px solid #c9d4db;border-radius:6px;font-size:13px;color:#1f2d36;background:#fff;font-family:inherit;outline:none;appearance:auto">
+                      <option value="">—</option><sc-for list="{{ nameOptions }}" as="p" hint-placeholder-count="6"><option value="{{ p.name }}">{{ p.name }}</option></sc-for>
+                    </select></div>
+                  <div><div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#8b99a1;margin-bottom:4px">Seconder</div>
+                    <select value="{{ sm.seconder }}" onChange="{{ sm.onSeconder }}" style="padding:8px 10px;border:1px solid #c9d4db;border-radius:6px;font-size:13px;color:#1f2d36;background:#fff;font-family:inherit;outline:none;appearance:auto">
+                      <option value="">—</option><sc-for list="{{ nameOptions }}" as="p" hint-placeholder-count="6"><option value="{{ p.name }}">{{ p.name }}</option></sc-for>
+                    </select></div>
+                  <div style="display:flex;gap:6px"><button onClick="{{ sm.setCarries }}" style="{{ sm.carriesStyle }}">Carries</button><button onClick="{{ sm.setFails }}" style="{{ sm.failsStyle }}">Fails</button></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <!-- meeting motions (votable) -->
+          <sc-if value="{{ hasMeetingMotions }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:20px 22px">
+              <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;color:#003A5D;margin-bottom:4px">Motions for this meeting</div>
+              <p style="font-size:12.5px;color:#7e8d96;margin-bottom:14px">Submitted as meeting motions — vote &amp; sign through the portal; results flow into the agenda automatically.</p>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <sc-for list="{{ meetingMotions }}" as="mm" hint-placeholder-count="1">
+                  <div style="border:1px solid #e6ecf0;border-radius:9px;padding:13px 15px">
+                    <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px"><span style="font-weight:700;font-size:14.5px;color:#0c2f47">{{ mm.title }}</span><span style="{{ mm.statusStyle }}">{{ mm.statusLabel }}</span></div>
+                    <div style="font-size:13.5px;line-height:1.5;color:#23323b">{{ mm.birt }}</div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px">
+                      <span style="font-size:12.5px;color:#5a6b75">{{ mm.resultLine }}</span>
+                      <button onClick="{{ mm.onOpen }}" style="background:#EE3224;color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">{{ mm.btnLabel }}</button>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <!-- digital motions -->
+          <sc-if value="{{ hasDigital }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:20px 22px">
+              <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;color:#003A5D;margin-bottom:4px">Notice of Digital Motions</div>
+              <p style="font-size:12.5px;color:#7e8d96;margin-bottom:14px">Online motions that closed since the last meeting — pulled in automatically.</p>
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <sc-for list="{{ digitalMotions }}" as="d" hint-placeholder-count="1">
+                  <div onClick="{{ d.onOpen }}" style="border:1px solid #e6ecf0;border-radius:9px;padding:13px 15px;cursor:pointer">
+                    <div style="font-size:12px;color:#7e8d96;margin-bottom:5px">{{ d.served }}</div>
+                    <div style="font-size:14px;line-height:1.5;color:#23323b">{{ d.birt }}</div>
+                    <div style="display:flex;align-items:center;gap:14px;margin-top:9px;font-size:12.5px;color:#5a6b75"><span>Mover: <strong>{{ d.mover }}</strong></span><span>Seconder: <strong>{{ d.seconder }}</strong></span><span style="{{ d.resultStyle }}">{{ d.result }}</span></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- items list -->
+          <div style="background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:20px 22px">
+            <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;color:#003A5D;margin-bottom:14px">Agenda items</div>
+            <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <sc-for list="{{ agendaItems }}" as="it" hint-placeholder-count="3">
+                  <div style="border:1px solid #e6ecf0;border-radius:9px;padding:15px 16px">
+                    <div style="display:flex;align-items:flex-start;gap:10px">
+                      <div style="width:24px;height:24px;border-radius:6px;background:#003A5D;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none">{{ it.num }}</div>
+                      <div style="flex:1;min-width:0">
+                        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15.5px;color:#0c2f47">{{ it.title }}</span><span style="{{ it.typeStyle }}">{{ it.typeLabel }}</span></div>
+                        <div style="font-size:12.5px;color:#7e8d96;margin-top:3px">Presenter: {{ it.presenter }} · {{ it.time }}</div>
+                        <sc-if value="{{ it.description }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;line-height:1.55;color:#42525b;margin-top:8px;white-space:pre-wrap">{{ it.description }}</div></sc-if>
+                        <sc-if value="{{ it.hasMotion }}" hint-placeholder-val="{{ false }}">
+                          <div style="background:#f6f9fb;border-radius:8px;padding:11px 13px;margin-top:10px;font-size:13.5px;line-height:1.5;color:#23323b"><strong style="color:#003A5D">MOTION:</strong> {{ it.motionText }}</div>
+                        </sc-if>
+                        <sc-if value="{{ it.isDecision }}" hint-placeholder-val="{{ false }}">
+                          <div style="border:1px dashed #e3b4ad;background:#fffaf9;border-radius:8px;padding:11px 13px;margin-top:10px">
+                            <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#b3271a;margin-bottom:8px">Record in-person result</div>
+                            <div style="display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end">
+                              <div><div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#8b99a1;margin-bottom:4px">Mover</div>
+                                <select value="{{ it.mvMover }}" onChange="{{ it.onMvMover }}" style="padding:7px 9px;border:1px solid #c9d4db;border-radius:6px;font-size:12.5px;color:#1f2d36;background:#fff;font-family:inherit;outline:none;appearance:auto"><option value="">—</option><sc-for list="{{ nameOptions }}" as="p" hint-placeholder-count="6"><option value="{{ p.name }}">{{ p.name }}</option></sc-for></select></div>
+                              <div><div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#8b99a1;margin-bottom:4px">Seconder</div>
+                                <select value="{{ it.mvSeconder }}" onChange="{{ it.onMvSeconder }}" style="padding:7px 9px;border:1px solid #c9d4db;border-radius:6px;font-size:12.5px;color:#1f2d36;background:#fff;font-family:inherit;outline:none;appearance:auto"><option value="">—</option><sc-for list="{{ nameOptions }}" as="p" hint-placeholder-count="6"><option value="{{ p.name }}">{{ p.name }}</option></sc-for></select></div>
+                              <div style="display:flex;gap:6px"><button onClick="{{ it.setMvCarries }}" style="{{ it.mvCarriesStyle }}">Carries</button><button onClick="{{ it.setMvFails }}" style="{{ it.mvFailsStyle }}">Fails</button></div>
+                            </div>
+                          </div>
+                        </sc-if>
+                        <div style="margin-top:10px">
+                          <textarea value="{{ it.mvNotes }}" onInput="{{ it.onMvNotes }}" placeholder="Minutes notes — what was discussed / decided…" style="width:100%;min-height:54px;padding:9px 12px;border:1px solid #e6ecf0;border-radius:8px;font-size:13px;line-height:1.5;color:#33444d;background:#fbfcfd;font-family:inherit;outline:none"></textarea>
+                        </div>
+                        <div style="display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap">
+                          <sc-if value="{{ it.decisionLabel }}" hint-placeholder-val="{{ false }}">
+                            <button onClick="{{ it.onDecision }}" style="{{ it.decisionBtnStyle }}">{{ it.decisionLabel }}</button>
+                          </sc-if>
+                          <sc-if value="{{ it.canDelete }}" hint-placeholder-val="{{ false }}">
+                            <button onClick="{{ it.onDelete }}" style="background:#fff;color:#b3271a;border:1px solid #e3b4ad;border-radius:7px;padding:8px 12px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit">Remove</button>
+                          </sc-if>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ false }}"></sc-if>
+
+            <!-- add item form -->
+            <div style="border-top:1px solid #edf1f4;margin-top:18px;padding-top:18px">
+              <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:14px;color:#0c2f47;margin-bottom:13px">Add an agenda item</div>
+              <div style="display:flex;gap:10px;margin-bottom:12px">
+                <button onClick="{{ iSetDiscussion }}" style="{{ itemTypeDiscussionStyle }}">Discussion</button>
+                <button onClick="{{ iSetDecision }}" style="{{ itemTypeDecisionStyle }}">Decision (needs a vote)</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:11px">
+                <input value="{{ itemDraft.title }}" onInput="{{ iOnTitle }}" placeholder="Item title" style="width:100%;padding:10px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:14.5px;color:#1f2d36;background:#fff;font-family:inherit;outline:none">
+                <div style="display:flex;gap:10px">
+                  <select value="{{ itemDraft.presenter }}" onChange="{{ iOnPresenter }}" style="flex:1;padding:10px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:14.5px;color:#1f2d36;background:#fff;font-family:inherit;outline:none;appearance:auto">
+                    <option value="">Presenter…</option>
+                    <sc-for list="{{ presenterOptions }}" as="p" hint-placeholder-count="6"><option value="{{ p.name }}">{{ p.name }}</option></sc-for>
+                  </select>
+                  <input value="{{ itemDraft.timeEstimate }}" onInput="{{ iOnTime }}" placeholder="Time (e.g. 10 min)" style="width:150px;padding:10px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:14.5px;color:#1f2d36;background:#fff;font-family:inherit;outline:none">
+                </div>
+                <textarea value="{{ itemDraft.description }}" onInput="{{ iOnDesc }}" placeholder="Description / context" style="width:100%;min-height:70px;padding:10px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:14.5px;line-height:1.5;color:#1f2d36;background:#fff;font-family:inherit;outline:none"></textarea>
+                <sc-if value="{{ itemIsDecision }}" hint-placeholder-val="{{ false }}">
+                  <textarea value="{{ itemDraft.motionText }}" onInput="{{ iOnMotion }}" placeholder="Motion text — “Be it resolved that…” (this becomes the online vote)" style="width:100%;min-height:70px;padding:10px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:14.5px;line-height:1.5;color:#1f2d36;background:#fbfcfd;font-family:inherit;outline:none"></textarea>
+                </sc-if>
+                <input value="{{ itemDraft.docs }}" onInput="{{ iOnDocs }}" placeholder="Supporting document / link (optional)" style="width:100%;padding:10px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:14.5px;color:#1f2d36;background:#fff;font-family:inherit;outline:none">
+                <sc-if value="{{ itemError }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#b3271a;font-weight:600">{{ itemError }}</div></sc-if>
+                <div><button onClick="{{ onAddItem }}" style="background:#003A5D;color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Add item</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Other Business + Reports + Adjournment -->
+          <div style="background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:20px 22px">
+            <div style="font-weight:700;font-size:14.5px;color:#0c2f47;margin-bottom:7px">Other Business</div>
+            <textarea value="{{ minOtherBusiness }}" onInput="{{ onOtherBusiness }}" placeholder="Any other business raised at the meeting…" style="width:100%;min-height:48px;padding:9px 12px;border:1px solid #e6ecf0;border-radius:8px;font-size:13.5px;line-height:1.5;color:#33444d;background:#fbfcfd;font-family:inherit;outline:none;margin-bottom:18px"></textarea>
+            <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;color:#003A5D;margin-bottom:12px">Executive &amp; Staff Reports</div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <sc-for list="{{ savedReports }}" as="r" hint-placeholder-count="6">
+                <div>
+                  <div style="font-weight:700;font-size:13.5px;color:#23323b">{{ r.role }}</div>
+                  <sc-if value="{{ r.hasText }}" hint-placeholder-val="{{ false }}">
+                    <ul style="margin:5px 0 0 18px;padding:0">
+                      <sc-for list="{{ r.lines }}" as="ln" hint-placeholder-count="2"><li style="font-size:13.5px;line-height:1.55;color:#42525b;margin-bottom:2px">{{ ln }}</li></sc-for>
+                    </ul>
+                  </sc-if>
+                  <sc-if value="{{ r.hasText }}" hint-placeholder-val="{{ true }}"></sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <div style="border-top:1px solid #edf1f4;margin-top:18px;padding-top:14px">
+              <div style="font-weight:700;font-size:14.5px;color:#0c2f47;margin-bottom:7px">Adjournment</div>
+              <div style="display:flex;align-items:center;gap:9px;font-size:13.5px;color:#5a6b75">The meeting is adjourned at <input value="{{ minAdjourn }}" onInput="{{ onAdjourn }}" placeholder="5:00 PM" style="width:110px;padding:7px 10px;border:1px solid #c9d4db;border-radius:6px;font-size:13.5px;color:#1f2d36;background:#fff;font-family:inherit;outline:none"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- right column: reports + attendance -->
+        <div style="display:flex;flex-direction:column;gap:16px;position:sticky;top:20px">
+          <div style="background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:20px">
+            <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;color:#003A5D;margin-bottom:4px">Submit your report</div>
+            <p style="font-size:12.5px;color:#7e8d96;margin-bottom:13px;line-height:1.5">Add your update to the Executive &amp; Staff Reports section of the agenda.</p>
+            <select value="{{ reportWho }}" onChange="{{ onReportWho }}" style="width:100%;padding:10px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:14px;color:#1f2d36;background:#fff;font-family:inherit;outline:none;appearance:auto;margin-bottom:10px">
+              <option value="">Your role…</option>
+              <sc-for list="{{ reportPeople }}" as="r" hint-placeholder-count="6"><option value="{{ r.role }}">{{ r.role }}</option></sc-for>
+            </select>
+            <textarea value="{{ reportText }}" onInput="{{ onReportText }}" placeholder="Your report…" style="width:100%;min-height:120px;padding:10px 13px;border:1px solid #c9d4db;border-radius:7px;font-size:14px;line-height:1.5;color:#1f2d36;background:#fff;font-family:inherit;outline:none;margin-bottom:10px"></textarea>
+            <button onClick="{{ onSaveReport }}" style="width:100%;background:#EE3224;color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Save report</button>
+          </div>
+          <div style="background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:20px">
+            <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;color:#003A5D;margin-bottom:12px">Expected attendance</div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8b99a1;margin-bottom:5px">Executives</div>
+            <div style="font-size:13px;line-height:1.6;color:#33444d;margin-bottom:12px">{{ mv.execs }}</div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8b99a1;margin-bottom:5px">Staff</div>
+            <div style="font-size:13px;line-height:1.6;color:#33444d">{{ mv.staff }}</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
   </main>
 </div>
 </x-dc>
@@ -465,6 +812,23 @@ class Component extends DCLogic {
     ];
     this.EXECDIR = {key:'execdir', role:'Executive Director', name:'Corey Scott', email:'executivedirector@utgsu.ca'};
     this.ALL_RECIPIENTS = [...this.VOTERS.map(v=>v.email), this.EXECDIR.email];
+    // Staff (non-voting) — from the meeting minutes
+    this.STAFF = [
+      {name:'Susana May Boateng', role:'Union Affairs and Services Coordinator'},
+      {name:'Corey Scott', role:'Executive Director'},
+      {name:'Shain Abdulla', role:'Communications and Engagement Specialist'},
+      {name:'Gail Fernando', role:'Finance Administrator'},
+      {name:'Nusrat Huq', role:'Membership & Advocacy Coordinator'},
+      {name:'Lorena Florea', role:'Health and Dental Plan Administrator'},
+    ];
+    // Everyone who can present items / submit reports / be marked in attendance
+    this.EXEC_NAMES = this.VOTERS.map(v=>v.name);
+    this.STAFF_NAMES = this.STAFF.map(s=>s.name);
+    // Order used for the Executive & Staff Reports section of the agenda/minutes
+    this.REPORT_ROLES = [
+      'President','Vice President External','Vice President Internal','Vice President Finance','Vice President Grad Life','Vice President Academics',
+      'Executive Director','Health and Dental Plan Administrator','Finance Administrator','Membership & Advocacy Coordinator','Communications and Engagement Specialist','Union Affairs and Services Coordinator'
+    ];
     this.CATEGORIES = ['Finance','Governance','Advocacy','Events & Social','Operations','Equity & Inclusion','Academic'];
     this.CHOICE = {
       yes:{label:'Yes', color:'#1f8a5b', sub:'In favour'},
@@ -472,6 +836,7 @@ class Component extends DCLogic {
       abstain:{label:'Abstain', color:'#6b7a85', sub:'No position'},
     };
     this.state = {
+      appMode:'motions',
       view:'dashboard', currentId:null, motions:[], outbox:[],
       filter:'all', motionTab:'vote',
       draft:this.blankDraft(), catSuggestion:null, catLoading:false, submitError:'',
@@ -479,9 +844,16 @@ class Component extends DCLogic {
       toast:null,
       admin:false, showLogin:false, loginPw:'', loginError:'',
       conn:'connecting', deleteId:null, search:'',
+      // meetings
+      meetings:[], agendaItems:[], currentMeetingId:null,
+      meetingDraft:this.blankMeeting(), itemDraft:this.blankItem(), itemError:'', meetingError:'',
+      reportWho:'', reportText:'', deleteItemId:null, deleteMeetingId:null,
+      minutesDraft:null, minutesDirty:false,
     };
   }
-  blankDraft(){ return {title:'',mover:'',category:'',motionText:'',background:'',link:''}; }
+  blankMeeting(){ return {title:'UTGSU Office Meeting', date:'', start:'16:00', end:'17:00', location:'Boardroom', chair:'Amir Moghadam'}; }
+  blankItem(){ return {title:'',presenter:'',type:'discussion',timeEstimate:'',description:'',motionText:'',docs:''}; }
+  blankDraft(){ return {title:'',mover:'',category:'',motionText:'',background:'',link:'',kind:'online',meetingId:''}; }
 
   // ===== connection / data layer (Supabase + EmailJS) =====
   cfg(){ return window.MP_CONFIG || {}; }
@@ -493,7 +865,8 @@ class Component extends DCLogic {
     });
   }
   async componentDidMount(){
-    this.SEED_VERSION = 2;
+    this.SEED_VERSION = 4;
+    this.MEETINGS_SEED_VERSION = 4;
     this.VOTE_WINDOW_MS = 48*60*60*1000; // 48 hours
     const c=this.cfg();
     // init EmailJS if present
@@ -506,6 +879,10 @@ class Component extends DCLogic {
         try {
           this.sb = window.supabase.createClient(c.SUPABASE_URL, c.SUPABASE_KEY);
           await this.loadMotions();
+          await this.loadMeetings();
+          await this.loadAgendaItems();
+          await this.seedMeetingIfEmpty();
+          await this.ensureExampleMotions();
           this.subscribe();
           ok=true;
           this.setState({conn:'live'});
@@ -521,14 +898,23 @@ class Component extends DCLogic {
       if(loaded && loaded.version===this.SEED_VERSION && loaded.motions && loaded.motions.length){
         this.setState({motions:loaded.motions});
       } else { this.seed(); }
+      // meetings demo data
+      let lm=null;
+      try { lm = JSON.parse(localStorage.getItem('utgsu_meetings')||'null'); } catch(e){}
+      if(lm && lm.version===this.MEETINGS_SEED_VERSION && lm.meetings && lm.meetings.length){
+        this.setState({meetings:lm.meetings, agendaItems:lm.agendaItems||[]});
+      } else {
+        await this.seedMeetingIfEmpty();
+      }
     } else {
       this.live=true;
     }
     // 48-hour expiry: check now and every minute, plus on every realtime refresh
     this.checkExpiries();
-    this._expiryTimer = setInterval(()=>this.checkExpiries(), 60*1000);
+    this.checkAgendaSends();
+    this._expiryTimer = setInterval(()=>{ this.checkExpiries(); this.checkAgendaSends(); }, 60*1000);
     // re-render the live countdowns each minute
-    this._tickTimer = setInterval(()=>{ if(this.state.view==='motion'||this.state.view==='dashboard') this.forceUpdate(); }, 60*1000);
+    this._tickTimer = setInterval(()=>{ if(this.state.view==='motion'||this.state.view==='dashboard'||this.state.appMode==='meetings') this.forceUpdate(); }, 60*1000);
   }
   componentWillUnmount(){ clearInterval(this._expiryTimer); clearInterval(this._tickTimer); }
   expiresAt(m){ return (m && m.status==='voting' && m.approvedAt) ? new Date(m.approvedAt).getTime()+this.VOTE_WINDOW_MS : null; }
@@ -555,13 +941,19 @@ class Component extends DCLogic {
       this.sb.channel('motions-rt')
         .on('postgres_changes',{event:'*',schema:'public',table:'motions'},()=>{ this.loadMotions().then(()=>this.checkExpiries()); })
         .subscribe();
+      this.sb.channel('meetings-rt')
+        .on('postgres_changes',{event:'*',schema:'public',table:'meetings'},()=>{ this.loadMeetings(); })
+        .subscribe();
+      this.sb.channel('items-rt')
+        .on('postgres_changes',{event:'*',schema:'public',table:'agenda_items'},()=>{ this.loadAgendaItems(); })
+        .subscribe();
     } catch(e){}
   }
   // map DB row <-> app motion
   rowToMotion(r){
     return { id:r.id, title:r.title, mover:r.mover, category:r.category,
       motionText:r.motion_text, background:r.background, link:r.link,
-      status:r.status, seconder:r.seconder, votes:r.votes||{},
+      status:r.status, seconder:r.seconder, votes:r.votes||{}, meetingId:r.meeting_id||null, pendingMeeting:r.pending_meeting||false,
       createdAt:r.created_at, approvedAt:r.approved_at, closedAt:r.closed_at, closeReason:r.close_reason };
   }
   async loadMotions(){
@@ -569,6 +961,579 @@ class Component extends DCLogic {
     const { data, error } = await this.sb.from('motions').select('*').order('created_at',{ascending:true});
     if(error){ throw error; }
     this.setState({motions:(data||[]).map(r=>this.rowToMotion(r))});
+  }
+
+  // ===== meetings data layer =====
+  rowToMeeting(r){
+    return { id:r.id, title:r.title, date:r.meeting_date, timeLabel:r.time_label, location:r.location,
+      chair:r.chair, status:r.status, attendance:r.attendance||{}, reports:r.reports||{}, minutes:r.minutes||{},
+      agendaSentAt:r.agenda_sent_at, publishedAt:r.published_at, createdAt:r.created_at };
+  }
+  rowToItem(r){
+    return { id:r.id, meetingId:r.meeting_id, position:r.position, title:r.title, presenter:r.presenter,
+      type:r.type, timeEstimate:r.time_estimate, description:r.description, motionText:r.motion_text,
+      docs:r.docs, notes:r.notes, result:r.result, mover:r.mover, seconder:r.seconder,
+      linkedMotionId:r.linked_motion_id, createdAt:r.created_at };
+  }
+  async loadMeetings(){
+    if(!this.sb) return;
+    const { data, error } = await this.sb.from('meetings').select('*').order('meeting_date',{ascending:false});
+    if(error) throw error;
+    this.setState({meetings:(data||[]).map(r=>this.rowToMeeting(r))});
+  }
+  async loadAgendaItems(){
+    if(!this.sb) return;
+    const { data, error } = await this.sb.from('agenda_items').select('*').order('position',{ascending:true});
+    if(error) throw error;
+    this.setState({agendaItems:(data||[]).map(r=>this.rowToItem(r))});
+  }
+  meetingToRow(m){
+    const row={};
+    if('title' in m) row.title=m.title;
+    if('date' in m) row.meeting_date=m.date;
+    if('timeLabel' in m) row.time_label=m.timeLabel;
+    if('location' in m) row.location=m.location;
+    if('chair' in m) row.chair=m.chair;
+    if('status' in m) row.status=m.status;
+    if('attendance' in m) row.attendance=m.attendance;
+    if('reports' in m) row.reports=m.reports;
+    if('minutes' in m) row.minutes=m.minutes;
+    if('agendaSentAt' in m) row.agenda_sent_at=m.agendaSentAt;
+    if('publishedAt' in m) row.published_at=m.publishedAt;
+    return row;
+  }
+  itemToRow(it){
+    const row={};
+    if('meetingId' in it) row.meeting_id=it.meetingId;
+    if('position' in it) row.position=it.position;
+    if('title' in it) row.title=it.title;
+    if('presenter' in it) row.presenter=it.presenter;
+    if('type' in it) row.type=it.type;
+    if('timeEstimate' in it) row.time_estimate=it.timeEstimate;
+    if('description' in it) row.description=it.description;
+    if('motionText' in it) row.motion_text=it.motionText;
+    if('docs' in it) row.docs=it.docs;
+    if('notes' in it) row.notes=it.notes;
+    if('result' in it) row.result=it.result;
+    if('mover' in it) row.mover=it.mover;
+    if('seconder' in it) row.seconder=it.seconder;
+    if('linkedMotionId' in it) row.linked_motion_id=it.linkedMotionId;
+    return row;
+  }
+  async meetingInsert(m){
+    if(this.live && this.sb){
+      const { data, error } = await this.sb.from('meetings').insert(this.meetingToRow(m)).select().single();
+      if(error) throw error;
+      await this.loadMeetings();
+      return this.rowToMeeting(data);
+    } else {
+      const nm={ id:this.genId(), createdAt:Date.now(), attendance:{}, reports:{}, minutes:{}, ...m };
+      const meetings=[...this.state.meetings, nm];
+      this.setState({meetings}); this.persistMeetings(meetings, this.state.agendaItems);
+      return nm;
+    }
+  }
+  async meetingUpdate(id, patch){
+    if(this.live && this.sb){
+      const { error } = await this.sb.from('meetings').update(this.meetingToRow(patch)).eq('id',id);
+      if(error) throw error;
+      await this.loadMeetings();
+    } else {
+      const meetings=this.state.meetings.map(x=> x.id===id ? {...x, ...patch} : x);
+      this.setState({meetings}); this.persistMeetings(meetings, this.state.agendaItems);
+    }
+  }
+  async meetingDelete(id){
+    if(this.live && this.sb){
+      const { error } = await this.sb.from('meetings').delete().eq('id',id);
+      if(error) throw error;
+      await this.loadMeetings(); await this.loadAgendaItems();
+    } else {
+      const meetings=this.state.meetings.filter(x=>x.id!==id);
+      const agendaItems=this.state.agendaItems.filter(x=>x.meetingId!==id);
+      this.setState({meetings, agendaItems}); this.persistMeetings(meetings, agendaItems);
+    }
+  }
+  async itemInsert(it){
+    if(this.live && this.sb){
+      const { data, error } = await this.sb.from('agenda_items').insert(this.itemToRow(it)).select().single();
+      if(error) throw error;
+      await this.loadAgendaItems();
+      return this.rowToItem(data);
+    } else {
+      const ni={ id:this.genId(), createdAt:Date.now(), ...it };
+      const agendaItems=[...this.state.agendaItems, ni];
+      this.setState({agendaItems}); this.persistMeetings(this.state.meetings, agendaItems);
+      return ni;
+    }
+  }
+  async itemUpdate(id, patch){
+    if(this.live && this.sb){
+      const { error } = await this.sb.from('agenda_items').update(this.itemToRow(patch)).eq('id',id);
+      if(error) throw error;
+      await this.loadAgendaItems();
+    } else {
+      const agendaItems=this.state.agendaItems.map(x=> x.id===id ? {...x, ...patch} : x);
+      this.setState({agendaItems}); this.persistMeetings(this.state.meetings, agendaItems);
+    }
+  }
+  async itemDelete(id){
+    if(this.live && this.sb){
+      const { error } = await this.sb.from('agenda_items').delete().eq('id',id);
+      if(error) throw error;
+      await this.loadAgendaItems();
+    } else {
+      const agendaItems=this.state.agendaItems.filter(x=>x.id!==id);
+      this.setState({agendaItems}); this.persistMeetings(this.state.meetings, agendaItems);
+    }
+  }
+  persistMeetings(meetings, agendaItems){
+    try { localStorage.setItem('utgsu_meetings', JSON.stringify({version:this.MEETINGS_SEED_VERSION||2, meetings, agendaItems})); } catch(e){}
+  }
+  currentMeeting(){ return this.state.meetings.find(m=>m.id===this.state.currentMeetingId); }
+  itemsFor(meetingId){ return this.state.agendaItems.filter(i=>i.meetingId===meetingId).sort((a,b)=>a.position-b.position); }
+
+  // Ensure the two example digital motions exist (live self-heal) — only while the example
+  // June 16, 2026 meeting is present, so deliberately-deleted examples aren't re-added.
+  async ensureExampleMotions(){
+    if(!(this.live && this.sb)) return;
+    const hasExampleMeeting=(this.state.meetings||[]).some(mt=>String(mt.date||'').slice(0,10)==='2026-06-16');
+    if(!hasExampleMeeting) return;
+    const existing=new Set((this.state.motions||[]).map(m=>(m.title||'').trim()));
+    const missing=this.exampleDigitalMotions().filter(mo=>!existing.has(mo.title.trim()));
+    if(!missing.length) return;
+    try {
+      for(const mo of missing){
+        await this.sb.from('motions').insert({ title:mo.title, mover:mo.mover, category:mo.category,
+          motion_text:mo.motionText, background:mo.background, link:mo.link, status:'closed',
+          seconder:mo.seconder, votes:mo.votes,
+          approved_at:new Date(mo.approvedAt).toISOString(), closed_at:new Date(mo.closedAt).toISOString(), close_reason:'all' });
+      }
+      await this.loadMotions();
+    } catch(e){}
+  }
+
+  // ----- seed example meeting (June 16, 2026) once -----
+  async seedMeetingIfEmpty(){
+    if((this.state.meetings||[]).length) return;
+    try {
+      // In live mode, also seed the two digital motions so they appear in the meeting.
+      if(this.live && this.sb){
+        for(const mo of this.exampleDigitalMotions()){
+          await this.sb.from('motions').insert({ title:mo.title, mover:mo.mover, category:mo.category,
+            motion_text:mo.motionText, background:mo.background, link:mo.link, status:'closed',
+            seconder:mo.seconder, votes:mo.votes,
+            approved_at:new Date(mo.approvedAt).toISOString(), closed_at:new Date(mo.closedAt).toISOString(), close_reason:'all' });
+        }
+        await this.loadMotions();
+      }
+      const date=new Date('2026-06-16T16:00:00').toISOString();
+      const m=await this.meetingInsert({ title:'UTGSU Office Meeting', date, timeLabel:'4:00 pm – 5:00 pm',
+        location:'Boardroom', chair:'Amir Moghadam', status:'completed',
+        minutes:{ prevMinutesDate:'June 2, 2026', callToOrder:'4:06 PM', adjourn:'5:00 PM', otherBusiness:'No other business.',
+          adoption:{mover:'Amirhossein Zadeh', seconder:'Zoe Nicholadis', result:'Carries'},
+          approval:{mover:'Amirhossein Zadeh', seconder:'Nick Silver', result:'Carries'} },
+        attendance:{ execs:this.EXEC_NAMES.slice(), staff:this.STAFF_NAMES.slice(), regrets:[], absent:[] },
+        reports:{
+          'Vice President External':'Meeting with UTSU and APUS to discuss transit/municipal elections today. Talked with other Toronto student unions at Skills, and will arrange follow-up meetings with them on the same topics. Need to determine our internal social media/branding policy for collaborations/coalitions.\nScott, Moghadam, Florea, and Silver will meet to discuss this.\nDiscussed with CFS-O staff about upcoming initiatives from the Federation regarding Hands Off Our Education and AI policy.',
+          'Vice President Academics':'Student Supervisor Campaign\nMentorship Program Research\nInitial Volunteer Award Discussion',
+          'Vice President Finance':'Student Supervisor Campaign\nReviewed SCB applications',
+          'Vice President Grad Life':'Held our first event on June 12th — what went well, what went less well\nStill opportunities for execs to come to games: the 18th, the 24th, maybe more?!\nSkills Symposium at UTM',
+          'Vice President Internal':'Attended CFS Skills workshop\nWorking on caucus framework\nWorking on the Board of Directors’ meeting on Saturday',
+          'Health and Dental Plan Administrator':'Continue sending out emails to Departments for Orientation and Outreach 2026\nAssisting with the health & dental enquiries for both accounts\nMeetings with students regarding coverage issues and opt-out cheques not received\nContinue discussions with Josh regarding files to Alumo for 2026-2027\nMet with Alumo regarding the Change of Coverage dates\nMet with UHIP regarding international student sessions\nMeeting with Alumo to finalize the Renewal and coverage additions for 2026-2027\nFinalising Health and Dental Premiums based on the addition to coverage\nWorking on the Emergency Grant Applications\nWorking on the Health and Dental Office Budget\nWorking on the Website content for 2026-2027',
+          'Finance Administrator':'Audit prep this week and audit visit for audit planning last week. Audit visit next week.\nMet with Rubric rep to discuss prevailing issues, particularly with reporting and memo errors\nFollow-up and finalized purchase of software via U of T\nMet with Susana to finalize supply orders. Regular supply orders are complete. Delivery received.\nPetty Cash reconciliation and balance update complete.\nSupported with telecom issues. The matter was resolved.\nFood orders for multiple events have been completed.\nProvided budget planning support as needed\nHeld weekly meetings with VP Finance\nHeld multiple meetings with the Executive Director on various issues.',
+          'Membership & Advocacy Coordinator':'Advocacy — student advice and guidance meetings, referrals, and document review/editing.\nMain topics: academic appeals, supervision issues, harassment, mental health concerns, departmental & SGS complaints.\nAssisted course unions with Rubric issues, financial inquiries\nPlanning meetings for course unions, caucuses',
+          'Communications and Engagement Specialist':'Started working on the GradFest design and post\nSent list of bulk items for orientation to receive quotes from Big Tree Promotions\nAttended the CFS Conference this past weekend\nCreated a template for a 10-Month Communications Planning\nCreated a template for a Communications Strategy Meeting Agenda\nUpdated photos in the UTGSU Community of Practice Presentation 2026\nUpdated the Orientation page on the UTGSU website\nCreated a design for the FIFA watch parties for all games\nCreated “Become a Grad Life Ambassador” design',
+          'Union Affairs and Services Coordinator':'Worked on the building budget proposal with Corey\nPrepared and sent out the GradFest Tabling invitation to Dr. Danielle Martin\nSent request to Hart House for Swags\nPurchased office supplies with Nusrat\nContacted the University for building repairs, including the change of dead bulbs in the Pub, the basement office, and the gym, and fixing the lounge AC breaker.\nCoordinated with SGS to have their orientation webpage updated with GradFest information\nAttended the Building Committee meeting\nMet with Sally from CCR to finalise discussions on CCR Validation, which has already been submitted. They confirmed receipt of our validation spreadsheet and mentioned that they will complete their verification and revert.\nWas away on vacation',
+        },
+        publishedAt:new Date('2026-06-15T16:00:00').toISOString(),
+        agendaSentAt:new Date('2026-06-15T16:00:00').toISOString(),
+      });
+      const items=[
+        {title:'GradFest Updates', presenter:'Zoe Nicholadis', type:'discussion', timeEstimate:'10 min',
+          description:'The GradFest Committee didn’t meet over the past week. However, everyone has been assigned a task and is working on some aspect of GradFest. Zoë is thinking about the Orientation Leaders and teams, as well as the Hart Entertainment items, and engagement with Hart House.\nScott inquires if everyone has completed their assigned tasks. The team confirmed they are working on their assigned tasks.'},
+        {title:'Budget & Audit Updates', presenter:'Nusrat Huq', type:'discussion', timeEstimate:'10 min',
+          description:'Huq inquires if everyone has started working on their budget proposal tasks. They state that they are available to assist in any capacity this week; however, they will not be available in the coming week to support team members with it. The deadline to have the proposal ready is Jul 21, 2026.\nThey also add that the annual audit has started — the planning meeting was held last week, and the audit process will begin next week.'},
+        {title:'Executive Retreat Report', presenter:'Corey Scott', type:'discussion', timeEstimate:'10 min',
+          description:'Scott presents a report on the recently held Executive Retreat at Muskoka.\nShimshek notes that another project they intend to work on is a policy for the Student-Supervisor relationship (similar to what the University of Waterloo Students’ Union has), and they will be contacting the School of Graduate Studies (SGS) to collaborate on it.'},
+      ];
+      for(let i=0;i<items.length;i++){ await this.itemInsert({...items[i], meetingId:m.id, position:i}); }
+      await this.loadMeetings(); await this.loadAgendaItems();
+    } catch(e){}
+  }
+
+  previousMeeting(meeting){
+    const t=this.meetingTime(meeting);
+    const earlier=this.state.meetings.filter(x=>x.id!==meeting.id && this.meetingTime(x)<t).sort((a,b)=>this.meetingTime(b)-this.meetingTime(a));
+    return earlier[0]||null;
+  }
+  surname(name){ if(!name) return ''; const p=String(name).trim().split(/\s+/); return p[p.length-1]; }
+  motionMoverName(mo){ if(this.isEdMover(mo)) return '—'; return mo.mover||'—'; }
+  motionSeconderName(mo){ return mo.seconder? this.voterLabel(mo.seconder):'—'; }
+
+  // ----- shared agenda model (used by plain-text email + docx) -----
+  agendaModel(m){
+    const items=this.itemsFor(m.id);
+    const digital=this.digitalMotionsFor(m);
+    const prev=this.previousMeeting(m);
+    const mn=m.minutes||{};
+    const sn=(name)=>this.surname(name)||'____________';
+    const secs=[];
+    secs.push({n:'1', title:'Call to Order', lines:['The meeting is called to order'+(mn.callToOrder?' at '+mn.callToOrder:' at __________')+'.']});
+    secs.push({n:'2', title:'Adoption of Agenda', motion:{birt:'BIRT, the Executive Committee adopts the agenda for the '+this.fmtMeetingShort(m)+', UTGSU Office Meeting.',
+      mover:sn(mn.adoption&&mn.adoption.mover), seconder:sn(mn.adoption&&mn.adoption.seconder), result:(mn.adoption&&mn.adoption.result)||'____________'}});
+    secs.push({n:'3', title:'Approval of Minutes', motion:{birt:'BIRT, the Executive Committee approves the minutes from the '+(mn.prevMinutesDate||(prev?this.fmtMeetingShort(prev):'previous'))+' UTGSU Office Meeting.',
+      mover:sn(mn.approval&&mn.approval.mover), seconder:sn(mn.approval&&mn.approval.seconder), result:(mn.approval&&mn.approval.result)||'____________'}});
+    if(digital.length){
+      secs.push({n:'4', title:'Notice of Digital Motions', digital:digital.map(mo=>({
+        served:'The following motion was served online and '+(this.isPassed(mo)?'passed':'failed')+' on '+this.fmt(mo.closedAt)+'.',
+        birt:mo.motionText, mover:this.surname(this.motionMoverName(mo)), seconder:this.surname(this.motionSeconderName(mo)),
+        result:this.isPassed(mo)?'Carries':'Fails'
+      }))});
+    }
+    let n = digital.length? 5 : 4;
+    items.forEach(it=>{
+      const lines=[]; if(it.description) lines.push(it.description); if(it.notes) lines.push(it.notes);
+      secs.push({ n:String(n++), title:it.title,
+        meta:[it.presenter?('Presenter: '+it.presenter):'', it.timeEstimate?('Time: '+it.timeEstimate):'', it.type==='decision'?'Decision':'Discussion'].filter(Boolean).join('  ·  '),
+        lines,
+        motion: it.type==='decision' && it.motionText ? {birt:it.motionText, mover:sn(it.mover), seconder:sn(it.seconder), result:it.result||'____________'} : null });
+    });
+    // Motions brought to this meeting (submitted as "meeting motions") — auto-filled results
+    const mtgMotions=this.state.motions.filter(mo=>mo.meetingId===m.id);
+    if(mtgMotions.length){
+      secs.push({n:String(n++), title:'Motions', digital:mtgMotions.map(mo=>({
+        served:'Motion brought to this meeting'+(mo.status==='closed'?', '+(this.isPassed(mo)?'passed':'failed')+' '+this.fmt(mo.closedAt):(mo.status==='voting'?' — voting in progress':'')),
+        birt:mo.motionText, mover:this.surname(this.motionMoverName(mo)), seconder:this.surname(this.motionSeconderName(mo)),
+        result: mo.status==='closed' ? (this.isPassed(mo)?'Carries':'Fails') : (mo.status==='voting'?'In progress':'Pending')
+      }))});
+    }
+    secs.push({n:String(n++), title:'Other Business', lines:[mn.otherBusiness||'']});
+    secs.push({n:String(n++), title:'Executive & Staff Reports', reports:this.REPORT_ROLES.map(role=>({role, text:(m.reports&&m.reports[role])||''}))});
+    secs.push({n:String(n++), title:'Adjournment', lines:['The meeting is adjourned'+(mn.adjourn?' at '+mn.adjourn:' at __________')+'.']});
+    return secs;
+  }
+  agendaPlainText(m){
+    const secs=this.agendaModel(m);
+    const L=[];
+    secs.forEach(s=>{
+      L.push(s.n+'. '+s.title);
+      if(s.meta) L.push('   '+s.meta);
+      (s.lines||[]).forEach(x=>{ if(x) L.push('   '+x); });
+      if(s.motion){ L.push('   MOTION: '+s.motion.birt); }
+      if(s.digital){ s.digital.forEach(d=>{ L.push('   '+d.served); L.push('   MOTION: '+d.birt); L.push('   Mover: '+d.mover+'   Seconder: '+d.seconder+'   Result: '+d.result); }); }
+      if(s.reports){ s.reports.forEach(r=>{ L.push('   '+r.role+(r.text?':':'')); if(r.text) L.push('      '+r.text); }); }
+      L.push('');
+    });
+    return L.join('\n');
+  }
+
+  // ----- real .docx generation (OOXML in a stored zip) -----
+  xmlEsc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  para(text, opts){
+    opts=opts||{};
+    const runs=(Array.isArray(text)?text:[{t:text}]).map(r=>{
+      if(r.tab) return '<w:r><w:tab/></w:r>';
+      const rpr=[]; if(r.b||opts.bold) rpr.push('<w:b/>'); if(opts.color||r.color) rpr.push('<w:color w:val="'+(r.color||opts.color)+'"/>');
+      if(opts.size||r.size) rpr.push('<w:sz w:val="'+(r.size||opts.size)+'"/>');
+      const rprXml=rpr.length?'<w:rPr>'+rpr.join('')+'</w:rPr>':'';
+      return '<w:r>'+rprXml+'<w:t xml:space="preserve">'+this.xmlEsc(r.t)+'</w:t></w:r>';
+    }).join('');
+    const ppr=[]; if(opts.align) ppr.push('<w:jc w:val="'+opts.align+'"/>');
+    if(opts.spaceBefore||opts.spaceAfter) ppr.push('<w:spacing '+(opts.spaceBefore?'w:before="'+opts.spaceBefore+'" ':'')+(opts.spaceAfter?'w:after="'+opts.spaceAfter+'"':'')+'/>');
+    if(opts.shd) ppr.push('<w:shd w:val="clear" w:fill="'+opts.shd+'"/>');
+    const pprXml=ppr.length?'<w:pPr>'+ppr.join('')+'</w:pPr>':'';
+    return '<w:p>'+pprXml+runs+'</w:p>';
+  }
+  buildAgendaDocxXml(m){
+    const P=[];
+    const att=m.attendance||{};
+    const moverLine=(mover,seconder,result)=> this.para([
+      {t:'Mover:',b:true},{tab:true},{t:mover||'____________'},{tab:true},{tab:true},
+      {t:'Seconder:',b:true},{tab:true},{t:seconder||'____________'},{tab:true},{tab:true},
+      {t:'Result:',b:true},{tab:true},{t:result||'____________'}
+    ],{size:'22',spaceAfter:'80'});
+    // Header
+    P.push(this.para('UTGSU Office Meeting - '+(m.status==='completed'?'MINUTES':'AGENDA'),{bold:true,size:'30',align:'center',color:'003A5D'}));
+    P.push(this.para(this.fmtMeetingDate(m)+' | '+(m.timeLabel||'')+' | '+(m.location||''),{align:'center',size:'22',spaceAfter:'160'}));
+    P.push(this.para([{t:'Executives Present: ',b:true},{t:(att.execs||this.EXEC_NAMES).join(', ')}],{size:'22'}));
+    P.push(this.para([{t:'Staff Present: ',b:true},{t:(att.staff||this.STAFF_NAMES).join(', ')}],{size:'22'}));
+    P.push(this.para([{t:'Absent with Regrets: ',b:true},{t:(att.regrets&&att.regrets.length?att.regrets.join(', '):'None')}],{size:'22'}));
+    P.push(this.para([{t:'Absent without Regrets: ',b:true},{t:(att.absent&&att.absent.length?att.absent.join(', '):'None')}],{size:'22',spaceAfter:'120'}));
+    // Sections (unnumbered headings, matching the document)
+    this.agendaModel(m).forEach(s=>{
+      P.push(this.para(s.title,{bold:true,size:'26',color:'003A5D',spaceBefore:'200',spaceAfter:'40'}));
+      if(s.meta) P.push(this.para(s.meta,{size:'20',color:'5a6b75'}));
+      (s.lines||[]).forEach(x=>{ if(x) P.push(this.para(x,{size:'22'})); });
+      if(s.motion){
+        P.push(this.para('MOTION:',{bold:true,size:'22'}));
+        P.push(this.para(s.motion.birt,{size:'22'}));
+        P.push(moverLine(s.motion.mover, s.motion.seconder, s.motion.result));
+      }
+      if(s.digital){ s.digital.forEach(d=>{
+        P.push(this.para(d.served,{size:'22'}));
+        P.push(this.para('MOTION:',{bold:true,size:'22'}));
+        P.push(this.para(d.birt,{size:'22'}));
+        P.push(moverLine(d.mover, d.seconder, d.result));
+      }); }
+      if(s.reports){ s.reports.forEach(r=>{ P.push(this.para(r.role,{bold:true,size:'22',spaceBefore:'120'})); if(r.text){ r.text.split('\n').forEach(line=>{ if(line.trim()) P.push(this.para(line,{size:'22'})); }); } }); }
+    });
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+      '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+
+      P.join('')+'<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440"/></w:sectPr></w:body></w:document>';
+  }
+  crc32(bytes){
+    let c, crc=0xFFFFFFFF;
+    if(!this._crcTable){ this._crcTable=[]; for(let n=0;n<256;n++){ c=n; for(let k=0;k<8;k++){ c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1); } this._crcTable[n]=c>>>0; } }
+    for(let i=0;i<bytes.length;i++){ crc=this._crcTable[(crc^bytes[i])&0xFF]^(crc>>>8); }
+    return (crc^0xFFFFFFFF)>>>0;
+  }
+  zipStore(files){
+    const enc=new TextEncoder();
+    const chunks=[]; const central=[]; let offset=0;
+    const u16=v=>[v&0xFF,(v>>8)&0xFF]; const u32=v=>[v&0xFF,(v>>8)&0xFF,(v>>16)&0xFF,(v>>24)&0xFF];
+    files.forEach(f=>{
+      const nameB=enc.encode(f.name); const dataB=(typeof f.data==='string')?enc.encode(f.data):f.data;
+      const crc=this.crc32(dataB);
+      const local=[].concat(u32(0x04034b50),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(dataB.length),u32(dataB.length),u16(nameB.length),u16(0));
+      chunks.push(new Uint8Array(local)); chunks.push(nameB); chunks.push(dataB);
+      const cen=[].concat(u32(0x02014b50),u16(20),u16(20),u16(0),u16(0),u16(0),u16(0),u32(crc),u32(dataB.length),u32(dataB.length),u16(nameB.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(offset));
+      central.push(new Uint8Array(cen)); central.push(nameB);
+      offset += local.length+nameB.length+dataB.length;
+    });
+    let cenSize=0; central.forEach(c=>cenSize+=c.length);
+    const cenStart=offset;
+    const eocd=[].concat(u32(0x06054b50),u16(0),u16(0),u16(files.length),u16(files.length),u32(cenSize),u32(cenStart),u16(0));
+    const all=[...chunks,...central,new Uint8Array(eocd)];
+    let total=0; all.forEach(a=>total+=a.length);
+    const buf=new Uint8Array(total); let p=0; all.forEach(a=>{ buf.set(a,p); p+=a.length; });
+    return new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+  }
+  downloadAgendaDocx(m){
+    const doc=this.buildAgendaDocxXml(m);
+    const ct='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
+    const rels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
+    const blob=this.zipStore([
+      {name:'[Content_Types].xml', data:ct},
+      {name:'_rels/.rels', data:rels},
+      {name:'word/document.xml', data:doc},
+    ]);
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download='UTGSU Agenda — '+this.fmtMeetingShort(m).replace(/[^a-z0-9 ]/gi,'')+'.docx';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
+  }
+
+  // ----- meetings navigation & actions -----
+  switchMode(mode){ this.setState({appMode:mode, view:'dashboard', toast:null}); }
+  startCreateMeeting(){ this.setState({appMode:'meetings', view:'createMeeting', meetingDraft:this.blankMeeting(), meetingError:''}); }
+  setMeetingDraft(k,v){ this.setState({meetingDraft:{...this.state.meetingDraft,[k]:v}, meetingError:''}); }
+  openMeeting(mt){ this.setState({appMode:'meetings', view:'meeting', currentMeetingId:mt.id, itemDraft:this.blankItem(), itemError:'', reportWho:'', reportText:'', minutesDraft:this.initMinutesDraft(mt), minutesDirty:false}); }
+  initMinutesDraft(mt){
+    const mn=mt.minutes||{};
+    const items={};
+    this.itemsFor(mt.id).forEach(it=>{ items[it.id]={mover:it.mover||'', seconder:it.seconder||'', result:it.result||'', notes:it.notes||''}; });
+    return {
+      callToOrder:mn.callToOrder||'', adjourn:mn.adjourn||'', otherBusiness:mn.otherBusiness||'',
+      adoption:{mover:(mn.adoption&&mn.adoption.mover)||'', seconder:(mn.adoption&&mn.adoption.seconder)||'', result:(mn.adoption&&mn.adoption.result)||''},
+      approval:{mover:(mn.approval&&mn.approval.mover)||'', seconder:(mn.approval&&mn.approval.seconder)||'', result:(mn.approval&&mn.approval.result)||''},
+      items,
+    };
+  }
+  setMin(path, value){
+    const d=JSON.parse(JSON.stringify(this.state.minutesDraft||{}));
+    const keys=path.split('.'); let o=d;
+    for(let i=0;i<keys.length-1;i++){ o[keys[i]]=o[keys[i]]||{}; o=o[keys[i]]; }
+    o[keys[keys.length-1]]=value;
+    this.setState({minutesDraft:d, minutesDirty:true});
+  }
+  async saveMinutes(){
+    const mt=this.currentMeeting(); if(!mt) return;
+    const d=this.state.minutesDraft||{};
+    const minutes={ ...(mt.minutes||{}), callToOrder:d.callToOrder, adjourn:d.adjourn, otherBusiness:d.otherBusiness, adoption:d.adoption, approval:d.approval };
+    try {
+      await this.meetingUpdate(mt.id, {minutes});
+      for(const it of this.itemsFor(mt.id)){
+        const di=(d.items&&d.items[it.id])||null; if(!di) continue;
+        if((it.mover||'')!==di.mover || (it.seconder||'')!==di.seconder || (it.result||'')!==di.result || (it.notes||'')!==di.notes){
+          await this.itemUpdate(it.id, {mover:di.mover, seconder:di.seconder, result:di.result, notes:di.notes});
+        }
+      }
+      this.setState({minutesDirty:false});
+      this.showToast('Minutes saved');
+    } catch(e){ this.showToast('Could not save minutes — check connection'); }
+  }
+  backToMeetings(){ this.setState({view:'dashboard', currentMeetingId:null}); }
+  fmtTime12(hhmm){ if(!hhmm) return ''; const [h,m]=hhmm.split(':').map(Number); const ap=h>=12?'pm':'am'; const h12=((h+11)%12)+1; return h12+':'+String(m).padStart(2,'0')+' '+ap; }
+  earliestUpcomingMeeting(){
+    const up=this.state.meetings.filter(mt=>mt.status!=='completed').sort((a,b)=>this.meetingTime(a)-this.meetingTime(b));
+    return up[0]||null;
+  }
+  async createMeeting(){
+    const d=this.state.meetingDraft;
+    if(!d.date){ this.setState({meetingError:'Pick a meeting date.'}); return; }
+    const iso=new Date(d.date+'T'+(d.start||'16:00')+':00').toISOString();
+    const timeLabel=this.fmtTime12(d.start)+(d.end?' – '+this.fmtTime12(d.end):'');
+    this.setState({meetingError:'', toast:'Creating meeting…'});
+    try {
+      const mt=await this.meetingInsert({ title:d.title||'UTGSU Office Meeting', date:iso, timeLabel,
+        location:d.location, chair:d.chair, status:'planning',
+        attendance:{ execs:this.EXEC_NAMES.slice(), staff:this.STAFF_NAMES.slice(), regrets:[], absent:[] }, reports:{} });
+      // attach any motions that were waiting for the next scheduled meeting
+      const waiting=this.state.motions.filter(mo=>mo.pendingMeeting);
+      for(const mo of waiting){ try { await this.dbUpdate(mo.id, {meetingId:mt.id, pendingMeeting:false}); } catch(e){} }
+      const attached=waiting.length;
+      this.setState({view:'meeting', currentMeetingId:mt.id});
+      this.showToast(attached ? ('Meeting created — '+attached+' waiting motion'+(attached>1?'s':'')+' attached') : 'Meeting created — execs can now add agenda items');
+    } catch(e){ this.setState({meetingError:'Could not create the meeting. Check your connection.'}); }
+  }
+  setItemDraft(k,v){ this.setState({itemDraft:{...this.state.itemDraft,[k]:v}, itemError:''}); }
+  async addAgendaItem(){
+    const m=this.currentMeeting(); if(!m) return;
+    const d=this.state.itemDraft;
+    if(!d.title.trim()){ this.setState({itemError:'Give the item a title.'}); return; }
+    if(d.type==='decision' && !d.motionText.trim()){ this.setState({itemError:'A decision item needs the motion text to vote on.'}); return; }
+    const pos=this.itemsFor(m.id).length;
+    try {
+      await this.itemInsert({ meetingId:m.id, position:pos, title:d.title.trim(), presenter:d.presenter.trim(),
+        type:d.type, timeEstimate:d.timeEstimate.trim(), description:d.description.trim(),
+        motionText:d.type==='decision'?d.motionText.trim():'', docs:d.docs.trim() });
+      this.setState({itemDraft:this.blankItem(), itemError:''});
+      this.showToast('Agenda item added');
+    } catch(e){ this.setState({itemError:'Could not add the item. Check your connection.'}); }
+  }
+  askDeleteItem(id){ this.setState({deleteItemId:id}); }
+  async confirmDeleteItem(){
+    const id=this.state.deleteItemId; if(!id) return;
+    try { await this.itemDelete(id); } catch(e){ this.showToast('Could not delete item'); return; }
+    this.setState({deleteItemId:null}); this.showToast('Agenda item removed');
+  }
+  askDeleteMeeting(id){ this.setState({deleteMeetingId:id}); }
+  async confirmDeleteMeeting(){
+    const id=this.state.deleteMeetingId; if(!id) return;
+    try { await this.meetingDelete(id); } catch(e){ this.showToast('Could not delete meeting'); return; }
+    this.setState({deleteMeetingId:null, view:'dashboard', currentMeetingId:null}); this.showToast('Meeting deleted');
+  }
+  setReportWho(v){ this.setState({reportWho:v, reportText:(this.currentMeeting()&&this.currentMeeting().reports&&this.currentMeeting().reports[v])||''}); }
+  setReportText(v){ this.setState({reportText:v}); }
+  async saveReport(){
+    const m=this.currentMeeting(); if(!m) return;
+    if(!this.state.reportWho){ this.showToast('Pick whose report this is'); return; }
+    const reports={...(m.reports||{}), [this.state.reportWho]:this.state.reportText.trim()};
+    try { await this.meetingUpdate(m.id, {reports}); } catch(e){ this.showToast('Could not save report'); return; }
+    this.showToast('Report saved to the agenda');
+  }
+  async publishAgendaNow(){
+    const m=this.currentMeeting(); if(!m) return;
+    const now=Date.now();
+    try { await this.meetingUpdate(m.id, {status:'published', publishedAt:m.publishedAt||now, agendaSentAt:now}); }
+    catch(e){ this.showToast('Could not publish'); return; }
+    await this.sendEmail(this.buildAgendaEmail({...m, agendaSentAt:now}));
+    this.showToast('Agenda published & emailed to all execs and staff');
+  }
+  async markMeetingComplete(){
+    const m=this.currentMeeting(); if(!m) return;
+    try { await this.meetingUpdate(m.id, {status:'completed'}); } catch(e){ this.showToast('Could not update'); return; }
+    this.showToast('Meeting marked complete');
+  }
+  // start an online vote+sign motion for a decision agenda item
+  async startDecisionMotion(it){
+    const m=this.currentMeeting(); if(!m||!it) return;
+    const now=Date.now();
+    // Auto-approve and open voting immediately — the committee is deciding to vote now.
+    const mk=(()=>{ const v=this.VOTERS.find(x=>x.name.trim().toLowerCase()===String(it.presenter||'').trim().toLowerCase()); return v?v.key:null; })();
+    const votes={}; if(mk){ votes[mk]={choice:'yes', signature:it.presenter, at:now, mover:true}; }
+    const mo={ title:it.title, mover:it.presenter||'', category:'Meeting decision',
+      motionText:it.motionText||'', background:'Decision item from '+this.fmtMeetingShort(m)+(it.description?': '+it.description:''),
+      link:it.docs||'', status:'voting', approvedAt:now, seconder:null, votes };
+    try {
+      const saved=await this.dbInsert(mo);
+      if(this.live && this.sb && saved && saved.id){ try { await this.sb.from('motions').update({meeting_id:m.id, status:'voting', approved_at:new Date(now).toISOString(), votes}).eq('id',saved.id); } catch(e){} }
+      if(saved && saved.id){ await this.itemUpdate(it.id, {linkedMotionId:saved.id}); }
+      await this.loadMotions();
+      const opened=this.state.motions.find(x=>x.id===saved.id)||{...saved, status:'voting', approvedAt:now, votes};
+      this.sendEmail(this.buildVoteEmail(opened, now));
+      this.setState({appMode:'motions', view:'motion', currentId:saved.id, motionTab:'vote', voterKey:null, voteChoice:null, voteSig:''});
+      this.showToast('Online vote opened — members can vote & sign. Call-to-vote emailed to the committee.');
+    } catch(e){ this.showToast('Could not open the vote'); }
+  }
+  openLinkedMotion(it){
+    const mo=this.state.motions.find(x=>x.id===it.linkedMotionId);
+    if(mo){ this.setState({appMode:'motions'}); this.open(mo); }
+  }
+
+
+  // ----- meeting dates & digital motions -----
+  AGENDA_LEAD_MS(){ return 24*60*60*1000; }
+  meetingTime(m){ return m && m.date ? new Date(m.date).getTime() : 0; }
+  prevMeetingTime(meeting){
+    const t=this.meetingTime(meeting);
+    const earlier=this.state.meetings.filter(x=>x.id!==meeting.id && this.meetingTime(x)<t);
+    if(!earlier.length) return 0;
+    return Math.max(...earlier.map(x=>this.meetingTime(x)));
+  }
+  // standalone digital motions (not tied to a meeting decision) that closed since the previous
+  // meeting and on/before this one — so each appears only in the immediate next meeting
+  digitalMotionsFor(meeting){
+    const t=this.meetingTime(meeting), prev=this.prevMeetingTime(meeting);
+    return this.state.motions.filter(mo=>{
+      if(mo.meetingId) return false;            // a meeting-decision motion shows under its item
+      if(mo.status!=='closed' || !mo.closedAt) return false;
+      const ct=new Date(mo.closedAt).getTime();
+      return ct>prev && ct<=t;
+    }).sort((a,b)=>new Date(a.closedAt)-new Date(b.closedAt));
+  }
+  fmtMeetingDate(m){
+    if(!m||!m.date) return '';
+    try { return new Date(m.date).toLocaleDateString('en-CA',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
+    catch(e){ return ''; }
+  }
+  fmtMeetingShort(m){
+    if(!m||!m.date) return '';
+    try { return new Date(m.date).toLocaleDateString('en-CA',{month:'long',day:'numeric',year:'numeric'}); }
+    catch(e){ return ''; }
+  }
+  meetingStatusInfo(m){
+    if(m.status==='completed') return {label:'Completed', bg:'#e7eef3', fg:'#3d5562'};
+    if(m.status==='published') return {label:'Agenda published', bg:'#d7f0e1', fg:'#1f7a4d'};
+    const t=this.meetingTime(m);
+    if(t && Date.now()>t) return {label:'In progress / awaiting minutes', bg:'#fdf0d5', fg:'#8a5a00'};
+    return {label:'Collecting agenda items', bg:'#dbeafe', fg:'#1d4ed8'};
+  }
+  agendaCountdownLabel(m){
+    const send=this.meetingTime(m)-this.AGENDA_LEAD_MS();
+    const ms=send-Date.now();
+    if(m.agendaSentAt) return 'Agenda sent '+this.fmt(m.agendaSentAt);
+    if(ms<=0) return 'Agenda ready to send';
+    const h=Math.floor(ms/3600000), d=Math.floor(h/24);
+    if(d>=1) return 'Agenda auto-sends in '+d+'d '+(h%24)+'h';
+    const mn=Math.floor((ms%3600000)/60000);
+    return 'Agenda auto-sends in '+h+'h '+mn+'m';
+  }
+  // ----- 24h agenda auto-send -----
+  checkAgendaSends(){
+    (this.state.meetings||[]).forEach(m=>{
+      if(m.status==='completed' || m.agendaSentAt) return;
+      const send=this.meetingTime(m)-this.AGENDA_LEAD_MS();
+      if(send>0 && Date.now()>=send && Date.now()<this.meetingTime(m)) this.autoSendAgenda(m);
+    });
+  }
+  async autoSendAgenda(m){
+    if(this._sendingAgenda && this._sendingAgenda[m.id]) return;
+    this._sendingAgenda=this._sendingAgenda||{}; this._sendingAgenda[m.id]=true;
+    try {
+      const now=Date.now();
+      if(this.live) await this.meetingUpdate(m.id, {agendaSentAt:now, status:(m.status==='planning'?'published':m.status), publishedAt:m.publishedAt||now});
+      await this.sendEmail(this.buildAgendaEmail(m));
+    } catch(e){}
+  }
+  buildAgendaEmail(m){
+    return { kind:'vote', // committee template
+      to:this.ALL_RECIPIENTS, subject:'Agenda — '+m.title+', '+this.fmtMeetingShort(m),
+      motionTitle:m.title, intro:'The agenda for the upcoming '+m.title+' is now set. The meeting is '+this.fmtMeetingDate(m)+(m.timeLabel?', '+m.timeLabel:'')+(m.location?', '+m.location:'')+'.\n\nThe full agenda follows. Open the portal to download the agenda document (.docx), add your report, or review items.',
+      fields:[{label:'Agenda', value:this.agendaPlainText(m)}],
+      note:'This agenda was sent automatically 24 hours before the meeting.' };
   }
   // demo-mode local persistence
   persistLocal(motions){
@@ -579,6 +1544,8 @@ class Component extends DCLogic {
     if(this.live && this.sb){
       const row={ title:m.title, mover:m.mover, category:m.category, motion_text:m.motionText,
         background:m.background, link:m.link, status:m.status, seconder:m.seconder, votes:m.votes||{} };
+      if(m.meetingId) row.meeting_id=m.meetingId;
+      if(m.pendingMeeting) row.pending_meeting=true;
       const { data, error } = await this.sb.from('motions').insert(row).select().single();
       if(error) throw error;
       const nm=this.rowToMotion(data);
@@ -597,6 +1564,8 @@ class Component extends DCLogic {
       if('status' in patch) row.status=patch.status;
       if('seconder' in patch) row.seconder=patch.seconder;
       if('mover' in patch) row.mover=patch.mover;
+      if('meetingId' in patch) row.meeting_id=patch.meetingId;
+      if('pendingMeeting' in patch) row.pending_meeting=patch.pendingMeeting;
       if('votes' in patch) row.votes=patch.votes;
       if('approvedAt' in patch) row.approved_at=new Date(patch.approvedAt).toISOString();
       if('closedAt' in patch) row.closed_at=new Date(patch.closedAt).toISOString();
@@ -669,6 +1638,25 @@ class Component extends DCLogic {
     catch(e){ return ''; }
   }
 
+  // Two digital motions exactly as in the June 16, 2026 minutes — closed & passed,
+  // so they appear in that meeting's "Notice of Digital Motions".
+  exampleDigitalMotions(){
+    return [
+      { title:'AVP External hiring recommendation — Katelin Fung', mover:'Nick Silver', seconder:'president',
+        category:'Hiring',
+        motionText:'Be it resolved that the Hiring Committee recommends the following candidate for the Associate Vice-President External Role: Katelin Fung.',
+        background:'The hiring report is attached. (Associate-VP External Hiring Committee 2026 Report)', link:'',
+        status:'closed', approvedAt:'2026-06-14T12:00:00', closedAt:'2026-06-15T14:00:00', closeReason:'all',
+        votes:{ external:{choice:'yes',signature:'Nick Silver',at:new Date('2026-06-15T13:05:00').getTime(),mover:true}, president:{choice:'yes',signature:'Amir Moghadam',at:new Date('2026-06-15T13:20:00').getTime()}, internal:{choice:'yes',signature:'Reke Avikpe',at:new Date('2026-06-15T13:40:00').getTime()}, finance:{choice:'yes',signature:'Amirhossein Zadeh',at:new Date('2026-06-15T13:55:00').getTime()} } },
+      { title:'Equity Officer hiring recommendation — Meaghan Muscat', mover:'Reke Avikpe', seconder:'president',
+        category:'Hiring',
+        motionText:'Be it resolved that the Hiring Committee recommends the following candidate for the Equity Officer: Meaghan Muscat.',
+        background:'Recommendation of the Hiring Committee.', link:'',
+        status:'closed', approvedAt:'2026-06-15T12:00:00', closedAt:'2026-06-16T10:00:00', closeReason:'all',
+        votes:{ internal:{choice:'yes',signature:'Reke Avikpe',at:new Date('2026-06-16T09:10:00').getTime(),mover:true}, president:{choice:'yes',signature:'Amir Moghadam',at:new Date('2026-06-16T09:25:00').getTime()}, external:{choice:'yes',signature:'Nick Silver',at:new Date('2026-06-16T09:40:00').getTime()}, academics:{choice:'yes',signature:'Eliz Shimshek',at:new Date('2026-06-16T09:55:00').getTime()} } },
+    ];
+  }
+
   seed(){
     const now = Date.now();
     const m1 = {
@@ -684,24 +1672,8 @@ class Component extends DCLogic {
         finance:{choice:'yes', signature:'Amirhossein Zadeh', at: now-1000*60*60*18},
       },
     };
-    const m2 = {
-      id:'seed2', title:'Adopt hybrid Council meeting policy',
-      mover:'Reke Avikpe', category:'Governance',
-      motionText:'Be it resolved that the Executive Committee adopts a standing policy that all General Council meetings be held in a hybrid format, with both in-person and remote voting options available.',
-      background:'Remote access has consistently increased attendance and quorum at Council meetings over the past year. Formalizing a hybrid policy ensures equitable participation for members across campuses and those with accessibility needs.',
-      link:'',
-      status:'closed', createdAt: now-1000*60*60*72, approvedAt: now-1000*60*60*68, closedAt: now-1000*60*60*50, closeReason:'all',
-      seconder:'internal',
-      votes:{
-        internal:{choice:'yes', signature:'Reke Avikpe', at: now-1000*60*60*64},
-        president:{choice:'yes', signature:'Amir Moghadam', at: now-1000*60*60*62},
-        external:{choice:'yes', signature:'Nick Silver', at: now-1000*60*60*60},
-        academics:{choice:'yes', signature:'Eliz Shimshek', at: now-1000*60*60*58},
-        finance:{choice:'no', signature:'Amirhossein Zadeh', at: now-1000*60*60*55},
-        gradlife:{choice:'abstain', signature:'Zoe Nicholadis', at: now-1000*60*60*52},
-      },
-    };
-    const motions=[m1,m2];
+    const digital=this.exampleDigitalMotions().map((mo,i)=>({ ...mo, id:'seedD'+i, createdAt:new Date(mo.approvedAt).getTime() }));
+    const motions=[m1, ...digital];
     this.persistLocal(motions);
     this.setState({motions});
   }
@@ -861,9 +1833,18 @@ class Component extends DCLogic {
     }
     let category = d.category.trim();
     if(!category){ category = this.heuristicCat(d.title+' '+d.motionText); }
+    if(d.kind==='meeting' && !d.meetingId){ this.setState({submitError:'Pick which meeting this motion is for.'}); return; }
+    let resolvedMeetingId=null, pendingMeeting=false;
+    if(d.kind==='meeting'){
+      if(d.meetingId==='next'){
+        const up=this.earliestUpcomingMeeting();
+        if(up){ resolvedMeetingId=up.id; } else { pendingMeeting=true; }
+      } else { resolvedMeetingId=d.meetingId; }
+    }
     const m = { title:d.title.trim(), mover:d.mover.trim(), category,
       motionText:d.motionText.trim(), background:d.background.trim(), link:d.link.trim(),
-      status:'pending_approval', seconder:null, votes:{} };
+      status:'pending_approval', seconder:null, votes:{},
+      meetingId: resolvedMeetingId, pendingMeeting };
     this.setState({submitError:'', toast:'Submitting…'});
     let saved;
     try { saved=await this.dbInsert(m); }
@@ -968,6 +1949,7 @@ class Component extends DCLogic {
     return {label:status, bg:'#eee', fg:'#555'};
   }
   badgeStyle(info){ return 'display:inline-block;padding:4px 11px;border-radius:20px;background:'+info.bg+';color:'+info.fg+';font-size:11.5px;font-weight:700;letter-spacing:.03em'; }
+  pillStyle(active, color){ return 'border:1.5px solid '+(active?color:'#d2dbe1')+';background:'+(active?color:'#fff')+';color:'+(active?'#fff':'#5a6b75')+';border-radius:7px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit'; }
   navStyle(active){ return 'background:'+(active?'rgba(255,255,255,.14)':'transparent')+';color:#fff;border:none;border-radius:7px;padding:9px 14px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center'; }
 
   renderVals(){
@@ -976,11 +1958,18 @@ class Component extends DCLogic {
     const emailLog=this.buildLog();
     const out={
       view:s.view,
-      isDashboard:s.view==='dashboard',
-      isSubmit:s.view==='submit',
-      isApprove:s.view==='approve',
-      isMotionView:s.view==='motion',
-      isEmails:s.view==='emails',
+      appMode:s.appMode,
+      isMotionsMode:s.appMode==='motions',
+      isMeetingsMode:s.appMode==='meetings',
+      onMotionsMode:()=>this.switchMode('motions'),
+      onMeetingsMode:()=>this.switchMode('meetings'),
+      navMotionsStyle:this.navStyle(s.appMode==='motions'),
+      navMeetingsStyle:this.navStyle(s.appMode==='meetings'),
+      isDashboard:s.appMode==='motions' && s.view==='dashboard',
+      isSubmit:s.appMode==='motions' && s.view==='submit',
+      isApprove:s.appMode==='motions' && s.view==='approve',
+      isMotionView:s.appMode==='motions' && s.view==='motion',
+      isEmails:s.appMode==='motions' && s.view==='emails',
       goDashboard:()=>this.goDashboard(),
       goEmails:()=>this.goEmails(),
       startNew:()=>this.startNew(),
@@ -1041,8 +2030,12 @@ class Component extends DCLogic {
       if(m.status==='voting'){ metric=this.votedCount(m)+'/6'; metricSub=this.remainingLabel(m)||'voted'; }
       else if(m.status==='closed'){ const t=this.tally(m); metric=t.yes+'–'+t.no; metricSub=this.isPassed(m)?'passed':'failed'; metricStyle='font-size:15px;font-weight:700;color:'+(this.isPassed(m)?'#1f7a4d':'#b3271a'); }
       else { metric='—'; metricSub='awaiting'; metricStyle='font-size:15px;font-weight:700;color:#c79a3a'; }
+      const mtg = m.meetingId ? this.state.meetings.find(x=>x.id===m.meetingId) : null;
+      const kindLabel = mtg ? ('Meeting · '+this.fmtMeetingShort(mtg)) : (m.pendingMeeting ? 'Meeting · next scheduled' : 'Online');
+      const kindStyle = 'display:inline-block;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:700;letter-spacing:.02em;background:'+((mtg||m.pendingMeeting)?'#ede7f6':'#e7eef3')+';color:'+((mtg||m.pendingMeeting)?'#5b3da8':'#3d5562');
       return { title:m.title, mover:this.moverDisplay(m), category:m.category,
         catStyle:this.catBadgeStyle(), statusLabel:info.label, statusStyle:this.badgeStyle(info),
+        kindLabel, kindStyle,
         dateLabel:this.fmt(m.createdAt), metric, metricSub, metricStyle,
         canDelete:s.admin, onDelete:(ev)=>{ if(ev&&ev.stopPropagation) ev.stopPropagation(); this.askDelete(m.id); },
         onOpen:()=>this.open(m) };
@@ -1075,6 +2068,18 @@ class Component extends DCLogic {
     out.onLink=e=>this.setDraft('link',e.target.value);
     out.onSuggestCat=()=>this.suggestCategory();
     out.peopleOptions=[...this.VOTERS, this.EXECDIR].map(p=>({ name:p.name, optLabel:p.name+' — '+p.role+(p.key==='execdir'?' (non-voting)':'') }));
+    // motion type (online vs meeting)
+    out.kindIsMeeting=d.kind==='meeting';
+    out.onKindOnline=()=>this.setState({draft:{...this.state.draft,kind:'online'}, submitError:''});
+    out.onKindMeeting=()=>this.setState({draft:{...this.state.draft,kind:'meeting', meetingId:(this.state.draft.meetingId||'next')}, submitError:''});
+    out.onMeetingPick=e=>this.setState({draft:{...this.state.draft,meetingId:e.target.value}, submitError:''});
+    const kindBtn=(active,color)=>'flex:1;text-align:left;border:2px solid '+(active?color:'#d8e0e6')+';background:'+(active?color:'#fff')+';color:'+(active?'#fff':'#3d5562')+';border-radius:10px;padding:12px 14px;cursor:pointer;font-family:inherit';
+    out.kindOnlineStyle=kindBtn(d.kind!=='meeting','#003A5D');
+    out.kindMeetingStyle=kindBtn(d.kind==='meeting','#EE3224');
+    out.meetingPickOptions=this.state.meetings.slice().filter(mt=>mt.status!=='completed').sort((a,b)=>this.meetingTime(a)-this.meetingTime(b)).map(mt=>({ id:mt.id, label:this.fmtMeetingShort(mt)+' — '+(mt.timeLabel||'') }));
+    const up=this.earliestUpcomingMeeting();
+    out.nextMeetingLabel = up ? ('Next meeting — '+this.fmtMeetingShort(up)) : 'The next meeting to be scheduled';
+    out.nextMeetingHint = up ? ('Goes to the soonest upcoming meeting ('+this.fmtMeetingShort(up)+'). You can pick a specific meeting below instead.') : 'No meeting is scheduled yet — this motion will attach automatically to the first meeting that gets scheduled.';
     out.draftMoverIsEd=this.isEdMover({mover:d.mover});
     out.catLoading=s.catLoading;
     out.catSuggestion=s.catSuggestion;
@@ -1093,6 +2098,9 @@ class Component extends DCLogic {
         catStyle:this.catBadgeStyle(), statusLabel:info.label, statusStyle:this.badgeStyle(info),
         expiryLabel:this.remainingLabel(cur), hasExpiry:cur.status==='voting'&&!!cur.approvedAt,
         moverDisplay:this.moverDisplay(cur),
+        submittedLabel: cur.createdAt? 'Submitted '+this.fmt(cur.createdAt):'',
+        approvedLabel: cur.approvedAt? 'Approved '+this.fmt(cur.approvedAt):'',
+        closedLabel: cur.closedAt? 'Closed '+this.fmt(cur.closedAt):'',
         seconderLabel: cur.seconder ? '  ·  Seconded by '+this.voterLabel(cur.seconder) : '' };
     }
     out.onApprove=()=>this.approve();
@@ -1166,6 +2174,7 @@ class Component extends DCLogic {
         const vote=cur.votes[v.key];
         const ci=vote?this.CHOICE[vote.choice]:null;
         return { name:v.name, role:v.role, voted:!!vote, sig:vote?vote.signature:'',
+          voteTime: vote? this.fmt(vote.at):'',
           isSeconder:cur.seconder===v.key, isMover:this.moverKey(cur)===v.key,
           dotStyle:'width:11px;height:11px;border-radius:50%;flex:none;background:'+(vote?(ci.color):'#d6dee3'),
           choiceLabel:vote?ci.label:'—',
@@ -1174,6 +2183,182 @@ class Component extends DCLogic {
             : 'font-size:12px;font-weight:600;color:#b6c0c7' };
       });
     }
+
+    // ===== MEETINGS =====
+    out.isMeetingsList = s.appMode==='meetings' && s.view==='dashboard';
+    out.isCreateMeeting = s.appMode==='meetings' && s.view==='createMeeting';
+    out.isMeetingView = s.appMode==='meetings' && s.view==='meeting';
+    out.onStartCreateMeeting=()=>this.startCreateMeeting();
+    out.backToMeetings=()=>this.backToMeetings();
+
+    // meetings list
+    const meetingsSorted=this.state.meetings.slice().sort((a,b)=>this.meetingTime(b)-this.meetingTime(a));
+    out.hasMeetings=meetingsSorted.length>0;
+    out.noMeetings=meetingsSorted.length===0;
+    out.meetingCards=meetingsSorted.map(mt=>{
+      const info=this.meetingStatusInfo(mt);
+      const itemCount=this.itemsFor(mt.id).length;
+      return { title:mt.title, dateLabel:this.fmtMeetingDate(mt), timeLabel:mt.timeLabel||'', location:mt.location||'',
+        statusLabel:info.label, statusStyle:this.badgeStyle(info),
+        sub:itemCount+(itemCount===1?' agenda item':' agenda items')+(mt.status!=='completed'?'  ·  '+this.agendaCountdownLabel(mt):''),
+        onOpen:()=>this.openMeeting(mt) };
+    });
+
+    // create meeting form
+    const md=s.meetingDraft;
+    out.meetingDraft=md;
+    out.mOnTitle=e=>this.setMeetingDraft('title',e.target.value);
+    out.mOnDate=e=>this.setMeetingDraft('date',e.target.value);
+    out.mOnStart=e=>this.setMeetingDraft('start',e.target.value);
+    out.mOnEnd=e=>this.setMeetingDraft('end',e.target.value);
+    out.mOnLocation=e=>this.setMeetingDraft('location',e.target.value);
+    out.mOnChair=e=>this.setMeetingDraft('chair',e.target.value);
+    out.chairOptions=this.EXEC_NAMES.map(n=>({name:n}));
+    out.meetingError=s.meetingError;
+    out.onCreateMeeting=()=>this.createMeeting();
+    out.onCancelMeeting=()=>this.setState({view:'dashboard'});
+
+    // meeting detail
+    const mt=this.currentMeeting();
+    if(s.appMode==='meetings' && s.view==='meeting' && mt){
+      const info=this.meetingStatusInfo(mt);
+      const items=this.itemsFor(mt.id);
+      const digital=this.digitalMotionsFor(mt);
+      out.mv={
+        title:mt.title, dateLabel:this.fmtMeetingDate(mt), timeLabel:mt.timeLabel||'', location:mt.location||'', chair:mt.chair||'—',
+        statusLabel:info.label, statusStyle:this.badgeStyle(info),
+        countdown:this.agendaCountdownLabel(mt),
+        execs:(mt.attendance&&mt.attendance.execs||this.EXEC_NAMES).join(', '),
+        staff:(mt.attendance&&mt.attendance.staff||this.STAFF_NAMES).join(', '),
+        isCompleted:mt.status==='completed',
+      };
+      out.mvCanDelete=s.admin;
+      out.onAskDeleteMeeting=()=>this.askDeleteMeeting(mt.id);
+      out.onDownloadAgenda=()=>this.downloadAgendaDocx(mt);
+      out.onPublishAgenda=()=>this.publishAgendaNow();
+      out.onMarkComplete=()=>this.markMeetingComplete();
+      out.mvIsPublished=mt.status!=='planning';
+
+      // full agenda structure (Call to Order, procedural motions, reports, adjournment)
+      const prevM=this.previousMeeting(mt);
+      const prevLabel=(mt.minutes&&mt.minutes.prevMinutesDate)||(prevM?this.fmtMeetingShort(prevM):'the previous');
+      const draft=s.minutesDraft||this.initMinutesDraft(mt);
+      const allNames=[...this.EXEC_NAMES, ...this.STAFF_NAMES].filter((v,i,a)=>a.indexOf(v)===i);
+      out.nameOptions=allNames.map(n=>({name:n}));
+      const motionEditor=(key, title, birt)=>{
+        const cur=draft[key]||{mover:'',seconder:'',result:''};
+        return { title, birt,
+          mover:cur.mover, seconder:cur.seconder, result:cur.result||'',
+          onMover:e=>this.setMin(key+'.mover', e.target.value),
+          onSeconder:e=>this.setMin(key+'.seconder', e.target.value),
+          setCarries:()=>this.setMin(key+'.result','Carries'),
+          setFails:()=>this.setMin(key+'.result','Fails'),
+          carriesStyle:this.pillStyle(cur.result==='Carries','#1f8a5b'),
+          failsStyle:this.pillStyle(cur.result==='Fails','#c0392b') };
+      };
+      out.standingMotions=[
+        motionEditor('adoption','Adoption of Agenda','BIRT, the Executive Committee adopts the agenda for the '+this.fmtMeetingShort(mt)+', UTGSU Office Meeting.'),
+        motionEditor('approval','Approval of Minutes','BIRT, the Executive Committee approves the minutes from the '+prevLabel+' UTGSU Office Meeting.'),
+      ];
+      out.minCallToOrder=draft.callToOrder; out.onCallToOrder=e=>this.setMin('callToOrder', e.target.value);
+      out.minAdjourn=draft.adjourn; out.onAdjourn=e=>this.setMin('adjourn', e.target.value);
+      out.minOtherBusiness=draft.otherBusiness; out.onOtherBusiness=e=>this.setMin('otherBusiness', e.target.value);
+      out.minutesDirty=s.minutesDirty;
+      out.onSaveMinutes=()=>this.saveMinutes();
+      out.saveMinutesStyle='background:'+(s.minutesDirty?'#EE3224':'#9fc6dd')+';color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:700;cursor:'+(s.minutesDirty?'pointer':'default')+';font-family:inherit';
+      out.savedReports=this.REPORT_ROLES.map(role=>{
+        const text=(mt.reports&&mt.reports[role])||'';
+        return { role, text, hasText:!!text.trim(),
+          lines: text.trim()? text.split('\n').filter(l=>l.trim()) : [] };
+      });
+
+      // digital motions auto-pulled
+      out.digitalMotions=digital.map(mo=>({
+        birt:mo.motionText, served:'Served online and '+(this.isPassed(mo)?'passed':'failed')+' on '+this.fmt(mo.closedAt),
+        mover:this.motionMoverName(mo), seconder:this.motionSeconderName(mo),
+        result:this.isPassed(mo)?'Carries':'Fails',
+        resultStyle:'font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;background:'+(this.isPassed(mo)?'#d7f0e1':'#fbe0dd')+';color:'+(this.isPassed(mo)?'#1f7a4d':'#b3271a'),
+        onOpen:()=>{ this.setState({appMode:'motions'}); this.open(mo); } }));
+      out.hasDigital=digital.length>0;
+
+      // motions brought to this meeting (votable through the portal)
+      const mtgMotions=this.state.motions.filter(mo=>mo.meetingId===mt.id);
+      out.meetingMotions=mtgMotions.map(mo=>{
+        const li=this.statusInfo(mo.status,mo);
+        const t=this.tally(mo);
+        let resultLine='';
+        if(mo.status==='closed') resultLine=(this.isPassed(mo)?'Carries':'Fails')+' — '+t.yes+' yes, '+t.no+' no, '+t.abstain+' abstain';
+        else if(mo.status==='voting') resultLine=this.votedCount(mo)+'/6 voted · '+this.remainingLabel(mo);
+        else resultLine='Awaiting President approval';
+        return { title:mo.title, birt:mo.motionText, statusLabel:li.label, statusStyle:this.badgeStyle(li),
+          resultLine, btnLabel: mo.status==='voting'?'Vote & sign':'Open motion',
+          onOpen:()=>{ this.setState({appMode:'motions'}); this.open(mo); } };
+      });
+      out.hasMeetingMotions=mtgMotions.length>0;
+
+      // agenda items
+      out.agendaItems=items.map((it,idx)=>{
+        const linked=this.state.motions.find(x=>x.id===it.linkedMotionId);
+        let decisionLabel='', decisionAction=null, decisionStyle='';
+        if(it.type==='decision'){
+          if(!linked){ decisionLabel='Open online vote'; decisionAction=()=>this.startDecisionMotion(it); decisionStyle='background:#EE3224;color:#fff'; }
+          else {
+            const li=this.statusInfo(linked.status,linked);
+            decisionLabel='Open online vote ('+li.label+')'; decisionAction=()=>this.openLinkedMotion(it); decisionStyle='background:#003A5D;color:#fff';
+          }
+        }
+        const di=(s.minutesDraft&&s.minutesDraft.items&&s.minutesDraft.items[it.id])||{mover:'',seconder:'',result:'',notes:''};
+        return { num:idx+1, title:it.title, presenter:it.presenter||'—', type:it.type,
+          typeLabel: it.type==='decision'?'Decision':'Discussion',
+          typeStyle: 'font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:3px 8px;border-radius:5px;background:'+(it.type==='decision'?'#fdebe9':'#e7eef3')+';color:'+(it.type==='decision'?'#b3271a':'#3d5562'),
+          time:it.timeEstimate||'', description:it.description||'', motionText:it.motionText||'', docs:it.docs||'',
+          hasMotion:it.type==='decision'&&!!it.motionText,
+          isDecision: it.type==='decision',
+          mvMover:di.mover, mvSeconder:di.seconder, mvResult:di.result, mvNotes:di.notes,
+          onMvMover:e=>this.setMin('items.'+it.id+'.mover', e.target.value),
+          onMvSeconder:e=>this.setMin('items.'+it.id+'.seconder', e.target.value),
+          setMvCarries:()=>this.setMin('items.'+it.id+'.result','Carries'),
+          setMvFails:()=>this.setMin('items.'+it.id+'.result','Fails'),
+          mvCarriesStyle:this.pillStyle(di.result==='Carries','#1f8a5b'),
+          mvFailsStyle:this.pillStyle(di.result==='Fails','#c0392b'),
+          onMvNotes:e=>this.setMin('items.'+it.id+'.notes', e.target.value),
+          decisionLabel, onDecision:decisionAction, decisionBtnStyle: decisionLabel?('border:none;border-radius:7px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;'+decisionStyle):'',
+          canDelete:!mt.status||mt.status!=='completed'||s.admin, onDelete:()=>this.askDeleteItem(it.id) };
+      });
+      out.hasItems=items.length>0;
+
+      // add item form
+      const idr=s.itemDraft;
+      out.itemDraft=idr;
+      out.iOnTitle=e=>this.setItemDraft('title',e.target.value);
+      out.iOnPresenter=e=>this.setItemDraft('presenter',e.target.value);
+      out.iOnTime=e=>this.setItemDraft('timeEstimate',e.target.value);
+      out.iOnDesc=e=>this.setItemDraft('description',e.target.value);
+      out.iOnMotion=e=>this.setItemDraft('motionText',e.target.value);
+      out.iOnDocs=e=>this.setItemDraft('docs',e.target.value);
+      out.iSetDiscussion=()=>this.setItemDraft('type','discussion');
+      out.iSetDecision=()=>this.setItemDraft('type','decision');
+      out.itemTypeDiscussionStyle='flex:1;border:2px solid '+(idr.type==='discussion'?'#003A5D':'#d8e0e6')+';background:'+(idr.type==='discussion'?'#003A5D':'#fff')+';color:'+(idr.type==='discussion'?'#fff':'#3d5562')+';border-radius:9px;padding:12px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px';
+      out.itemTypeDecisionStyle='flex:1;border:2px solid '+(idr.type==='decision'?'#EE3224':'#d8e0e6')+';background:'+(idr.type==='decision'?'#EE3224':'#fff')+';color:'+(idr.type==='decision'?'#fff':'#3d5562')+';border-radius:9px;padding:12px;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px';
+      out.itemIsDecision=idr.type==='decision';
+      out.presenterOptions=[...this.EXEC_NAMES,...this.STAFF_NAMES].filter((v,i,a)=>a.indexOf(v)===i).map(n=>({name:n}));
+      out.itemError=s.itemError;
+      out.onAddItem=()=>this.addAgendaItem();
+
+      // reports
+      out.reportPeople=this.REPORT_ROLES.map(role=>({role, has:!!(mt.reports&&mt.reports[role]&&mt.reports[role].trim())}));
+      out.reportWho=s.reportWho;
+      out.reportText=s.reportText;
+      out.onReportWho=e=>this.setReportWho(e.target.value);
+      out.onReportText=e=>this.setReportText(e.target.value);
+      out.onSaveReport=()=>this.saveReport();
+    }
+    out.showDeleteItem=!!s.deleteItemId;
+    out.onCancelDeleteItem=()=>this.setState({deleteItemId:null});
+    out.onConfirmDeleteItem=()=>this.confirmDeleteItem();
+    out.showDeleteMeeting=!!s.deleteMeetingId;
+    out.onCancelDeleteMeeting=()=>this.setState({deleteMeetingId:null});
+    out.onConfirmDeleteMeeting=()=>this.confirmDeleteMeeting();
 
     // email cards
     out.emailCards=emailLog.map(e=>({
