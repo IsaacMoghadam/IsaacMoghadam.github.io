@@ -180,7 +180,7 @@
       <div style="background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);overflow:hidden">
         <div style="padding:22px 26px;border-bottom:1px solid #edf1f4">
           <h2 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:21px;color:#003A5D">Submit a motion</h2>
-          <p style="font-size:13.5px;color:#5a6b75;margin-top:5px">Once submitted, this goes to the President (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="63131106100a07060d172316170410164d0002">[email&#160;protected]</a>) for approval before it opens to a vote.</p>
+          <p style="font-size:13.5px;color:#5a6b75;margin-top:5px">Once submitted, this goes to the President (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="72020017011b16171c063207061501075c1113">[email&#160;protected]</a>) for approval before it opens to a vote.</p>
         </div>
         <div style="padding:24px 26px;display:flex;flex-direction:column;gap:20px">
           <div>
@@ -195,6 +195,9 @@
                 <option value="{{ p.name }}">{{ p.optLabel }}</option>
               </sc-for>
             </select>
+            <sc-if value="{{ draftMoverIsEd }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:9px;font-size:13px;color:#8a5a00;background:#fdf0d5;border-radius:7px;padding:9px 12px;line-height:1.5">As Executive Director you can’t vote, so the <strong>first committee member to vote</strong> will be recorded as the mover of this motion.</div>
+            </sc-if>
           </div>
           <div>
             <label style="display:block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:7px">Category</label>
@@ -228,7 +231,7 @@
           </sc-if>
           <div style="display:flex;gap:10px;align-items:center;padding-top:4px">
             <button onClick="{{ onSubmitMotion }}" style="background:#EE3224;color:#fff;border:none;border-radius:8px;padding:13px 26px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Submit for approval</button>
-            <span style="font-size:13px;color:#7e8d96">→ emails <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="20505245534944454e546055544753550e4341">[email&#160;protected]</a></span>
+            <span style="font-size:13px;color:#7e8d96">→ emails <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="02727067716b66676c764277766571772c6163">[email&#160;protected]</a></span>
           </div>
         </div>
       </div>
@@ -246,7 +249,7 @@
       <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start">
         <div style="background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:24px 26px;display:flex;flex-direction:column;gap:18px">
           <div style="display:flex;gap:26px">
-            <div><div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:5px">Mover</div><div style="font-size:15px;color:#1f2d36;font-weight:600">{{ cur.mover }}</div></div>
+            <div><div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:5px">Mover</div><div style="font-size:15px;color:#1f2d36;font-weight:600">{{ cur.moverDisplay }}</div></div>
             <div><div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:5px">Category</div><div style="font-size:15px;color:#1f2d36;font-weight:600">{{ cur.category }}</div></div>
           </div>
           <div><div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5a6b75;margin-bottom:6px">Motion text</div><p style="font-size:15.5px;line-height:1.6;color:#23323b;white-space:pre-wrap">{{ cur.motionText }}</p></div>
@@ -286,7 +289,7 @@
           <button onClick="{{ onAskDelete }}" style="background:#fff;color:#b3271a;border:1px solid #e3b4ad;border-radius:7px;padding:6px 12px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit">Delete motion</button>
         </sc-if>
       </div>
-      <div style="font-size:13.5px;color:#5a6b75;margin-bottom:18px">Moved by <strong style="color:#33444d">{{ cur.mover }}</strong>{{ cur.seconderLabel }}</div>
+      <div style="font-size:13.5px;color:#5a6b75;margin-bottom:18px">Moved by <strong style="color:#33444d">{{ cur.moverDisplay }}</strong>{{ cur.seconderLabel }}</div>
 
       <div style="display:inline-flex;background:#e2e9ee;border-radius:9px;padding:4px;margin-bottom:20px;gap:3px">
         <button onClick="{{ tabVote }}" style="{{ tabVoteStyle }}">Cast a vote</button>
@@ -365,7 +368,7 @@
               </div>
             </sc-if>
             <sc-if value="{{ resultsSent }}" hint-placeholder-val="{{ false }}">
-              <div style="background:#f0f6f2;border:1px solid #cce6d6;border-radius:12px;padding:16px 20px;font-size:13.5px;color:#1f7a4d;font-weight:600">✓ Results have been emailed to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="28585a4d5b414c4d465c685d5c4f5b5d064b49">[email&#160;protected]</a>.</div>
+              <div style="background:#f0f6f2;border:1px solid #cce6d6;border-radius:12px;padding:16px 20px;font-size:13.5px;color:#1f7a4d;font-weight:600">✓ Results have been emailed to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b2c2c0d7c1dbd6d7dcc6f2c7c6d5c1c79cd1d3">[email&#160;protected]</a>.</div>
             </sc-if>
           </sc-if>
         </div>
@@ -593,6 +596,7 @@ class Component extends DCLogic {
       const row={};
       if('status' in patch) row.status=patch.status;
       if('seconder' in patch) row.seconder=patch.seconder;
+      if('mover' in patch) row.mover=patch.mover;
       if('votes' in patch) row.votes=patch.votes;
       if('approvedAt' in patch) row.approved_at=new Date(patch.approvedAt).toISOString();
       if('closedAt' in patch) row.closed_at=new Date(patch.closedAt).toISOString();
@@ -706,7 +710,7 @@ class Component extends DCLogic {
   motionFields(m){
     const f = [
       {label:'Category', value:m.category},
-      {label:'Mover', value:m.mover},
+      {label:'Mover', value:this.moverDisplay(m)},
       {label:'Motion text', value:m.motionText},
       {label:'Background', value:m.background},
     ];
@@ -763,6 +767,8 @@ class Component extends DCLogic {
     return 'Closes in '+mn+'m';
   }
   moverKey(m){ if(!m||!m.mover) return null; const v=this.VOTERS.find(x=>x.name.trim().toLowerCase()===String(m.mover).trim().toLowerCase()); return v?v.key:null; }
+  isEdMover(m){ return !!(m && m.mover && this.EXECDIR && String(m.mover).trim().toLowerCase()===this.EXECDIR.name.trim().toLowerCase()); }
+  moverDisplay(m){ return this.isEdMover(m) ? 'To be set on first vote (submitted by '+this.EXECDIR.name+', Exec Director)' : (m? m.mover : ''); }
   tally(m){
     const c={yes:0,no:0,abstain:0};
     Object.values(m.votes||{}).forEach(v=>{ if(c[v.choice]!=null) c[v.choice]++; });
@@ -923,7 +929,13 @@ class Component extends DCLogic {
     const now=Date.now();
     const votes={...latest.votes, [this.state.voterKey]:{choice:this.state.voteChoice, signature:this.state.voteSig.trim(), at:now}};
     const patch={votes};
-    if(!latest.seconder && this.state.voterKey!==this.moverKey(latest)) patch.seconder=this.state.voterKey;
+    const voterName = (this.VOTERS.find(x=>x.key===this.state.voterKey)||{}).name || this.state.voteSig.trim();
+    if(this.isEdMover(latest)){
+      // Exec Director submitted: the first member to vote becomes the recorded mover
+      patch.mover = voterName;
+    } else if(!latest.seconder && this.state.voterKey!==this.moverKey(latest)){
+      patch.seconder=this.state.voterKey;
+    }
     const allVoted = Object.keys(votes).length >= this.VOTERS.length;
     if(allVoted){ patch.status='closed'; patch.closedAt=now; patch.closeReason='all'; }
     try { await this.dbUpdate(m.id, patch); }
@@ -1029,7 +1041,7 @@ class Component extends DCLogic {
       if(m.status==='voting'){ metric=this.votedCount(m)+'/6'; metricSub=this.remainingLabel(m)||'voted'; }
       else if(m.status==='closed'){ const t=this.tally(m); metric=t.yes+'–'+t.no; metricSub=this.isPassed(m)?'passed':'failed'; metricStyle='font-size:15px;font-weight:700;color:'+(this.isPassed(m)?'#1f7a4d':'#b3271a'); }
       else { metric='—'; metricSub='awaiting'; metricStyle='font-size:15px;font-weight:700;color:#c79a3a'; }
-      return { title:m.title, mover:m.mover, category:m.category,
+      return { title:m.title, mover:this.moverDisplay(m), category:m.category,
         catStyle:this.catBadgeStyle(), statusLabel:info.label, statusStyle:this.badgeStyle(info),
         dateLabel:this.fmt(m.createdAt), metric, metricSub, metricStyle,
         canDelete:s.admin, onDelete:(ev)=>{ if(ev&&ev.stopPropagation) ev.stopPropagation(); this.askDelete(m.id); },
@@ -1063,6 +1075,7 @@ class Component extends DCLogic {
     out.onLink=e=>this.setDraft('link',e.target.value);
     out.onSuggestCat=()=>this.suggestCategory();
     out.peopleOptions=[...this.VOTERS, this.EXECDIR].map(p=>({ name:p.name, optLabel:p.name+' — '+p.role+(p.key==='execdir'?' (non-voting)':'') }));
+    out.draftMoverIsEd=this.isEdMover({mover:d.mover});
     out.catLoading=s.catLoading;
     out.catSuggestion=s.catSuggestion;
     out.aiBtnLabel=s.catLoading?'Sorting…':'✦ Sort with AI';
@@ -1079,6 +1092,7 @@ class Component extends DCLogic {
         motionText:cur.motionText, background:cur.background, link:cur.link,
         catStyle:this.catBadgeStyle(), statusLabel:info.label, statusStyle:this.badgeStyle(info),
         expiryLabel:this.remainingLabel(cur), hasExpiry:cur.status==='voting'&&!!cur.approvedAt,
+        moverDisplay:this.moverDisplay(cur),
         seconderLabel: cur.seconder ? '  ·  Seconded by '+this.voterLabel(cur.seconder) : '' };
     }
     out.onApprove=()=>this.approve();
