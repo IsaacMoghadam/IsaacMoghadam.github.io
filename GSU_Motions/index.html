@@ -225,7 +225,7 @@ logoW:2048,logoH:241,footerW:1224,footerH:132
       <div style="background:#fff;border:1px solid #d9e1e7;border-radius:12px;box-shadow:0 1px 3px rgba(0,40,70,.06);overflow:hidden">
         <div style="padding:22px 26px;border-bottom:1px solid #edf1f4">
           <h2 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:21px;color:#003A5D">Submit a motion</h2>
-          <p style="font-size:13.5px;color:#5a6b75;margin-top:5px">Once submitted, this goes to the President (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="32424057415b56575c467247465541471c5153">[email&#160;protected]</a>) for approval before it opens to a vote.</p>
+          <p style="font-size:13.5px;color:#5a6b75;margin-top:5px">Once submitted, this goes to the President (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="10606275637974757e645065647763653e7371">[email&#160;protected]</a>) for approval before it opens to a vote.</p>
         </div>
         <div style="padding:24px 26px;display:flex;flex-direction:column;gap:20px">
           <div>
@@ -293,7 +293,7 @@ logoW:2048,logoH:241,footerW:1224,footerH:132
           </sc-if>
           <div style="display:flex;gap:10px;align-items:center;padding-top:4px">
             <button onClick="{{ onSubmitMotion }}" style="background:#EE3224;color:#fff;border:none;border-radius:8px;padding:13px 26px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">Submit for approval</button>
-            <span style="font-size:13px;color:#7e8d96">→ emails <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1e6e6c7b6d777a7b706a5e6b6a796d6b307d7f">[email&#160;protected]</a></span>
+            <span style="font-size:13px;color:#7e8d96">→ emails <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e4949681978d80818a90a49190839791ca8785">[email&#160;protected]</a></span>
           </div>
         </div>
       </div>
@@ -431,7 +431,7 @@ logoW:2048,logoH:241,footerW:1224,footerH:132
               </div>
             </sc-if>
             <sc-if value="{{ resultsSent }}" hint-placeholder-val="{{ false }}">
-              <div style="background:#f0f6f2;border:1px solid #cce6d6;border-radius:12px;padding:16px 20px;font-size:13.5px;color:#1f7a4d;font-weight:600">✓ Results have been emailed to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3b4b495e48525f5e554f7b4e4f5c484e15585a">[email&#160;protected]</a>.</div>
+              <div style="background:#f0f6f2;border:1px solid #cce6d6;border-radius:12px;padding:16px 20px;font-size:13.5px;color:#1f7a4d;font-weight:600">✓ Results have been emailed to <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3f4f4d5a4c565b5a514b7f4a4b584c4a115c5e">[email&#160;protected]</a>.</div>
             </sc-if>
           </sc-if>
         </div>
@@ -933,6 +933,28 @@ class Component extends DCLogic {
   isExpired(m){ const e=this.expiresAt(m); return e!=null && Date.now()>=e; }
   checkExpiries(){
     (this.state.motions||[]).forEach(m=>{ if(this.isExpired(m)) this.autoCloseExpired(m); });
+    this.checkReminders();
+  }
+  async checkReminders(){
+    const REMIND_AT_MS = 24*60*60*1000; // 24h before the 48h deadline
+    for(const m of (this.state.motions||[])){
+      if(m.status!=='voting' || !m.approvedAt || m.reminderSent) continue;
+      const e=this.expiresAt(m); if(e==null) continue;
+      const remaining=e-Date.now();
+      if(remaining>REMIND_AT_MS || remaining<=0) continue; // only inside the final 24h window
+      const allVoted=Object.keys(m.votes||{}).length>=this.VOTERS.length;
+      if(allVoted) continue; // everyone already voted — no reminder needed
+      if(this._reminding && this._reminding[m.id]) continue;
+      this._reminding=this._reminding||{}; this._reminding[m.id]=true;
+      let latest=m;
+      try { const f=await this.fetchOne(m.id); if(f) latest=f; } catch(err){}
+      if(latest.status!=='voting' || latest.reminderSent || Object.keys(latest.votes||{}).length>=this.VOTERS.length){ delete this._reminding[m.id]; continue; }
+      const now=Date.now();
+      try { await this.dbUpdate(m.id, {reminderSent:true}); }
+      catch(err){ delete this._reminding[m.id]; continue; }
+      await this.sendEmail(this.buildReminderEmail({...latest, reminderSent:true}, now));
+      delete this._reminding[m.id];
+    }
   }
   async autoCloseExpired(m){
     if(this._closing && this._closing[m.id]) return;
@@ -966,6 +988,7 @@ class Component extends DCLogic {
     return { id:r.id, title:r.title, mover:r.mover, category:r.category,
       motionText:r.motion_text, background:r.background, link:r.link,
       status:r.status, seconder:r.seconder, votes:r.votes||{}, meetingId:r.meeting_id||null, pendingMeeting:r.pending_meeting||false,
+      reminderSent:r.reminder_sent||false,
       createdAt:r.created_at, approvedAt:r.approved_at, closedAt:r.closed_at, closeReason:r.close_reason };
   }
   async loadMotions(){
@@ -1657,6 +1680,7 @@ class Component extends DCLogic {
       if('mover' in patch) row.mover=patch.mover;
       if('meetingId' in patch) row.meeting_id=patch.meetingId;
       if('pendingMeeting' in patch) row.pending_meeting=patch.pendingMeeting;
+      if('reminderSent' in patch) row.reminder_sent=patch.reminderSent;
       if('votes' in patch) row.votes=patch.votes;
       if('approvedAt' in patch) row.approved_at=new Date(patch.approvedAt).toISOString();
       if('closedAt' in patch) row.closed_at=new Date(patch.closedAt).toISOString();
@@ -1796,6 +1820,27 @@ class Component extends DCLogic {
       motionTitle:m.title, fields:this.motionFields(m),
       note:'The Executive Director (executivedirector@utgsu.ca) receives this for the record and does not vote.' };
   }
+  buildReminderEmail(m, ts){
+    const e=this.expiresAt(m);
+    const notVoted=this.VOTERS.filter(v=>!m.votes[v.key]);
+    const voted=this.VOTERS.filter(v=>m.votes[v.key]);
+    const notList=notVoted.map(v=>v.role+' ('+v.email+')').join(', ')||'—';
+    const votedList=voted.map(v=>v.role).join(', ')||'none yet';
+    return { id:'e'+m.id+'_remind', kind:'reminder', kindLabel:'Voting reminder',
+      to:this.ALL_RECIPIENTS, sentAt:this.fmt(ts),
+      subject:'⏰ Reminder — 24 hours left to vote: '+m.title,
+      intro:'This is a reminder to cast your vote. Voting on the motion below closes in 24 hours, on '+this.fmt(e)+'. After that the vote closes automatically and the result is finalized from the votes received.',
+      motionTitle:m.title,
+      fields:[
+        {label:'Still need to vote ('+notVoted.length+')', value:notList},
+        {label:'Already voted ('+voted.length+')', value:votedList},
+        {label:'Mover', value:this.moverDisplay(m)},
+        {label:'Motion text', value:m.motionText},
+        {label:'Background', value:m.background},
+        ...(m.link?[{label:'Supporting document', value:m.link}]:[]),
+      ],
+      note:'Please open the Motion Portal to cast your vote (Yes / No / Abstain) and sign. If you have already voted, no action is needed. The Executive Director receives this for the record and does not vote.' };
+  }
   buildResultsEmail(m, ts){
     const t = this.tally(m);
     const passed = this.isPassed(m);
@@ -1851,6 +1896,7 @@ class Component extends DCLogic {
       const ct=m.createdAt?new Date(m.createdAt).getTime():0;
       out.push({e:this.buildApprovalEmail(m,m.createdAt),ts:ct});
       if(m.approvedAt) out.push({e:this.buildVoteEmail(m,m.approvedAt),ts:new Date(m.approvedAt).getTime()});
+      if(m.reminderSent && m.approvedAt){ const rt=new Date(m.approvedAt).getTime()+24*60*60*1000; out.push({e:this.buildReminderEmail(m,rt),ts:rt}); }
       if(m.status==='closed'&&m.closedAt) out.push({e:this.buildResultsEmail(m,m.closedAt),ts:new Date(m.closedAt).getTime()});
     });
     out.sort((a,b)=>b.ts-a.ts);
