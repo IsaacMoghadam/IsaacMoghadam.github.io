@@ -1,0 +1,37 @@
+{
+  "_note": "Site configuration for the Roadmap & Ideas page. contactEmail = where suggestions are sent if no Formspree id is set. formspreeId = optional; create a free form at formspree.io and paste its id (the part after /f/) to collect suggestions without opening the user's email client.",
+  "contactEmail": "vpinternal@utgsu.ca",
+  "formspreeId": "",
+  "roadmap": [
+    {
+      "status": "planned",
+      "title": "Email each executive their portfolio updates",
+      "detail": "Automatically email every VP a monthly digest of only the governance items matched to their portfolio (e.g. VP Academics gets Academic/Business/University Affairs Board items), so they don't have to open the dashboard."
+    },
+    {
+      "status": "planned",
+      "title": "Member suggestion inbox",
+      "detail": "Let any grad student suggest a body to track, flag an item that matters, or request a deeper summary — collected here and reviewed by the VP Internal."
+    },
+    {
+      "status": "idea",
+      "title": "Slack / Discord alerts",
+      "detail": "Post a message to the UTGSU staff channel whenever a new agenda package with high grad-student relevance is detected."
+    },
+    {
+      "status": "idea",
+      "title": "Searchable archive of past years",
+      "detail": "Keep prior academic years so you can search across the full history of what each body decided and when."
+    },
+    {
+      "status": "idea",
+      "title": "Action tracker",
+      "detail": "Flag items that need a UTGSU response (a deputation, a letter, a vote) and track them to completion."
+    },
+    {
+      "status": "idea",
+      "title": "OCR for scanned documents",
+      "detail": "Read presentations and reports that are posted as scanned images with no text layer, so nothing is missed."
+    }
+  ]
+}

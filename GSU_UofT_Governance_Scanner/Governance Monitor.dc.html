@@ -16,7 +16,9 @@
   body{background:#eef2f5}
   @keyframes tpop{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
   @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes slidedown{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
   a{color:inherit}
+  input,textarea,button{font-family:inherit}
 </style>
 </helmet>
 
@@ -34,8 +36,13 @@
     <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:#9fe6c4;margin-left:6px"><span style="width:7px;height:7px;border-radius:50%;background:#46d39a"></span>Last scan {{ scanDateLabel }}</span>
     <div style="flex:1"></div>
     <a href="{{ sourceUrl }}" target="_blank" style="text-decoration:none;color:#9fc6dd;font-size:13.5px;font-weight:600;padding:8px 6px">Source ↗</a>
-    <button onClick="{{ onRunScan }}" style="background:#EE3224;color:#fff;border:none;border-radius:7px;padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:6px">Run scan now</button>
   </header>
+
+  <nav style="background:#01293f;display:flex;align-items:center;gap:4px;padding:0 26px;height:48px">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+      <button onClick="{{ t.onPick }}" style="{{ t.style }}">{{ t.label }}</button>
+    </sc-for>
+  </nav>
 
   <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
     <div style="position:fixed;top:78px;left:50%;transform:translateX(-50%);z-index:50;background:#0c2f47;color:#fff;padding:12px 20px;border-radius:10px;box-shadow:0 8px 28px rgba(0,30,50,.28);font-size:14px;font-weight:600;display:flex;align-items:center;gap:10px;animation:tpop .25s ease">
@@ -43,277 +50,509 @@
     </div>
   </sc-if>
 
-  <main style="max-width:1080px;margin:0 auto;padding:30px 26px 80px">
+  <main style="max-width:1080px;margin:0 auto;padding:28px 26px 90px">
 
-    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:16px">
-      <div>
-        <h1 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:26px;color:#003A5D">Meeting Packages &amp; Reports</h1>
-        <p style="font-size:14px;color:#5a6b75;margin-top:4px">Agenda packages and reports tracked automatically across U of T governing bodies · {{ academicYear }}</p>
-      </div>
-      <div style="display:flex;gap:10px">
-        <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:12px 18px;text-align:center;min-width:96px">
-          <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:24px;color:#EE3224">{{ newCount }}</div>
-          <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7e8d96;margin-top:2px">New this scan</div>
-        </div>
-        <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:12px 18px;text-align:center;min-width:96px">
-          <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:24px;color:#003A5D">{{ bodyCount }}</div>
-          <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7e8d96;margin-top:2px">Bodies tracked</div>
-        </div>
-      </div>
-    </div>
+    <!-- ============================ MEETINGS VIEW ============================ -->
+    <sc-if value="{{ isMeetings }}" hint-placeholder-val="{{ true }}">
 
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:18px;flex-wrap:wrap">
-      <span style="background:#003A5D;color:#fff;font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;border-radius:7px;padding:8px 14px">{{ scanLabel }}</span>
-      <span style="font-size:12.5px;color:#9aabb4;font-weight:600">scheduled monthly · next {{ nextScanLabel }}</span>
-    </div>
-
-    <div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap">
-      <sc-for list="{{ chips }}" as="c" hint-placeholder-count="4">
-        <button onClick="{{ c.onPick }}" style="{{ c.style }}">{{ c.label }}</button>
-      </sc-for>
-    </div>
-
-    <div style="display:flex;flex-direction:column;gap:26px">
-      <sc-for list="{{ bodies }}" as="b" hint-placeholder-count="3">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:16px">
         <div>
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
-            <span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#003A5D;text-transform:uppercase;letter-spacing:.04em">{{ b.name }}</span>
-            <span style="{{ b.statusStyle }}">{{ b.statusLabel }}</span>
-            <div style="flex:1;height:1px;background:#e2e9ee"></div>
-            <a href="{{ b.url }}" target="_blank" style="font-size:12.5px;color:#5a6b75;font-weight:600;text-decoration:none">Body page ↗</a>
+          <h1 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:26px;color:#003A5D">Meeting Packages &amp; Reports</h1>
+          <p style="font-size:14px;color:#5a6b75;margin-top:4px">Tracked automatically across U of T governing bodies · {{ academicYear }}</p>
+        </div>
+        <div style="display:flex;gap:10px">
+          <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:12px 18px;text-align:center;min-width:96px">
+            <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:24px;color:#EE3224">{{ newCount }}</div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7e8d96;margin-top:2px">New this scan</div>
           </div>
-
-          <div style="display:flex;flex-direction:column;gap:14px">
-            <sc-for list="{{ b.packages }}" as="p" hint-placeholder-count="1">
-              <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:20px 22px">
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
-                  <div style="flex:1;min-width:0">
-                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap">
-                      <span style="display:inline-block;padding:3px 9px;border-radius:5px;background:#e8eef2;color:#3d5562;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase">{{ p.docType }}</span>
-                      <span style="{{ p.badgeStyle }}">{{ p.badgeLabel }}</span>
-                    </div>
-                    <h3 style="font-family:Montserrat,sans-serif;font-weight:700;font-size:18px;color:#0c2f47;line-height:1.3">{{ p.title }}</h3>
-                    <div style="font-size:13px;color:#5a6b75;margin-top:6px">Meeting <strong style="color:#33444d">{{ p.meetingLabel }}</strong> · detected {{ p.detectedLabel }}</div>
-                  </div>
-                </div>
-
-                <p style="font-size:14.5px;line-height:1.65;color:#33444d;margin-top:14px;text-wrap:pretty">{{ p.summary }}</p>
-
-                <sc-if value="{{ p.hasGrad }}" hint-placeholder-val="{{ false }}">
-                  <div style="margin-top:14px;background:#fbe9e6;border:1px solid #f3cfc8;border-left:3px solid #EE3224;border-radius:8px;padding:13px 16px">
-                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#b3271a;margin-bottom:6px">Why it matters to grad students</div>
-                    <p style="font-size:13.5px;line-height:1.6;color:#5a3631;text-wrap:pretty">{{ p.gradRelevance }}</p>
-                  </div>
-                </sc-if>
-
-                <sc-if value="{{ p.hasItems }}" hint-placeholder-val="{{ true }}">
-                  <div style="margin-top:14px;background:#f6f9fb;border:1px solid #e6edf2;border-radius:9px;padding:14px 16px">
-                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7e8d96;margin-bottom:9px">What was discussed</div>
-                    <div style="display:flex;flex-direction:column;gap:8px">
-                      <sc-for list="{{ p.keyItems }}" as="k" hint-placeholder-count="3">
-                        <div style="display:flex;gap:10px;align-items:flex-start">
-                          <span style="width:6px;height:6px;border-radius:1px;background:#EE3224;flex:none;margin-top:7px"></span>
-                          <span style="font-size:13.5px;line-height:1.5;color:#33444d">{{ k.text }}</span>
-                        </div>
-                      </sc-for>
-                    </div>
-                  </div>
-                </sc-if>
-
-                <sc-if value="{{ p.hasDocs }}" hint-placeholder-val="{{ false }}">
-                  <div style="margin-top:14px">
-                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7e8d96;margin-bottom:10px">Reports &amp; presentations <span style="color:#b8c2c9">· {{ p.docCount }}</span></div>
-                    <div style="display:flex;flex-direction:column;gap:10px">
-                      <sc-for list="{{ p.documents }}" as="d" hint-placeholder-count="2">
-                        <div style="border:1px solid #e6edf2;border-radius:9px;padding:12px 14px">
-                          <a href="{{ d.url }}" target="_blank" style="font-size:13.5px;font-weight:700;color:#003A5D;text-decoration:none;line-height:1.35">{{ d.title }} ↗</a>
-                          <p style="font-size:13px;line-height:1.55;color:#33444d;margin-top:5px;text-wrap:pretty">{{ d.summary }}</p>
-                          <sc-if value="{{ d.hasGrad }}" hint-placeholder-val="{{ false }}">
-                            <p style="font-size:12.5px;line-height:1.5;color:#b3271a;margin-top:5px;font-weight:600;text-wrap:pretty">Grad-student angle: {{ d.gradRelevance }}</p>
-                          </sc-if>
-                        </div>
-                      </sc-for>
-                    </div>
-                  </div>
-                </sc-if>
-
-                <div style="display:flex;align-items:center;gap:18px;margin-top:16px;padding-top:14px;border-top:1px solid #edf1f4">
-                  <a href="{{ p.docUrl }}" target="_blank" style="font-size:13.5px;font-weight:700;color:#EE3224;text-decoration:none">Open source package ↗</a>
-                  <span style="font-size:12px;color:#9aabb4;font-weight:600">AI-generated summary · verify against the original</span>
-                </div>
-              </div>
-            </sc-for>
-
-            <sc-if value="{{ b.isEmpty }}" hint-placeholder-val="{{ false }}">
-              <div style="background:#fff;border:1px dashed #c9d4db;border-radius:11px;padding:22px;display:flex;align-items:center;gap:12px">
-                <span style="width:8px;height:8px;border-radius:50%;background:#c2ccd3;flex:none"></span>
-                <span style="font-size:13.5px;color:#7e8d96;font-weight:600">{{ b.emptyMsg }}</span>
-              </div>
-            </sc-if>
+          <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:12px 18px;text-align:center;min-width:96px">
+            <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:24px;color:#003A5D">{{ trackedCount }}</div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#7e8d96;margin-top:2px">Packages</div>
           </div>
         </div>
-      </sc-for>
-    </div>
+      </div>
 
-    <p style="text-align:center;font-size:12px;color:#9aabb4;margin-top:40px;line-height:1.6">Summaries generated automatically from posted agenda packages. Always confirm details against the official documents on the Governing Council Secretariat site.</p>
+      <!-- controls -->
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+        <div style="flex:1;min-width:220px;position:relative;display:flex;align-items:center">
+          <span style="position:absolute;left:13px;color:#9aabb4;font-size:15px">⌕</span>
+          <input value="{{ search }}" onInput="{{ onSearch }}" placeholder="Search items, decisions, dollar figures, policies…" style="width:100%;border:1px solid #d2dbe1;border-radius:9px;padding:11px 13px 11px 32px;font-size:14px;color:#1f2d36;background:#fff;outline:none" />
+        </div>
+        <button onClick="{{ onToggleGrad }}" style="{{ gradToggleStyle }}">Grad-relevant only</button>
+        <button onClick="{{ onExpandAll }}" style="border:1px solid #d2dbe1;background:#fff;color:#3d5562;border-radius:9px;padding:11px 14px;font-size:13px;font-weight:600;cursor:pointer">{{ expandAllLabel }}</button>
+      </div>
+
+      <!-- body chips -->
+      <div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap">
+        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="5">
+          <button onClick="{{ c.onPick }}" style="{{ c.style }}">{{ c.label }}</button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px dashed #c9d4db;border-radius:11px;padding:30px;text-align:center;color:#7e8d96;font-size:14px;font-weight:600">{{ noResultsMsg }}</div>
+      </sc-if>
+
+      <div style="display:flex;flex-direction:column;gap:26px">
+        <sc-for list="{{ bodies }}" as="b" hint-placeholder-count="3">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+              <span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#003A5D;text-transform:uppercase;letter-spacing:.04em">{{ b.name }}</span>
+              <span style="{{ b.statusStyle }}">{{ b.statusLabel }}</span>
+              <div style="flex:1;height:1px;background:#e2e9ee"></div>
+              <a href="{{ b.url }}" target="_blank" style="font-size:12.5px;color:#5a6b75;font-weight:600;text-decoration:none">Body page ↗</a>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{ b.packages }}" as="p" hint-placeholder-count="1">
+                <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);overflow:hidden">
+
+                  <!-- card header (always visible, click to toggle) -->
+                  <button onClick="{{ p.onToggle }}" style="width:100%;text-align:left;border:none;background:none;cursor:pointer;padding:17px 20px;display:flex;align-items:center;gap:14px">
+                    <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#9aabb4;flex:none;width:18px;transition:transform .15s;transform:{{ p.chevronRotate }}">▸</span>
+                    <div style="flex:1;min-width:0">
+                      <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:5px">
+                        <span style="display:inline-block;padding:3px 9px;border-radius:5px;background:#e8eef2;color:#3d5562;font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase">{{ p.docType }}</span>
+                        <span style="{{ p.badgeStyle }}">{{ p.badgeLabel }}</span>
+                        <sc-for list="{{ p.execTags }}" as="e" hint-placeholder-count="2">
+                          <span style="display:inline-block;padding:3px 9px;border-radius:20px;background:#e6eef5;color:#003A5D;font-size:10.5px;font-weight:700">{{ e.role }}</span>
+                        </sc-for>
+                      </div>
+                      <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15.5px;color:#0c2f47;line-height:1.3">{{ p.shortTitle }}</div>
+                      <div style="font-size:12.5px;color:#7e8d96;margin-top:3px">Meeting {{ p.meetingLabel }} · detected {{ p.detectedLabel }}</div>
+                    </div>
+                  </button>
+
+                  <!-- expanded body -->
+                  <sc-if value="{{ p.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding:2px 22px 20px 52px;animation:slidedown .18s ease">
+                      <p style="font-size:14.5px;line-height:1.65;color:#33444d;text-wrap:pretty">{{ p.summary }}</p>
+
+                      <sc-if value="{{ p.hasGrad }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin-top:14px;background:#fbe9e6;border:1px solid #f3cfc8;border-left:3px solid #EE3224;border-radius:8px;padding:13px 16px">
+                          <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#b3271a;margin-bottom:6px">Why it matters to grad students</div>
+                          <p style="font-size:13.5px;line-height:1.6;color:#5a3631;text-wrap:pretty">{{ p.gradRelevance }}</p>
+                        </div>
+                      </sc-if>
+
+                      <sc-if value="{{ p.hasItems }}" hint-placeholder-val="{{ true }}">
+                        <div style="margin-top:14px;background:#f6f9fb;border:1px solid #e6edf2;border-radius:9px;padding:14px 16px">
+                          <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7e8d96;margin-bottom:9px">What was discussed</div>
+                          <div style="display:flex;flex-direction:column;gap:8px">
+                            <sc-for list="{{ p.keyItems }}" as="k" hint-placeholder-count="3">
+                              <div style="display:flex;gap:10px;align-items:flex-start">
+                                <span style="width:6px;height:6px;border-radius:1px;background:#EE3224;flex:none;margin-top:7px"></span>
+                                <span style="font-size:13.5px;line-height:1.5;color:#33444d">{{ k.text }}</span>
+                              </div>
+                            </sc-for>
+                          </div>
+                        </div>
+                      </sc-if>
+
+                      <sc-if value="{{ p.hasDocs }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin-top:14px">
+                          <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7e8d96;margin-bottom:10px">Reports &amp; presentations <span style="color:#b8c2c9">· {{ p.docCount }}</span></div>
+                          <div style="display:flex;flex-direction:column;gap:10px">
+                            <sc-for list="{{ p.documents }}" as="d" hint-placeholder-count="2">
+                              <div style="border:1px solid #e6edf2;border-radius:9px;padding:12px 14px">
+                                <a href="{{ d.url }}" target="_blank" style="font-size:13.5px;font-weight:700;color:#003A5D;text-decoration:none;line-height:1.35">{{ d.title }} ↗</a>
+                                <p style="font-size:13px;line-height:1.55;color:#33444d;margin-top:5px;text-wrap:pretty">{{ d.summary }}</p>
+                                <sc-if value="{{ d.hasGrad }}" hint-placeholder-val="{{ false }}">
+                                  <p style="font-size:12.5px;line-height:1.5;color:#b3271a;margin-top:5px;font-weight:600;text-wrap:pretty">Grad-student angle: {{ d.gradRelevance }}</p>
+                                </sc-if>
+                              </div>
+                            </sc-for>
+                          </div>
+                        </div>
+                      </sc-if>
+
+                      <div style="display:flex;align-items:center;gap:18px;margin-top:16px;padding-top:14px;border-top:1px solid #edf1f4">
+                        <a href="{{ p.docUrl }}" target="_blank" style="font-size:13.5px;font-weight:700;color:#EE3224;text-decoration:none">Open source package ↗</a>
+                        <span style="font-size:12px;color:#9aabb4;font-weight:600">AI summary · verify against the original</span>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+
+              <sc-if value="{{ b.isEmpty }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#fff;border:1px dashed #c9d4db;border-radius:11px;padding:20px;display:flex;align-items:center;gap:12px">
+                  <span style="width:8px;height:8px;border-radius:50%;background:#c2ccd3;flex:none"></span>
+                  <span style="font-size:13.5px;color:#7e8d96;font-weight:600">{{ b.emptyMsg }}</span>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- ============================ EXECS VIEW ============================ -->
+    <sc-if value="{{ isExecs }}" hint-placeholder-val="{{ false }}">
+      <h1 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:26px;color:#003A5D">By Executive Portfolio</h1>
+      <p style="font-size:14px;color:#5a6b75;margin-top:4px;margin-bottom:20px">Governance items matched to each UTGSU executive's portfolio (Bylaw 7). Pick a portfolio to see what's relevant.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px;margin-bottom:26px">
+        <sc-for list="{{ execCards }}" as="e" hint-placeholder-count="6">
+          <button onClick="{{ e.onPick }}" style="{{ e.style }}">
+            <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:14px;line-height:1.2">{{ e.role }}</div>
+            <div style="font-size:18px;font-weight:800;margin-top:8px;{{ e.countColor }}">{{ e.count }}</div>
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.7;margin-top:1px">matched items</div>
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="background:#003A5D;color:#fff;border-radius:13px;padding:22px 24px;margin-bottom:22px">
+        <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:19px">{{ selectedExec.role }}</div>
+        <p style="font-size:13.5px;line-height:1.6;color:#cfe2ef;margin-top:8px;max-width:780px;text-wrap:pretty">{{ selectedExec.blurb }}</p>
+        <sc-if value="{{ selectedExec.hasWatch }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:13px">
+            <span style="font-size:11px;font-weight:700;color:#9fc6dd;align-self:center">Watches:</span>
+            <sc-for list="{{ selectedExec.watch }}" as="w" hint-placeholder-count="3">
+              <span style="background:rgba(255,255,255,.12);color:#fff;border-radius:20px;padding:4px 11px;font-size:11.5px;font-weight:600">{{ w.name }}</span>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ execHasItems }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ execPackages }}" as="p" hint-placeholder-count="3">
+            <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);overflow:hidden">
+              <button onClick="{{ p.onToggle }}" style="width:100%;text-align:left;border:none;background:none;cursor:pointer;padding:16px 20px;display:flex;align-items:center;gap:14px">
+                <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#9aabb4;flex:none;width:18px;transform:{{ p.chevronRotate }}">▸</span>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:5px">
+                    <span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:11px;color:#003A5D;text-transform:uppercase;letter-spacing:.04em">{{ p.bodyName }}</span>
+                    <span style="{{ p.badgeStyle }}">{{ p.badgeLabel }}</span>
+                  </div>
+                  <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;color:#0c2f47;line-height:1.3">{{ p.shortTitle }}</div>
+                  <div style="font-size:12.5px;color:#7e8d96;margin-top:3px">Meeting {{ p.meetingLabel }}</div>
+                </div>
+              </button>
+              <sc-if value="{{ p.open }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:2px 22px 20px 52px;animation:slidedown .18s ease">
+                  <p style="font-size:14px;line-height:1.65;color:#33444d;text-wrap:pretty">{{ p.summary }}</p>
+                  <sc-if value="{{ p.hasGrad }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:13px;background:#fbe9e6;border:1px solid #f3cfc8;border-left:3px solid #EE3224;border-radius:8px;padding:12px 15px">
+                      <div style="font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#b3271a;margin-bottom:5px">Why it matters to grad students</div>
+                      <p style="font-size:13px;line-height:1.6;color:#5a3631;text-wrap:pretty">{{ p.gradRelevance }}</p>
+                    </div>
+                  </sc-if>
+                  <a href="{{ p.docUrl }}" target="_blank" style="display:inline-block;margin-top:14px;font-size:13.5px;font-weight:700;color:#EE3224;text-decoration:none">Open source package ↗</a>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+      <sc-if value="{{ execEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff;border:1px dashed #c9d4db;border-radius:11px;padding:30px;text-align:center;color:#7e8d96;font-size:14px;font-weight:600">Nothing matched to this portfolio in the current scan. New items will appear here automatically.</div>
+      </sc-if>
+    </sc-if>
+
+    <!-- ============================ ROADMAP VIEW ============================ -->
+    <sc-if value="{{ isRoadmap }}" hint-placeholder-val="{{ false }}">
+      <h1 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:26px;color:#003A5D">Roadmap &amp; Ideas</h1>
+      <p style="font-size:14px;color:#5a6b75;margin-top:4px;margin-bottom:24px">What's coming next — and a place to tell us what would make this more useful.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7e8d96">On the roadmap</div>
+          <sc-for list="{{ roadmap }}" as="r" hint-placeholder-count="4">
+            <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:16px 18px">
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
+                <span style="{{ r.tagStyle }}">{{ r.tagLabel }}</span>
+              </div>
+              <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;color:#0c2f47;line-height:1.3">{{ r.title }}</div>
+              <p style="font-size:13px;line-height:1.55;color:#5a6b75;margin-top:6px;text-wrap:pretty">{{ r.detail }}</p>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="background:#fff;border:1px solid #d9e1e7;border-radius:13px;box-shadow:0 1px 3px rgba(0,40,70,.06);padding:22px 22px;position:sticky;top:20px">
+          <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:17px;color:#003A5D">Suggest something</div>
+          <p style="font-size:13px;color:#5a6b75;margin-top:5px;line-height:1.5">A body to track, an item that matters to you, or any way to make this better.</p>
+
+          <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:16px;background:#d6f2e4;border:1px solid #a9dcc3;border-radius:9px;padding:16px;color:#1f7a52;font-size:14px;font-weight:600;line-height:1.5">Thanks — your suggestion was sent. {{ submitNote }}</div>
+          </sc-if>
+
+          <sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:16px;display:flex;flex-direction:column;gap:11px">
+              <input value="{{ formName }}" onInput="{{ onFormName }}" placeholder="Your name (optional)" style="border:1px solid #d2dbe1;border-radius:9px;padding:11px 13px;font-size:14px;outline:none" />
+              <input value="{{ formEmail }}" onInput="{{ onFormEmail }}" placeholder="Your email (optional, for a reply)" style="border:1px solid #d2dbe1;border-radius:9px;padding:11px 13px;font-size:14px;outline:none" />
+              <textarea value="{{ formMsg }}" onInput="{{ onFormMsg }}" placeholder="Your suggestion…" style="border:1px solid #d2dbe1;border-radius:9px;padding:11px 13px;font-size:14px;outline:none;min-height:110px;resize:vertical"></textarea>
+              <button onClick="{{ onSubmit }}" style="{{ submitStyle }}">Send suggestion</button>
+              <div style="font-size:11.5px;color:#9aabb4;line-height:1.5">{{ formHint }}</div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <p style="text-align:center;font-size:12px;color:#9aabb4;margin-top:44px;line-height:1.6">Summaries generated automatically from posted agenda packages. Always confirm details against the official documents on the Governing Council Secretariat site.</p>
 
   </main>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1080,&quot;height&quot;:900},&quot;orgName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;UTGSU&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;showQuiet&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1080,&quot;height&quot;:920},&quot;orgName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;UTGSU&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
 class Component extends DCLogic {
-  state = { filter: 'all', data: null, toast: '' };
+  state = {
+    view: 'meetings',
+    filter: 'all',
+    search: '',
+    gradOnly: false,
+    open: {},           // packageId -> bool
+    allExpanded: false,
+    data: null,
+    execs: null,
+    config: null,
+    selectedExecId: 'vp-academics',
+    toast: '',
+    formName: '', formEmail: '', formMsg: '',
+    submitted: false, submitNote: ''
+  };
 
   componentDidMount() {
-    fetch('data.json')
-      .then(r => r.ok ? r.json() : Promise.reject())
-      .then(d => this.setState({ data: d }))
-      .catch(() => this.setState({ data: this.fallback() }));
+    this.load('data.json', d => ({ data: d }), { data: this.fallbackData() });
+    this.load('execs.json', d => ({ execs: d.execs }), { execs: this.fallbackExecs() });
+    this.load('config.json', d => ({ config: d }), { config: this.fallbackConfig() });
+  }
+  load(url, pick, fb) {
+    fetch(url).then(r => r.ok ? r.json() : Promise.reject())
+      .then(d => this.setState(pick(d)))
+      .catch(() => this.setState(fb));
   }
 
-  fallback() {
-    return {
-      generatedAt: '2026-06-01T08:00:00Z',
-      academicYear: '2025–2026',
-      source: 'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies',
-      bodies: [
-        { id:'academic-board', name:'Academic Board', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/academic-board', status:'new', packages:[
-          { title:'Academic Board — Agenda Package', meetingDate:'2026-05-28', detectedOn:'2026-06-01', isNew:true, docUrl:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/academic-board',
-            summary:'The May meeting centred on approval of the 2026–27 operating budget framework and a planning report on undergraduate enrolment growth across the three campuses. Members reviewed proposed new graduate programs in the Faculty of Applied Science & Engineering and received the annual report on academic appeals.',
-            keyItems:['2026–27 operating budget framework recommended for approval','Three new graduate programs in Engineering brought forward','Annual report on student academic appeals received','Update on tri-campus enrolment growth strategy'] } ] },
-        { id:'business-board', name:'Business Board', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/business-board', status:'new', packages:[
-          { title:'Business Board — Agenda Package', meetingDate:'2026-05-21', detectedOn:'2026-06-01', isNew:true, docUrl:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/business-board',
-            summary:'Discussion focused on the capital projects portfolio, including a status update on the Spadina–Sussex student residence and approval of a major infrastructure renewal project. The board also reviewed the quarterly financial report and a proposed increase to ancillary fees.',
-            keyItems:['Capital project approval: campus infrastructure renewal','Spadina–Sussex residence construction status update','Q3 financial report and investment performance reviewed','Proposed ancillary fee adjustments for 2026–27'] } ] },
-        { id:'audit-committee', name:'Audit Committee', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/audit-committee', status:'new', packages:[
-          { title:'Audit Committee — Agenda Package', meetingDate:'2026-05-14', detectedOn:'2026-06-01', isNew:true, docUrl:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/audit-committee',
-            summary:"The committee received the external auditor's interim findings and an update on the enterprise risk management framework. Internal audit presented its workplan for the coming year, with attention to cybersecurity and research grant compliance.",
-            keyItems:['External auditor interim findings presented','Enterprise risk management framework update','Internal audit workplan for 2026–27 approved','Focus areas: cybersecurity, research grant compliance'] } ] },
-        { id:'agenda-committee', name:'Agenda Committee', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/agenda-committee', status:'unchanged', packages:[
-          { title:'Agenda Committee — Agenda Package', meetingDate:'2026-04-30', detectedOn:'2026-05-01', isNew:false, docUrl:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/agenda-committee',
-            summary:"The committee set the agenda and forward calendar for the Academic Board's final meeting of the academic year and confirmed the schedule of governance meetings for 2026–27.",
-            keyItems:['Forward agenda for Academic Board confirmed','2026–27 governance meeting calendar approved'] } ] },
-        { id:'university-affairs-board', name:'University Affairs Board', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/university-affairs-board', status:'unchanged', packages:[] },
-        { id:'executive-committee', name:'Executive Committee', url:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies/executive-committee', status:'unchanged', packages:[] }
-      ]
-    };
+  // ---------- helpers ----------
+  fmt(iso){ if(!iso) return ''; const d=new Date(iso.length<=10?iso+'T00:00:00':iso); return isNaN(d)?iso:d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+  fmtShort(iso){ if(!iso) return ''; const d=new Date(iso.length<=10?iso+'T00:00:00':iso); return isNaN(d)?iso:d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+  pkgId(bodyId,p){ return bodyId+'::'+(p.docUrl||p.title); }
+  shortTitle(p){
+    // strip "Body — Type · Date" down to "Type · Date" for the card heading
+    const t = p.title || '';
+    const parts = t.split(' \u2014 ');
+    return parts.length>1 ? parts.slice(1).join(' \u2014 ') : t;
+  }
+  text(p){ return [p.summary,p.gradRelevance,(p.keyItems||[]).join(' '),(p.documents||[]).map(d=>d.title+' '+d.summary+' '+d.gradRelevance).join(' ')].join(' ').toLowerCase(); }
+
+  matchExecs(p){
+    const execs = this.state.execs || [];
+    const hay = this.text(p) + ' ' + (p.title||'').toLowerCase();
+    const out = [];
+    for(const e of execs){
+      let score = 0;
+      for(const k of (e.keywords||[])) if(hay.includes(k.toLowerCase())) score++;
+      // a body the exec explicitly watches counts strongly
+      const bn = (p._bodyName||'').toLowerCase();
+      if((e.watch||[]).some(w => bn.includes(w.toLowerCase()))) score += 3;
+      if(score>0) out.push({id:e.id, role:e.role, score});
+    }
+    return out.sort((a,b)=>b.score-a.score);
   }
 
-  fmt(iso) {
-    if (!iso) return '';
-    const d = new Date(iso.length <= 10 ? iso + 'T00:00:00' : iso);
-    if (isNaN(d)) return iso;
-    return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
-  }
-  fmtShort(iso) {
-    if (!iso) return '';
-    const d = new Date(iso.length <= 10 ? iso + 'T00:00:00' : iso);
-    if (isNaN(d)) return iso;
-    return d.toLocaleDateString('en-US', { month:'short', day:'numeric' });
-  }
+  chipStyle(active){ return 'padding:7px 13px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid '+(active?'#003A5D':'#d2dbe1')+';background:'+(active?'#003A5D':'#fff')+';color:'+(active?'#fff':'#3d5562'); }
+  tabStyle(active){ return 'border:none;background:none;cursor:pointer;font-size:14px;font-weight:700;color:'+(active?'#fff':'#7fa8c2')+';padding:0 16px;height:48px;border-bottom:3px solid '+(active?'#EE3224':'transparent')+';font-family:inherit'; }
+  newBadge(){ return 'display:inline-block;padding:4px 11px;border-radius:20px;background:#d6f2e4;color:#1f7a52;font-size:11.5px;font-weight:700'; }
+  oldBadge(){ return 'display:inline-block;padding:4px 11px;border-radius:20px;background:#eef2f5;color:#7e8d96;font-size:11.5px;font-weight:700'; }
 
-  chipStyle(active) {
-    return 'padding:7px 13px;border-radius:20px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid ' +
-      (active ? '#003A5D' : '#d2dbe1') + ';background:' + (active ? '#003A5D' : '#fff') + ';color:' + (active ? '#fff' : '#3d5562');
-  }
-  newBadge() { return 'display:inline-block;padding:4px 11px;border-radius:20px;background:#d6f2e4;color:#1f7a52;font-size:11.5px;font-weight:700;letter-spacing:.03em'; }
-  oldBadge() { return 'display:inline-block;padding:4px 11px;border-radius:20px;background:#eef2f5;color:#7e8d96;font-size:11.5px;font-weight:700;letter-spacing:.03em'; }
+  toggle(id){ this.setState(s => ({ open: { ...s.open, [id]: !s.open[id] } })); }
 
-  runScan() {
-    this.setState({ toast: 'Scanning governing bodies…' });
-    setTimeout(() => this.setState({ toast: '' }), 2600);
+  setAll(open){
+    const map = {};
+    for(const b of (this.state.data?.bodies||[])) for(const p of (b.packages||[])) map[this.pkgId(b.id,p)] = open;
+    this.setState({ open: map, allExpanded: open });
   }
 
-  renderVals() {
-    const data = this.state.data || { bodies: [], academicYear: '', source: '#', generatedAt: '' };
-    const showQuiet = this.props.showQuiet ?? true;
-    const filter = this.state.filter;
+  submit(){
+    const cfg = this.state.config || {};
+    const name = this.state.formName.trim(), email = this.state.formEmail.trim(), msg = this.state.formMsg.trim();
+    if(!msg){ this.setState({ toast:'Please write a suggestion first.' }); setTimeout(()=>this.setState({toast:''}),2000); return; }
+    if(cfg.formspreeId){
+      fetch('https://formspree.io/f/'+cfg.formspreeId, {
+        method:'POST', headers:{'Accept':'application/json','Content-Type':'application/json'},
+        body: JSON.stringify({ name, email, message: msg, _subject:'Governance Monitor suggestion' })
+      }).then(()=>this.setState({ submitted:true, submitNote:'' })).catch(()=>this.mailto(name,email,msg));
+    } else {
+      this.mailto(name,email,msg);
+    }
+  }
+  mailto(name,email,msg){
+    const cfg = this.state.config || {};
+    const to = cfg.contactEmail || '';
+    const body = encodeURIComponent(msg + '\n\n— ' + (name||'Anonymous') + (email?(' ('+email+')'):''));
+    const href = 'mailto:'+to+'?subject='+encodeURIComponent('Governance Monitor suggestion')+'&body='+body;
+    window.open(href, '_blank');
+    this.setState({ submitted:true, submitNote:'(Your email app should have opened — press send there.)' });
+  }
 
-    const allNew = data.bodies.reduce((n, b) => n + (b.packages || []).filter(p => p.isNew).length, 0);
+  // ---------- fallbacks ----------
+  fallbackData(){ return { generatedAt:'', academicYear:'2025\u20132026', source:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies', bodies:[] }; }
+  fallbackExecs(){ return []; }
+  fallbackConfig(){ return { contactEmail:'', formspreeId:'', roadmap:[] }; }
 
-    // chips
-    const chipDefs = [
-      { id:'all', label:'All bodies' },
-      { id:'new', label:'🟢 New this scan' }
-    ].concat(data.bodies.map(b => ({ id:b.id, label:b.name })));
-    const chips = chipDefs.map(c => ({
-      label: c.label,
-      style: this.chipStyle(filter === c.id),
-      onPick: () => this.setState({ filter: c.id })
-    }));
+  renderVals(){
+    const data = this.state.data || this.fallbackData();
+    const execs = this.state.execs || [];
+    const cfg = this.state.config || this.fallbackConfig();
+    const view = this.state.view;
+    const q = this.state.search.trim().toLowerCase();
 
-    // filter bodies
-    let bodies = data.bodies;
-    if (filter === 'new') {
-      bodies = data.bodies
-        .map(b => ({ ...b, packages: (b.packages || []).filter(p => p.isNew) }))
-        .filter(b => b.packages.length > 0);
-    } else if (filter !== 'all') {
-      bodies = data.bodies.filter(b => b.id === filter);
+    // annotate packages with body name + exec matches once
+    const allPkgs = [];
+    for(const b of data.bodies){
+      for(const p of (b.packages||[])){
+        p._bodyId = b.id; p._bodyName = b.name; p._bodyUrl = b.url;
+        p._id = this.pkgId(b.id,p);
+        p._execs = this.matchExecs(p);
+        allPkgs.push(p);
+      }
     }
 
-    const bodyVals = bodies.map(b => {
-      const pkgs = b.packages || [];
-      const newN = pkgs.filter(p => p.isNew).length;
-      let statusLabel, statusStyle;
-      if (newN > 0) { statusLabel = newN + (newN === 1 ? ' new package' : ' new packages'); statusStyle = this.newBadge(); }
-      else if (pkgs.length > 0) { statusLabel = 'No change'; statusStyle = this.oldBadge(); }
-      else { statusLabel = 'No packages yet'; statusStyle = this.oldBadge(); }
+    const newCount = allPkgs.filter(p=>p.isNew).length;
 
-      const visiblePkgs = (filter === 'all' && !showQuiet) ? pkgs : pkgs;
-      return {
-        name: b.name,
-        url: b.url,
-        statusLabel, statusStyle,
-        isEmpty: visiblePkgs.length === 0,
-        emptyMsg: 'No agenda package posted for the current academic year yet — checked ' + this.fmt(data.generatedAt) + '.',
-        packages: visiblePkgs.map(p => ({
-          title: p.title,
-          docType: p.docType || 'Agenda Package',
-          meetingLabel: this.fmt(p.meetingDate),
-          detectedLabel: this.fmtShort(p.detectedOn),
-          summary: p.summary,
-          gradRelevance: p.gradRelevance || '',
-          hasGrad: !!(p.gradRelevance && p.gradRelevance.trim()),
-          docUrl: p.docUrl,
-          badgeLabel: p.isNew ? 'NEW' : 'Earlier',
-          badgeStyle: p.isNew ? this.newBadge() : this.oldBadge(),
-          hasItems: (p.keyItems || []).length > 0,
-          keyItems: (p.keyItems || []).map(t => ({ text: t })),
-          hasDocs: (p.documents || []).length > 0,
-          docCount: (p.documents || []).length,
-          documents: (p.documents || []).map(d => ({
-            title: d.title || 'Document',
-            url: d.url || p.docUrl,
-            summary: d.summary || '',
-            gradRelevance: d.gradRelevance || '',
-            hasGrad: !!(d.gradRelevance && d.gradRelevance.trim())
-          }))
-        }))
-      };
-    }).filter(b => showQuiet || !b.isEmpty || filter !== 'all');
+    // ---- tabs ----
+    const tabDefs = [['meetings','Meetings'],['execs','By Executive'],['roadmap','Roadmap & Ideas']];
+    const tabs = tabDefs.map(([id,label])=>({ label, style:this.tabStyle(view===id), onPick:()=>this.setState({view:id}) }));
 
-    return {
+    const base = {
       orgName: this.props.orgName ?? 'UTGSU',
       academicYear: data.academicYear,
       sourceUrl: data.source,
-      scanDateLabel: this.fmt(data.generatedAt),
-      scanLabel: new Date((data.generatedAt || '2026-06-01') ).toLocaleDateString('en-US', { month:'long', year:'numeric' }) + ' scan',
-      nextScanLabel: this.nextScan(data.generatedAt),
-      newCount: allNew,
-      bodyCount: data.bodies.length,
-      chips,
-      bodies: bodyVals,
-      toast: this.state.toast,
-      onRunScan: () => this.runScan()
+      scanDateLabel: this.fmt(data.generatedAt) || 'pending',
+      newCount, trackedCount: allPkgs.length,
+      tabs, toast: this.state.toast,
+      isMeetings: view==='meetings', isExecs: view==='execs', isRoadmap: view==='roadmap',
+    };
+
+    if(view==='meetings') Object.assign(base, this.meetingsVals(data, q));
+    if(view==='execs')    Object.assign(base, this.execVals(allPkgs, execs));
+    if(view==='roadmap')  Object.assign(base, this.roadmapVals(cfg));
+    return base;
+  }
+
+  packageCardVals(p){
+    return {
+      _id: p._id,
+      docType: p.docType || 'Agenda Package',
+      shortTitle: this.shortTitle(p),
+      bodyName: p._bodyName,
+      meetingLabel: this.fmt(p.meetingDate),
+      detectedLabel: this.fmtShort(p.detectedOn),
+      summary: p.summary,
+      gradRelevance: p.gradRelevance || '',
+      hasGrad: !!(p.gradRelevance && p.gradRelevance.trim()),
+      docUrl: p.docUrl,
+      badgeLabel: p.isNew ? 'NEW' : 'Earlier',
+      badgeStyle: p.isNew ? this.newBadge() : this.oldBadge(),
+      execTags: (p._execs||[]).slice(0,3).map(e=>({role:e.role})),
+      hasItems: (p.keyItems||[]).length>0,
+      keyItems: (p.keyItems||[]).map(t=>({text:t})),
+      hasDocs: (p.documents||[]).length>0,
+      docCount: (p.documents||[]).length,
+      documents: (p.documents||[]).map(d=>({ title:d.title||'Document', url:d.url||p.docUrl, summary:d.summary||'', gradRelevance:d.gradRelevance||'', hasGrad:!!(d.gradRelevance&&d.gradRelevance.trim()) })),
+      open: !!this.state.open[p._id],
+      chevronRotate: this.state.open[p._id] ? 'rotate(90deg)' : 'rotate(0deg)',
+      onToggle: ()=>this.toggle(p._id),
     };
   }
 
-  nextScan(iso) {
-    const d = new Date(iso || '2026-06-01T00:00:00Z');
-    if (isNaN(d)) return '';
-    const n = new Date(d.getFullYear(), d.getMonth() + 1, 1);
-    return n.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  meetingsVals(data, q){
+    const filter = this.state.filter, gradOnly = this.state.gradOnly;
+    const pass = p => {
+      if(gradOnly && !(p.gradRelevance && p.gradRelevance.trim().length>40)) return false;
+      if(q && !(this.text(p)+' '+(p.title||'').toLowerCase()).includes(q)) return false;
+      return true;
+    };
+
+    const chipDefs = [['all','All bodies'],['new','🟢 New this scan']].concat(data.bodies.map(b=>[b.id,b.name]));
+    const chips = chipDefs.map(([id,label])=>({ label, style:this.chipStyle(filter===id), onPick:()=>this.setState({filter:id}) }));
+
+    let bodies = data.bodies;
+    if(filter==='new') bodies = data.bodies.map(b=>({...b, packages:(b.packages||[]).filter(p=>p.isNew)})).filter(b=>b.packages.length);
+    else if(filter!=='all') bodies = data.bodies.filter(b=>b.id===filter);
+
+    const showAll = filter==='all';
+    let total = 0;
+    const bodyVals = bodies.map(b=>{
+      const pkgs = (b.packages||[]).filter(pass);
+      total += pkgs.length;
+      const newN = pkgs.filter(p=>p.isNew).length;
+      let statusLabel, statusStyle;
+      if(newN>0){ statusLabel = newN+(newN===1?' new':' new'); statusStyle=this.newBadge(); }
+      else if((b.packages||[]).length>0){ statusLabel='No change'; statusStyle=this.oldBadge(); }
+      else { statusLabel='No packages yet'; statusStyle=this.oldBadge(); }
+      return {
+        name:b.name, url:b.url, statusLabel, statusStyle,
+        isEmpty: pkgs.length===0 && !showAll,
+        emptyMsg: 'No agenda package matched here yet — checked '+(this.fmt(data.generatedAt)||'recently')+'.',
+        packages: pkgs.map(p=>this.packageCardVals(p)),
+        _hide: pkgs.length===0 && showAll,   // hide empty bodies in the "all" view to cut noise
+      };
+    }).filter(b=>!b._hide);
+
+    return {
+      chips,
+      bodies: bodyVals,
+      search: this.state.search,
+      onSearch: e=>this.setState({search:e.target.value}),
+      gradToggleStyle: this.chipStyle(gradOnly)+';border-radius:9px;padding:11px 14px;',
+      onToggleGrad: ()=>this.setState({gradOnly:!gradOnly}),
+      expandAllLabel: this.state.allExpanded ? 'Collapse all' : 'Expand all',
+      onExpandAll: ()=>this.setAll(!this.state.allExpanded),
+      noResults: total===0,
+      noResultsMsg: q ? 'No items match "'+this.state.search+'".' : (this.state.gradOnly ? 'No strongly grad-relevant items in this view.' : 'No packages tracked yet — run a scan to populate.'),
+    };
+  }
+
+  execVals(allPkgs, execs){
+    const sel = execs.find(e=>e.id===this.state.selectedExecId) || execs[0] || {id:'',role:'',blurb:'',watch:[]};
+    const countFor = id => allPkgs.filter(p=>(p._execs||[]).some(e=>e.id===id)).length;
+    const execCards = execs.map(e=>{
+      const active = e.id===sel.id, c = countFor(e.id);
+      return {
+        role:e.role, count:c,
+        countColor: active ? 'color:#fff' : (c>0?'color:#EE3224':'color:#b8c2c9'),
+        style:'text-align:left;cursor:pointer;font-family:inherit;border-radius:11px;padding:14px 16px;border:1px solid '+(active?'#003A5D':'#d9e1e7')+';background:'+(active?'#003A5D':'#fff')+';color:'+(active?'#fff':'#0c2f47')+';box-shadow:0 1px 3px rgba(0,40,70,.06)',
+        onPick:()=>this.setState({selectedExecId:e.id}),
+      };
+    });
+
+    const matched = allPkgs
+      .filter(p=>(p._execs||[]).some(e=>e.id===sel.id))
+      .sort((a,b)=>{
+        const sa=(a._execs.find(e=>e.id===sel.id)||{}).score||0, sb=(b._execs.find(e=>e.id===sel.id)||{}).score||0;
+        if(sb!==sa) return sb-sa;
+        return (b.meetingDate||'').localeCompare(a.meetingDate||'');
+      });
+
+    return {
+      execCards,
+      selectedExec: { role:sel.role, blurb:sel.blurb, hasWatch:(sel.watch||[]).length>0, watch:(sel.watch||[]).map(w=>({name:w})) },
+      execPackages: matched.map(p=>this.packageCardVals(p)),
+      execHasItems: matched.length>0,
+      execEmpty: matched.length===0,
+    };
+  }
+
+  roadmapVals(cfg){
+    const tag = s => {
+      if(s==='planned') return {tagLabel:'Planned', tagStyle:'display:inline-block;padding:3px 10px;border-radius:20px;background:#d6e6f5;color:#1d5e96;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase'};
+      if(s==='building') return {tagLabel:'In progress', tagStyle:'display:inline-block;padding:3px 10px;border-radius:20px;background:#fde7c9;color:#9a6212;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase'};
+      return {tagLabel:'Idea', tagStyle:'display:inline-block;padding:3px 10px;border-radius:20px;background:#eef2f5;color:#7e8d96;font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase'};
+    };
+    return {
+      roadmap: (cfg.roadmap||[]).map(r=>({ title:r.title, detail:r.detail, ...tag(r.status) })),
+      submitted: this.state.submitted, notSubmitted: !this.state.submitted, submitNote: this.state.submitNote,
+      formName:this.state.formName, formEmail:this.state.formEmail, formMsg:this.state.formMsg,
+      onFormName:e=>this.setState({formName:e.target.value}),
+      onFormEmail:e=>this.setState({formEmail:e.target.value}),
+      onFormMsg:e=>this.setState({formMsg:e.target.value}),
+      onSubmit:()=>this.submit(),
+      submitStyle:'background:#EE3224;color:#fff;border:none;border-radius:9px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer',
+      formHint: cfg.formspreeId ? 'Sent securely to the UTGSU team.' : 'Opens your email app addressed to the UTGSU team.',
+    };
   }
 }
 </script>

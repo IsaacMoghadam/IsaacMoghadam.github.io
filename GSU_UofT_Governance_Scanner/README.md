@@ -25,10 +25,29 @@ which the monthly job rewrites and commits.
 | `index.html` | The dashboard people look at. (A copy of `Governance Monitor.dc.html` — the editable source.) |
 | `support.js` | Runtime the dashboard needs. Keep it next to `index.html`. |
 | `data.json` | The data the dashboard shows. The scanner overwrites this every month. |
+| `execs.json` | The 6 UTGSU executive portfolios + matching keywords (Bylaw 7). Powers the **By Executive** page. Edit to tune what shows under each VP. |
+| `config.json` | Roadmap items + the suggestion-form settings for the **Roadmap & Ideas** page. |
 | `backend/scan.py` | The scanner. |
 | `backend/bodies.json` | The list of governing bodies to track — edit to add/remove. |
 | `backend/requirements.txt` | Python dependencies. |
 | `.github/workflows/monthly-scan.yml` | The monthly schedule. |
+
+---
+
+## The three pages
+
+- **Meetings** — every tracked body, newest items as **collapsible cards** (click to expand the full summary, what-was-discussed bullets, grad-student relevance, and each linked report/presentation). Search box, a "grad-relevant only" filter, body chips, and expand/collapse-all.
+- **By Executive** — governance items automatically matched to each of the 6 UTGSU executives' portfolios. Matching is done in the browser from `execs.json` (no API cost), using each portfolio's keywords plus the bodies that VP explicitly watches under Bylaw 7. Edit `execs.json` to tune it.
+- **Roadmap & Ideas** — what's planned (e.g. emailing each exec their portfolio digest) and a form for members to submit suggestions. See "Collecting suggestions" below.
+
+---
+
+## Collecting suggestions (Roadmap page form)
+
+By default the form opens the visitor's email app addressed to `contactEmail` in `config.json`. To collect
+submissions silently instead (recommended), create a free form at <https://formspree.io>, copy its id (the part
+after `/f/` in the endpoint), and paste it into `config.json` as `formspreeId`. Change `contactEmail` to your
+real address either way.
 
 ---
 

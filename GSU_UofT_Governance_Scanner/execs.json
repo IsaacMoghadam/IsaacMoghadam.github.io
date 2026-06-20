@@ -1,0 +1,77 @@
+{
+  "_note": "UTGSU Executive Committee portfolios from Bylaw 7 (amended Dec 2024). 'keywords' drive automatic matching of governance items to each exec. Edit keywords to tune what shows up under each portfolio. Matching is case-insensitive substring on each meeting's text (summary, items, document summaries).",
+  "execs": [
+    {
+      "id": "president",
+      "role": "President",
+      "blurb": "Chief Executive Officer and official spokesperson. Coordinates relations with the Office of the President, Vice-Provost Students, and Governing Council and its committees (with VP Academics); strategic plan; human resources; Course Unions and graduate student groups.",
+      "watch": ["Governing Council", "Executive Committee", "Agenda Committee"],
+      "keywords": [
+        "strategic plan", "spokesperson", "human resources", "executive director",
+        "office of the president", "vice-provost students", "vice-provost, students",
+        "governing council", "course union", "media relations", "membership",
+        "presidential", "senior appointments", "compensation", "by-law", "bylaw", "governance review"
+      ]
+    },
+    {
+      "id": "vp-academics",
+      "role": "VP Academics",
+      "blurb": "Academic campaigns and advocacy; graduate funding, grants and awards; academic unit funding and the funding complaints process; academic appeals; student–supervisor relationships. Explicitly monitors the Academic Board, Business Board and University Affairs Board.",
+      "watch": ["Academic Board", "Business Board", "University Affairs Board", "Committee on Academic Policy and Programs", "Planning and Budget Committee"],
+      "keywords": [
+        "academic", "curriculum", "program", "graduate funding", "funding", "grant", "award",
+        "scholarship", "stipend", "tuition", "fees", "appeal", "supervisor", "supervision",
+        "mentorship", "ombudsperson", "enrolment", "admission", "library", "graduate education council",
+        "school of graduate studies", "sgs", "operating budget", "academic policy", "degree",
+        "new program", "program closure", "quality assurance", "provostial"
+      ]
+    },
+    {
+      "id": "vp-external",
+      "role": "VP External",
+      "blurb": "Municipal, provincial and federal government and community advocacy; relations with sibling students' unions and labour unions on and off campus; Canadian Federation of Students; partner advocacy coalitions; satellite-campus engagement.",
+      "watch": ["Governing Council", "University Affairs Board"],
+      "keywords": [
+        "government", "provincial", "federal", "municipal", "advocacy", "campaign",
+        "labour", "union", "cupe", "collective agreement", "canadian federation of students",
+        "tuition framework", "international student", "immigration", "transit", "housing affordability",
+        "coalition", "lobby", "public funding", "grant funding from government"
+      ]
+    },
+    {
+      "id": "vp-finance",
+      "role": "VP Finance",
+      "blurb": "Chief Financial Officer; financial planning and oversight; annual budget and audit; Health and Dental Plan; levy groups; bursaries and grants; service programs (tax clinics, discounts). Oversight of UTGSU services.",
+      "watch": ["Business Board", "Audit Committee", "Planning and Budget Committee"],
+      "keywords": [
+        "budget", "audit", "auditor", "financial", "finance", "investment", "expenditure",
+        "ancillary fee", "fee", "levy", "health and dental", "insurance", "bursary", "tax",
+        "deferred maintenance", "capital project", "capital budget", "endowment", "pension",
+        "cost", "funding envelope", "reserve", "variance", "compensation"
+      ]
+    },
+    {
+      "id": "vp-graduate-life",
+      "role": "VP Graduate Life",
+      "blurb": "Graduate student life programming and advocacy; orientation and welcome-back; programming in the UTGSU building; mental health and wellness; relations with SGS Grad Life, Grad House, Hart House, Athletics & Recreation, and Council of Student Services.",
+      "watch": ["University Affairs Board"],
+      "keywords": [
+        "student life", "wellness", "mental health", "health", "counselling", "orientation",
+        "hart house", "athletics", "recreation", "grad house", "council of student services",
+        "student services", "accessibility", "accommodation", "equity", "community", "wellbeing",
+        "food", "childcare", "family care", "campus space", "student space", "programming"
+      ]
+    },
+    {
+      "id": "vp-internal",
+      "role": "VP Internal",
+      "blurb": "Oversight of governance documents and minutes; planning of governance meetings; General Meetings; appointment processes (Chair, Equity Officer, Board of Appeal); maintaining Bylaws and Policies; Caucuses; Course Union governance support.",
+      "watch": ["Agenda Committee", "Executive Committee", "Elections Committee", "College of Electors"],
+      "keywords": [
+        "governance", "bylaw", "by-law", "policy", "policies", "minutes", "agenda", "terms of reference",
+        "election", "appointment", "nomination", "constitution", "quorum", "membership rule",
+        "committee structure", "mandate", "procedure", "consent agenda", "annual report", "calendar"
+      ]
+    }
+  ]
+}
