@@ -1,0 +1,27 @@
+name: Motion Portal automation
+
+# Runs on GitHub's servers — no one needs the app open.
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # every 15 minutes (UTC). GitHub may delay a few minutes under load.
+  workflow_dispatch:          # lets you run it manually from the Actions tab to test
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run motion + meeting automation
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          EMAILJS_SERVICE: ${{ secrets.EMAILJS_SERVICE }}
+          EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
+          EMAILJS_PRIVATE_KEY: ${{ secrets.EMAILJS_PRIVATE_KEY }}
+          EMAILJS_TEMPLATE_PRESIDENT: ${{ secrets.EMAILJS_TEMPLATE_PRESIDENT }}
+          EMAILJS_TEMPLATE_COMMITTEE: ${{ secrets.EMAILJS_TEMPLATE_COMMITTEE }}
+          PORTAL_URL: ${{ secrets.PORTAL_URL }}
+        run: node backend/cron/cron.mjs
