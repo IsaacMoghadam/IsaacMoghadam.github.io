@@ -25,9 +25,8 @@
 <div style="min-height:100vh;background:#eef2f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1f2d36">
 
   <header style="background:#003A5D;color:#fff;display:flex;align-items:center;gap:18px;padding:0 26px;height:62px">
-    <div style="height:44px;background:#fff;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;padding:0 13px;line-height:1">
-      <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:19px;color:#003A5D;letter-spacing:.5px">GM</div>
-      <div style="width:26px;height:3px;background:#EE3224;border-radius:2px;margin-top:3px"></div>
+    <div style="height:44px;background:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:none;padding:0 11px">
+      <img src="utgsu-logo.png" alt="UTGSU" style="height:30px;width:auto;display:block" />
     </div>
     <div style="line-height:1.15">
       <div style="font-family:Montserrat,sans-serif;font-weight:800;font-size:18px;letter-spacing:.2px">Governance Monitor</div>
@@ -72,39 +71,57 @@
         </div>
       </div>
 
-      <!-- controls -->
-      <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+      <!-- search row -->
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:11px;flex-wrap:wrap">
         <div style="flex:1;min-width:220px;position:relative;display:flex;align-items:center">
           <span style="position:absolute;left:13px;color:#9aabb4;font-size:15px">⌕</span>
           <input value="{{ search }}" onInput="{{ onSearch }}" placeholder="Search items, decisions, dollar figures, policies…" style="width:100%;border:1px solid #d2dbe1;border-radius:9px;padding:11px 13px 11px 32px;font-size:14px;color:#1f2d36;background:#fff;outline:none" />
         </div>
-        <button onClick="{{ onToggleGrad }}" style="{{ gradToggleStyle }}">Grad-relevant only</button>
         <button onClick="{{ onExpandAll }}" style="border:1px solid #d2dbe1;background:#fff;color:#3d5562;border-radius:9px;padding:11px 14px;font-size:13px;font-weight:600;cursor:pointer">{{ expandAllLabel }}</button>
       </div>
 
-      <!-- body chips -->
-      <div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap">
-        <sc-for list="{{ chips }}" as="c" hint-placeholder-count="5">
-          <button onClick="{{ c.onPick }}" style="{{ c.style }}">{{ c.label }}</button>
-        </sc-for>
+      <!-- filter toolbar (dropdowns replace the chip wall) -->
+      <div style="display:flex;gap:9px;align-items:center;margin-bottom:22px;flex-wrap:wrap">
+        <select value="{{ groupByVal }}" onChange="{{ onGroupBy }}" style="{{ selectStyle }}">
+          <option value="month">📅 By month</option>
+          <option value="body">🏛 By body</option>
+        </select>
+        <select value="{{ bodyFilterVal }}" onChange="{{ onBodyFilter }}" style="{{ selectStyle }}">
+          <sc-for list="{{ bodyOptions }}" as="o" hint-placeholder-count="6">
+            <option value="{{ o.value }}">{{ o.label }}</option>
+          </sc-for>
+        </select>
+        <select value="{{ execFilterVal }}" onChange="{{ onExecFilter }}" style="{{ selectStyle }}">
+          <sc-for list="{{ execOptions }}" as="o" hint-placeholder-count="7">
+            <option value="{{ o.value }}">{{ o.label }}</option>
+          </sc-for>
+        </select>
+        <button onClick="{{ onToggleNew }}" style="{{ newToggleStyle }}">🟢 New only</button>
+        <button onClick="{{ onToggleGrad }}" style="{{ gradToggleStyle }}">Grad-relevant</button>
+        <sc-if value="{{ hasActiveFilter }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ onClearFilters }}" style="border:none;background:none;color:#EE3224;font-size:13px;font-weight:700;cursor:pointer;padding:8px 4px">Clear</button>
+        </sc-if>
       </div>
 
       <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff;border:1px dashed #c9d4db;border-radius:11px;padding:30px;text-align:center;color:#7e8d96;font-size:14px;font-weight:600">{{ noResultsMsg }}</div>
       </sc-if>
 
-      <div style="display:flex;flex-direction:column;gap:26px">
-        <sc-for list="{{ bodies }}" as="b" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <sc-for list="{{ groups }}" as="g" hint-placeholder-count="3">
           <div>
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
-              <span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#003A5D;text-transform:uppercase;letter-spacing:.04em">{{ b.name }}</span>
-              <span style="{{ b.statusStyle }}">{{ b.statusLabel }}</span>
+            <button onClick="{{ g.onToggle }}" style="width:100%;text-align:left;border:none;background:none;cursor:pointer;display:flex;align-items:center;gap:11px;margin-bottom:13px;padding:0">
+              <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:12px;color:#9aabb4;flex:none;width:13px;transition:transform .15s;transform:{{ g.chevronRotate }}">▸</span>
+              <span style="font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;color:#003A5D;text-transform:uppercase;letter-spacing:.04em">{{ g.title }}</span>
+              <span style="display:inline-block;padding:3px 9px;border-radius:20px;background:#eef2f5;color:#7e8d96;font-size:11px;font-weight:700">{{ g.countLabel }}</span>
+              <sc-if value="{{ g.hasNew }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block;padding:3px 9px;border-radius:20px;background:#d6f2e4;color:#1f7a52;font-size:11px;font-weight:700">{{ g.newLabel }}</span></sc-if>
               <div style="flex:1;height:1px;background:#e2e9ee"></div>
-              <a href="{{ b.url }}" target="_blank" style="font-size:12.5px;color:#5a6b75;font-weight:600;text-decoration:none">Body page ↗</a>
-            </div>
+              <sc-if value="{{ g.isBody }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:#5a6b75;font-weight:600">Body ↗</span></sc-if>
+            </button>
 
+            <sc-if value="{{ g.open }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;flex-direction:column;gap:12px">
-              <sc-for list="{{ b.packages }}" as="p" hint-placeholder-count="1">
+              <sc-for list="{{ g.packages }}" as="p" hint-placeholder-count="1">
                 <div style="background:#fff;border:1px solid #d9e1e7;border-radius:11px;box-shadow:0 1px 3px rgba(0,40,70,.06);overflow:hidden">
 
                   <!-- card header (always visible, click to toggle) -->
@@ -112,14 +129,20 @@
                     <span style="font-family:Montserrat,sans-serif;font-weight:700;font-size:13px;color:#9aabb4;flex:none;width:18px;transition:transform .15s;transform:{{ p.chevronRotate }}">▸</span>
                     <div style="flex:1;min-width:0">
                       <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:5px">
+                        <sc-if value="{{ p.showBody }}" hint-placeholder-val="{{ false }}">
+                          <span style="display:inline-block;font-family:Montserrat,sans-serif;font-weight:800;padding:3px 9px;border-radius:5px;background:#003A5D;color:#fff;font-size:10px;letter-spacing:.03em;text-transform:uppercase">{{ p.bodyName }}</span>
+                        </sc-if>
                         <span style="display:inline-block;padding:3px 9px;border-radius:5px;background:#e8eef2;color:#3d5562;font-size:10.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase">{{ p.docType }}</span>
                         <span style="{{ p.badgeStyle }}">{{ p.badgeLabel }}</span>
+                        <sc-if value="{{ p.upcoming }}" hint-placeholder-val="{{ false }}">
+                          <span style="display:inline-block;padding:3px 9px;border-radius:20px;background:#fde7c9;color:#9a6212;font-size:10.5px;font-weight:800;letter-spacing:.02em">UPCOMING</span>
+                        </sc-if>
                         <sc-for list="{{ p.execTags }}" as="e" hint-placeholder-count="2">
                           <span style="display:inline-block;padding:3px 9px;border-radius:20px;background:#e6eef5;color:#003A5D;font-size:10.5px;font-weight:700">{{ e.role }}</span>
                         </sc-for>
                       </div>
                       <div style="font-family:Montserrat,sans-serif;font-weight:700;font-size:15.5px;color:#0c2f47;line-height:1.3">{{ p.shortTitle }}</div>
-                      <div style="font-size:12.5px;color:#7e8d96;margin-top:3px">Meeting {{ p.meetingLabel }} · detected {{ p.detectedLabel }}</div>
+                      <div style="font-size:12.5px;color:#7e8d96;margin-top:3px">Meeting {{ p.meetingLabel }} · {{ p.insideLabel }}</div>
                     </div>
                   </button>
 
@@ -174,14 +197,8 @@
                   </sc-if>
                 </div>
               </sc-for>
-
-              <sc-if value="{{ b.isEmpty }}" hint-placeholder-val="{{ false }}">
-                <div style="background:#fff;border:1px dashed #c9d4db;border-radius:11px;padding:20px;display:flex;align-items:center;gap:12px">
-                  <span style="width:8px;height:8px;border-radius:50%;background:#c2ccd3;flex:none"></span>
-                  <span style="font-size:13.5px;color:#7e8d96;font-weight:600">{{ b.emptyMsg }}</span>
-                </div>
-              </sc-if>
             </div>
+            </sc-if>
           </div>
         </sc-for>
       </div>
@@ -256,7 +273,7 @@
       <h1 style="font-family:Montserrat,sans-serif;font-weight:800;font-size:26px;color:#003A5D">Roadmap &amp; Ideas</h1>
       <p style="font-size:14px;color:#5a6b75;margin-top:4px;margin-bottom:24px">What's coming next — and a place to tell us what would make this more useful.</p>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;align-items:start">
         <div style="display:flex;flex-direction:column;gap:12px">
           <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7e8d96">On the roadmap</div>
           <sc-for list="{{ roadmap }}" as="r" hint-placeholder-count="4">
@@ -283,10 +300,27 @@
               <input value="{{ formName }}" onInput="{{ onFormName }}" placeholder="Your name (optional)" style="border:1px solid #d2dbe1;border-radius:9px;padding:11px 13px;font-size:14px;outline:none" />
               <input value="{{ formEmail }}" onInput="{{ onFormEmail }}" placeholder="Your email (optional, for a reply)" style="border:1px solid #d2dbe1;border-radius:9px;padding:11px 13px;font-size:14px;outline:none" />
               <textarea value="{{ formMsg }}" onInput="{{ onFormMsg }}" placeholder="Your suggestion…" style="border:1px solid #d2dbe1;border-radius:9px;padding:11px 13px;font-size:14px;outline:none;min-height:110px;resize:vertical"></textarea>
-              <button onClick="{{ onSubmit }}" style="{{ submitStyle }}">Send suggestion</button>
+              <button onClick="{{ onSubmit }}" style="{{ submitStyle }}">Post suggestion</button>
               <div style="font-size:11.5px;color:#9aabb4;line-height:1.5">{{ formHint }}</div>
             </div>
           </sc-if>
+
+          <div style="margin-top:22px;border-top:1px solid #edf1f4;padding-top:18px">
+            <div style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7e8d96;margin-bottom:12px">Suggestions from members <span style="color:#b8c2c9">· {{ suggestionCount }}</span></div>
+            <sc-if value="{{ hasSuggestions }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="2">
+                  <div style="background:#f6f9fb;border:1px solid #e6edf2;border-radius:9px;padding:13px 15px">
+                    <p style="font-size:13.5px;line-height:1.55;color:#33444d;text-wrap:pretty">{{ s.message }}</p>
+                    <div style="font-size:11.5px;color:#9aabb4;font-weight:600;margin-top:7px">{{ s.byline }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noSuggestions }}" hint-placeholder-val="{{ true }}">
+              <p style="font-size:13px;color:#9aabb4;line-height:1.5">No suggestions yet — be the first.</p>
+            </sc-if>
+          </div>
         </div>
       </div>
     </sc-if>
@@ -300,10 +334,14 @@
 class Component extends DCLogic {
   state = {
     view: 'meetings',
-    filter: 'all',
+    groupBy: 'month',     // 'month' | 'body'
+    bodyFilter: 'all',
+    execFilter: 'all',
+    onlyNew: false,
     search: '',
     gradOnly: false,
-    open: {},           // packageId -> bool
+    open: {},             // packageId -> bool
+    collapsedGroups: {},  // groupKey -> bool (collapsed)
     allExpanded: false,
     data: null,
     execs: null,
@@ -311,13 +349,59 @@ class Component extends DCLogic {
     selectedExecId: 'vp-academics',
     toast: '',
     formName: '', formEmail: '', formMsg: '',
-    submitted: false, submitNote: ''
+    submitted: false, submitNote: '',
+    suggestions: [], sending: false
   };
 
   componentDidMount() {
     this.load('data.json', d => ({ data: d }), { data: this.fallbackData() });
     this.load('execs.json', d => ({ execs: d.execs }), { execs: this.fallbackExecs() });
-    this.load('config.json', d => ({ config: d }), { config: this.fallbackConfig() });
+    this.load('config.json', d => { this._cfg = d; this.loadSuggestions(d); return { config: d }; }, { config: this.fallbackConfig() });
+  }
+
+  // ---------- suggestions store (Supabase, with this-browser fallback) ----------
+  sb(cfg){ return (cfg && cfg.supabaseUrl && cfg.supabaseAnonKey) ? cfg : null; }
+  localKey(){ return 'gm_suggestions'; }
+  readLocal(){ try { return JSON.parse(localStorage.getItem(this.localKey()) || '[]'); } catch(e){ return []; } }
+  writeLocal(arr){ try { localStorage.setItem(this.localKey(), JSON.stringify(arr)); } catch(e){} }
+
+  loadSuggestions(cfg){
+    const s = this.sb(cfg);
+    if(s){
+      fetch(s.supabaseUrl.replace(/\/$/,'') + '/rest/v1/suggestions?select=name,message,created_at&order=created_at.desc&limit=100', {
+        headers: { apikey: s.supabaseAnonKey, Authorization: 'Bearer ' + s.supabaseAnonKey }
+      }).then(r => r.ok ? r.json() : Promise.reject())
+        .then(rows => this.setState({ suggestions: rows }))
+        .catch(() => this.setState({ suggestions: this.readLocal() }));
+    } else {
+      this.setState({ suggestions: this.readLocal() });
+    }
+  }
+
+  submit(){
+    const cfg = this.state.config || {};
+    const name = this.state.formName.trim(), email = this.state.formEmail.trim(), msg = this.state.formMsg.trim();
+    if(!msg){ this.setState({ toast:'Please write a suggestion first.' }); setTimeout(()=>this.setState({toast:''}),2000); return; }
+    const row = { name: name || 'Anonymous', email, message: msg, created_at: new Date().toISOString() };
+    const s = this.sb(cfg);
+    this.setState({ sending: true });
+    if(s){
+      fetch(s.supabaseUrl.replace(/\/$/,'') + '/rest/v1/suggestions', {
+        method:'POST',
+        headers: { apikey: s.supabaseAnonKey, Authorization: 'Bearer ' + s.supabaseAnonKey, 'Content-Type':'application/json', Prefer:'return=minimal' },
+        body: JSON.stringify({ name: row.name, email: row.email, message: row.message })
+      }).then(r => { if(!r.ok) throw new Error(); this.afterSubmit(cfg, row); })
+        .catch(() => { this.afterSubmit(cfg, row, true); });
+    } else {
+      const arr = [row, ...this.readLocal()];
+      this.writeLocal(arr);
+      this.afterSubmit(cfg, row);
+    }
+  }
+  afterSubmit(cfg, row, savedLocally){
+    if(savedLocally){ const arr = [row, ...this.readLocal()]; this.writeLocal(arr); }
+    this.setState({ submitted:true, sending:false, formName:'', formEmail:'', formMsg:'' });
+    this.loadSuggestions(cfg);
   }
   load(url, pick, fb) {
     fetch(url).then(r => r.ok ? r.json() : Promise.reject())
@@ -365,32 +449,11 @@ class Component extends DCLogic {
     this.setState({ open: map, allExpanded: open });
   }
 
-  submit(){
-    const cfg = this.state.config || {};
-    const name = this.state.formName.trim(), email = this.state.formEmail.trim(), msg = this.state.formMsg.trim();
-    if(!msg){ this.setState({ toast:'Please write a suggestion first.' }); setTimeout(()=>this.setState({toast:''}),2000); return; }
-    if(cfg.formspreeId){
-      fetch('https://formspree.io/f/'+cfg.formspreeId, {
-        method:'POST', headers:{'Accept':'application/json','Content-Type':'application/json'},
-        body: JSON.stringify({ name, email, message: msg, _subject:'Governance Monitor suggestion' })
-      }).then(()=>this.setState({ submitted:true, submitNote:'' })).catch(()=>this.mailto(name,email,msg));
-    } else {
-      this.mailto(name,email,msg);
-    }
-  }
-  mailto(name,email,msg){
-    const cfg = this.state.config || {};
-    const to = cfg.contactEmail || '';
-    const body = encodeURIComponent(msg + '\n\n— ' + (name||'Anonymous') + (email?(' ('+email+')'):''));
-    const href = 'mailto:'+to+'?subject='+encodeURIComponent('Governance Monitor suggestion')+'&body='+body;
-    window.open(href, '_blank');
-    this.setState({ submitted:true, submitNote:'(Your email app should have opened — press send there.)' });
-  }
-
   // ---------- fallbacks ----------
   fallbackData(){ return { generatedAt:'', academicYear:'2025\u20132026', source:'https://governingcouncil.utoronto.ca/secretariat/page/governance-bodies', bodies:[] }; }
   fallbackExecs(){ return []; }
-  fallbackConfig(){ return { contactEmail:'', formspreeId:'', roadmap:[] }; }
+  fallbackConfig(){ return { contactEmail:'', formspreeId:'', supabaseUrl:'', supabaseAnonKey:'', roadmap:[] }; }
+  relTime(iso){ const d=new Date(iso); if(isNaN(d)) return ''; const days=Math.floor((Date.now()-d)/86400000); if(days<=0) return 'today'; if(days===1) return 'yesterday'; if(days<30) return days+' days ago'; return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
 
   renderVals(){
     const data = this.state.data || this.fallbackData();
@@ -432,12 +495,28 @@ class Component extends DCLogic {
     return base;
   }
 
-  packageCardVals(p){
+  monthKey(p){ const d=p.meetingDate||''; return d.length>=7 ? d.slice(0,7) : 'undated'; }
+  monthTitle(key){ if(key==='undated') return 'Undated'; const d=new Date(key+'-01T00:00:00'); return isNaN(d)?key:d.toLocaleDateString('en-US',{month:'long',year:'numeric'}); }
+  isUpcoming(p){ const d=p.meetingDate||''; if(d.length<10) return false; return d > new Date().toISOString().slice(0,10); }
+  insideLabel(p){
+    const parts=[];
+    const dc=(p.documents||[]).length; if(dc) parts.push(dc+(dc===1?' report':' reports'));
+    if(p.gradRelevance && p.gradRelevance.trim().length>40) parts.push('grad-relevant');
+    parts.push('detected '+this.fmtShort(p.detectedOn));
+    return parts.join(' · ');
+  }
+  toggleGroup(key){ this.setState(s=>({ collapsedGroups:{ ...s.collapsedGroups, [key]: !s.collapsedGroups[key] } })); }
+
+  packageCardVals(p, opts){
+    opts = opts || {};
     return {
       _id: p._id,
       docType: p.docType || 'Agenda Package',
       shortTitle: this.shortTitle(p),
       bodyName: p._bodyName,
+      showBody: !!opts.showBody,
+      upcoming: this.isUpcoming(p),
+      insideLabel: this.insideLabel(p),
       meetingLabel: this.fmt(p.meetingDate),
       detectedLabel: this.fmtShort(p.detectedOn),
       summary: p.summary,
@@ -459,50 +538,87 @@ class Component extends DCLogic {
   }
 
   meetingsVals(data, q){
-    const filter = this.state.filter, gradOnly = this.state.gradOnly;
+    const { groupBy, bodyFilter, execFilter, onlyNew, gradOnly } = this.state;
+    const selectStyle = 'border:1px solid #d2dbe1;border-radius:9px;padding:10px 12px;font-size:13px;font-weight:600;color:#3d5562;background:#fff;outline:none;cursor:pointer;font-family:inherit';
+
+    // flatten all packages (already annotated with _bodyId/_bodyName/_execs/_id)
+    const all = [];
+    for(const b of data.bodies) for(const p of (b.packages||[])) all.push(p);
+
+    // body dropdown options (only bodies that have packages, with counts)
+    const bodyCounts = {};
+    for(const p of all) bodyCounts[p._bodyId] = (bodyCounts[p._bodyId]||0)+1;
+    const bodyOptions = [{value:'all', label:'All bodies ('+all.length+')'}]
+      .concat(data.bodies.filter(b=>bodyCounts[b.id]).map(b=>({value:b.id, label:b.name+' ('+bodyCounts[b.id]+')'})));
+
+    // exec dropdown options (with counts)
+    const execs = this.state.execs || [];
+    const execCount = id => all.filter(p=>(p._execs||[]).some(e=>e.id===id)).length;
+    const execOptions = [{value:'all', label:'All portfolios'}]
+      .concat(execs.map(e=>({value:e.id, label:e.role+' ('+execCount(e.id)+')'})));
+
+    // apply filters
     const pass = p => {
+      if(onlyNew && !p.isNew) return false;
+      if(bodyFilter!=='all' && p._bodyId!==bodyFilter) return false;
+      if(execFilter!=='all' && !(p._execs||[]).some(e=>e.id===execFilter)) return false;
       if(gradOnly && !(p.gradRelevance && p.gradRelevance.trim().length>40)) return false;
       if(q && !(this.text(p)+' '+(p.title||'').toLowerCase()).includes(q)) return false;
       return true;
     };
+    const filtered = all.filter(pass);
 
-    const chipDefs = [['all','All bodies'],['new','🟢 New this scan']].concat(data.bodies.map(b=>[b.id,b.name]));
-    const chips = chipDefs.map(([id,label])=>({ label, style:this.chipStyle(filter===id), onPick:()=>this.setState({filter:id}) }));
+    // group
+    const groupsMap = {};
+    const order = [];
+    for(const p of filtered){
+      const key = groupBy==='month' ? this.monthKey(p) : p._bodyId;
+      if(!groupsMap[key]){ groupsMap[key] = []; order.push(key); }
+      groupsMap[key].push(p);
+    }
+    // sort group keys: month desc, body by name
+    if(groupBy==='month') order.sort((a,b)=> a<b?1:(a>b?-1:0));
+    else order.sort((a,b)=>{ const na=(data.bodies.find(x=>x.id===a)||{}).name||''; const nb=(data.bodies.find(x=>x.id===b)||{}).name||''; return na.localeCompare(nb); });
 
-    let bodies = data.bodies;
-    if(filter==='new') bodies = data.bodies.map(b=>({...b, packages:(b.packages||[]).filter(p=>p.isNew)})).filter(b=>b.packages.length);
-    else if(filter!=='all') bodies = data.bodies.filter(b=>b.id===filter);
-
-    const showAll = filter==='all';
-    let total = 0;
-    const bodyVals = bodies.map(b=>{
-      const pkgs = (b.packages||[]).filter(pass);
-      total += pkgs.length;
+    const groups = order.map(key=>{
+      const pkgs = groupsMap[key].slice().sort((a,b)=>(b.meetingDate||'').localeCompare(a.meetingDate||''));
       const newN = pkgs.filter(p=>p.isNew).length;
-      let statusLabel, statusStyle;
-      if(newN>0){ statusLabel = newN+(newN===1?' new':' new'); statusStyle=this.newBadge(); }
-      else if((b.packages||[]).length>0){ statusLabel='No change'; statusStyle=this.oldBadge(); }
-      else { statusLabel='No packages yet'; statusStyle=this.oldBadge(); }
+      const collapsed = !!this.state.collapsedGroups[key];
+      const isBody = groupBy!=='month';
+      const title = isBody ? ((data.bodies.find(x=>x.id===key)||{}).name||key) : this.monthTitle(key);
+      const bodyUrl = isBody ? ((data.bodies.find(x=>x.id===key)||{}).url||'#') : '#';
       return {
-        name:b.name, url:b.url, statusLabel, statusStyle,
-        isEmpty: pkgs.length===0 && !showAll,
-        emptyMsg: 'No agenda package matched here yet — checked '+(this.fmt(data.generatedAt)||'recently')+'.',
-        packages: pkgs.map(p=>this.packageCardVals(p)),
-        _hide: pkgs.length===0 && showAll,   // hide empty bodies in the "all" view to cut noise
+        title, isBody, bodyUrl,
+        countLabel: pkgs.length+(pkgs.length===1?' item':' items'),
+        hasNew: newN>0, newLabel: newN+' new',
+        open: !collapsed,
+        chevronRotate: collapsed ? 'rotate(0deg)' : 'rotate(90deg)',
+        onToggle: ()=>this.toggleGroup(key),
+        packages: pkgs.map(p=>this.packageCardVals(p, { showBody: groupBy==='month' })),
       };
-    }).filter(b=>!b._hide);
+    });
+
+    const hasActiveFilter = onlyNew || gradOnly || bodyFilter!=='all' || execFilter!=='all' || !!q;
 
     return {
-      chips,
-      bodies: bodyVals,
+      groupByVal: groupBy,
+      onGroupBy: e=>this.setState({groupBy:e.target.value}),
+      bodyFilterVal: bodyFilter, bodyOptions, onBodyFilter: e=>this.setState({bodyFilter:e.target.value}),
+      execFilterVal: execFilter, execOptions, onExecFilter: e=>this.setState({execFilter:e.target.value}),
+      selectStyle,
+      newToggleStyle: this.chipStyle(onlyNew)+';border-radius:9px;padding:10px 13px;',
+      onToggleNew: ()=>this.setState({onlyNew:!onlyNew}),
+      gradToggleStyle: this.chipStyle(gradOnly)+';border-radius:9px;padding:10px 13px;',
+      onToggleGrad: ()=>this.setState({gradOnly:!gradOnly}),
+      hasActiveFilter,
+      onClearFilters: ()=>this.setState({onlyNew:false, gradOnly:false, bodyFilter:'all', execFilter:'all', search:''}),
+      groups,
       search: this.state.search,
       onSearch: e=>this.setState({search:e.target.value}),
-      gradToggleStyle: this.chipStyle(gradOnly)+';border-radius:9px;padding:11px 14px;',
-      onToggleGrad: ()=>this.setState({gradOnly:!gradOnly}),
       expandAllLabel: this.state.allExpanded ? 'Collapse all' : 'Expand all',
       onExpandAll: ()=>this.setAll(!this.state.allExpanded),
-      noResults: total===0,
-      noResultsMsg: q ? 'No items match "'+this.state.search+'".' : (this.state.gradOnly ? 'No strongly grad-relevant items in this view.' : 'No packages tracked yet — run a scan to populate.'),
+      noResults: groups.length===0,
+      noResultsMsg: q ? 'No items match "'+this.state.search+'".' : (hasActiveFilter ? 'No items match these filters.' : 'No packages tracked yet — run a scan to populate.'),
     };
   }
 
@@ -550,8 +666,12 @@ class Component extends DCLogic {
       onFormEmail:e=>this.setState({formEmail:e.target.value}),
       onFormMsg:e=>this.setState({formMsg:e.target.value}),
       onSubmit:()=>this.submit(),
-      submitStyle:'background:#EE3224;color:#fff;border:none;border-radius:9px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer',
-      formHint: cfg.formspreeId ? 'Sent securely to the UTGSU team.' : 'Opens your email app addressed to the UTGSU team.',
+      submitStyle:'background:'+(this.state.sending?'#f08a80':'#EE3224')+';color:#fff;border:none;border-radius:9px;padding:12px 16px;font-size:14px;font-weight:700;cursor:'+(this.state.sending?'default':'pointer'),
+      formHint: this.sb(cfg) ? 'Posted to the shared UTGSU board below — visible to everyone.' : 'Saved to this browser. Add a Supabase key in config.json to share suggestions across everyone (see README).',
+      suggestions: (this.state.suggestions||[]).map(s=>({ message:s.message, byline:(s.name||'Anonymous')+' · '+this.relTime(s.created_at) })),
+      suggestionCount: (this.state.suggestions||[]).length,
+      hasSuggestions: (this.state.suggestions||[]).length>0,
+      noSuggestions: (this.state.suggestions||[]).length===0,
     };
   }
 }

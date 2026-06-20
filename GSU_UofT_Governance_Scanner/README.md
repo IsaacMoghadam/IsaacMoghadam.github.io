@@ -26,7 +26,8 @@ which the monthly job rewrites and commits.
 | `support.js` | Runtime the dashboard needs. Keep it next to `index.html`. |
 | `data.json` | The data the dashboard shows. The scanner overwrites this every month. |
 | `execs.json` | The 6 UTGSU executive portfolios + matching keywords (Bylaw 7). Powers the **By Executive** page. Edit to tune what shows under each VP. |
-| `config.json` | Roadmap items + the suggestion-form settings for the **Roadmap & Ideas** page. |
+| `config.json` | Roadmap items + the suggestion-form / database settings for the **Roadmap & Ideas** page. |
+| `utgsu-logo.png` | The GSU logo shown in the header. Keep it next to `index.html`. |
 | `backend/scan.py` | The scanner. |
 | `backend/bodies.json` | The list of governing bodies to track — edit to add/remove. |
 | `backend/requirements.txt` | Python dependencies. |
@@ -36,18 +37,43 @@ which the monthly job rewrites and commits.
 
 ## The three pages
 
-- **Meetings** — every tracked body, newest items as **collapsible cards** (click to expand the full summary, what-was-discussed bullets, grad-student relevance, and each linked report/presentation). Search box, a "grad-relevant only" filter, body chips, and expand/collapse-all.
+- **Meetings** — every tracked item as **collapsible cards** (click to expand the full summary, what-was-discussed bullets, grad-student relevance, and each linked report/presentation). A compact toolbar lets you **group by month or by body**, filter by **body** or **executive portfolio** (dropdowns, with counts), toggle **New only** / **Grad-relevant**, search, and expand/collapse all. Month/body sections themselves collapse, future meetings get an **Upcoming** tag, and each closed card shows what's inside (report count, grad-relevant).
 - **By Executive** — governance items automatically matched to each of the 6 UTGSU executives' portfolios. Matching is done in the browser from `execs.json` (no API cost), using each portfolio's keywords plus the bodies that VP explicitly watches under Bylaw 7. Edit `execs.json` to tune it.
 - **Roadmap & Ideas** — what's planned (e.g. emailing each exec their portfolio digest) and a form for members to submit suggestions. See "Collecting suggestions" below.
 
 ---
 
-## Collecting suggestions (Roadmap page form)
+## Collecting suggestions (Roadmap page)
 
-By default the form opens the visitor's email app addressed to `contactEmail` in `config.json`. To collect
-submissions silently instead (recommended), create a free form at <https://formspree.io>, copy its id (the part
-after `/f/` in the endpoint), and paste it into `config.json` as `formspreeId`. Change `contactEmail` to your
-real address either way.
+Suggestions members submit appear **right on the Roadmap & Ideas page** for everyone to see. Because the
+site is static, that shared list needs a tiny free database. Two options:
+
+**Option A — Supabase (recommended, ~10 min, it's real SQL/Postgres):**
+1. Make a free project at <https://supabase.com>.
+2. In the SQL editor, run:
+   ```sql
+   create table suggestions (
+     id bigint generated always as identity primary key,
+     name text,
+     email text,
+     message text not null,
+     created_at timestamptz default now()
+   );
+   alter table suggestions enable row level security;
+   -- allow anyone to post a suggestion
+   create policy "anyone can insert" on suggestions for insert to anon with check (true);
+   -- allow anyone to read suggestions (so they show on the page)
+   create policy "anyone can read" on suggestions for select to anon using (true);
+   ```
+3. In **Project Settings → API**, copy the **Project URL** and the **anon public** key.
+4. Paste them into `config.json` as `supabaseUrl` and `supabaseAnonKey`. Done — submissions now save to the
+   database and show for everyone. (The anon key is safe to ship publicly; row-level security above limits it
+   to inserting and reading this one table.)
+
+**Option B — do nothing:** suggestions are saved to the visitor's own browser only (not shared). Fine for
+testing, not for a real shared board.
+
+Either way, set `contactEmail` in `config.json` to your real address.
 
 ---
 
