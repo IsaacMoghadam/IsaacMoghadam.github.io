@@ -1,6 +1,6 @@
 {
   "_note": "Site configuration for the Roadmap & Ideas page. contactEmail = where suggestions are sent if no Formspree id is set. formspreeId = optional; create a free form at formspree.io and paste its id (the part after /f/) to collect suggestions without opening the user's email client.",
-  "contactEmail": "vpinternal@utgsu.ca",
+  "contactEmail": "president@utgsu.ca",
   "formspreeId": "",
   "roadmap": [
     {
